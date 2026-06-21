@@ -10,6 +10,7 @@ from pypdf import PdfReader
 ROOT = Path.cwd()
 XLSX = ROOT / "French_Vocab_Grouped_A1_A2_B1 (1).xlsx"
 PDF = ROOT / "B1 handnotes.pdf"
+HANDNOTES = ROOT / "data" / "b1-handnotes-source.json"
 DATA_DIR = ROOT / "data"
 REPORT_DIR = ROOT / "tmp" / "reports"
 DATA_DIR.mkdir(exist_ok=True)
@@ -36,8 +37,12 @@ def slug(text):
     return text or "card"
 
 
-def card_id(front, back, index):
-    return f"seed-xlsx-{index:04d}-{slug(front)[:36]}-{slug(back)[:24]}"
+def xlsx_card_id(french, english, index):
+    return f"seed-xlsx-{index:04d}-{slug(french)[:36]}-{slug(english)[:24]}"
+
+
+def handnote_card_id(front, back, page, index):
+    return f"seed-b1-handnotes-p{page:02d}-{index:04d}-{slug(front)[:32]}-{slug(back)[:20]}"
 
 
 def extract_xlsx_cards():
@@ -79,7 +84,7 @@ def extract_xlsx_cards():
             number = len(cards) + 1
             tags = ", ".join(filter(None, ["source:xlsx", level, category]))
             cards.append({
-                "id": card_id(french, english, number),
+                "id": xlsx_card_id(french, english, number),
                 "front": english,
                 "back": french,
                 "notes": f"{category} - {level}" if level else category,
@@ -95,6 +100,37 @@ def extract_xlsx_cards():
             })
 
     return cards, skipped
+
+
+def extract_handnote_cards():
+    if not HANDNOTES.exists():
+        return []
+
+    data = json.loads(HANDNOTES.read_text(encoding="utf-8"))
+    cards = []
+    for index, card in enumerate(data.get("cards", []), 1):
+        front = clean(card.get("front"))
+        back = clean(card.get("back"))
+        if not front or not back:
+            continue
+        page = int(card.get("sourcePage") or 0)
+        tags = clean(card.get("tags"))
+        if "source:b1-handnotes" not in tags:
+            tags = ", ".join(filter(None, ["source:b1-handnotes", tags]))
+        cards.append({
+            "id": handnote_card_id(front, back, page, index),
+            "front": front,
+            "back": back,
+            "notes": clean(card.get("notes")),
+            "tags": tags,
+            "direction": "en-fr",
+            "source": {
+                "file": data.get("source", PDF.name),
+                "page": page,
+                "needs_review": bool(card.get("needs_review", False))
+            }
+        })
+    return cards
 
 
 def inspect_pdf():
@@ -113,14 +149,18 @@ def inspect_pdf():
         "file": PDF.name,
         "pages": len(reader.pages),
         "total_extractable_chars": total_chars,
-        "status": "image_only_notes_need_ocr_or_manual_transcription",
+        "status": "handnote_cards_imported_from_visual_transcription_json",
         "pages_detail": pages
     }
 
-cards, skipped = extract_xlsx_cards()
+
+xlsx_cards, skipped = extract_xlsx_cards()
+handnote_cards = extract_handnote_cards()
+cards = xlsx_cards + handnote_cards
 pdf_report = inspect_pdf()
-levels = Counter(card["source"]["level"] or "unlabeled" for card in cards)
-categories = Counter(card["source"]["category"] for card in cards)
+levels = Counter(card["source"].get("level", "B1") if card["id"].startswith("seed-xlsx") else "B1" for card in cards)
+categories = Counter(card["source"].get("category", "B1 handnotes") for card in xlsx_cards)
+needs_review = sum(1 for card in handnote_cards if card["source"].get("needs_review"))
 
 seed_payload = {
     "version": 1,
@@ -131,10 +171,15 @@ seed_payload = {
 report = {
     "xlsx": {
         "file": XLSX.name,
-        "cards_created": len(cards),
-        "level_counts": dict(sorted(levels.items())),
+        "cards_created": len(xlsx_cards),
+        "level_counts": dict(sorted(Counter(card["source"]["level"] or "unlabeled" for card in xlsx_cards).items())),
         "top_categories": categories.most_common(20),
         "skipped_rows": skipped
+    },
+    "b1_handnotes": {
+        "file": HANDNOTES.name if HANDNOTES.exists() else None,
+        "cards_created": len(handnote_cards),
+        "needs_review": needs_review
     },
     "pdf": pdf_report,
     "total_cards_created": len(cards)
@@ -142,7 +187,4 @@ report = {
 
 (DATA_DIR / "seed-cards.json").write_text(json.dumps(seed_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 (REPORT_DIR / "flashcard-extraction-report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-print(json.dumps(report, ensure_ascii=False, indent=2)[:4000])
-
-
-
+print(json.dumps(report, ensure_ascii=False, indent=2)[:5000])

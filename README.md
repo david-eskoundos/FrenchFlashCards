@@ -4,13 +4,12 @@ Mobile-first French flashcard study site for GitHub Pages.
 
 ## Built-In Deck
 
-The site currently ships with 1,038 vocabulary flashcards extracted from `French_Vocab_Grouped_A1_A2_B1 (1).xlsx`. Built-in vocabulary cards show English on the front and French on the back so you practice producing French:
+The site currently ships with 1,184 built-in flashcards. Cards show English on the front and French on the back so you practice producing French:
 
 - A1: 300 cards
 - A2: 532 cards
-- B1: 206 cards
-
-The `B1 handnotes.pdf` file was inspected, but its useful notes are image-based. The PDF text layer only exposes page labels/dates and a few headings, so it needs OCR or manual transcription before it can become reliable flashcards.
+- B1 vocabulary: 206 cards
+- B1 handnotes: 146 cards from visual transcription JSON, including 3 marked for review
 
 ## Study Method
 
@@ -62,4 +61,6 @@ https://david-eskoundos.github.io/FrenchFlashCards/
 ```
 
 GitHub Pages may take a few minutes to publish after a push.
+
+
 

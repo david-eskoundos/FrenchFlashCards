@@ -1,7 +1,7 @@
 ﻿const STORAGE_KEY = "french-flashcards-v1";
 const CLOUD_SETTINGS_KEY = "french-flashcards-cloud-settings-v1";
 const SEED_DECK_URL = "data/seed-cards.json";
-const SEED_DECK_VERSION = 2;
+const SEED_DECK_VERSION = 3;
 const GIST_FILE_NAME = "french-flashcards-progress.json";
 
 function toIso(date) {
@@ -639,6 +639,7 @@ if (typeof module !== "undefined") {
 if (typeof window !== "undefined") {
   window.addEventListener("DOMContentLoaded", startBrowserApp);
 }
+
 
 
 

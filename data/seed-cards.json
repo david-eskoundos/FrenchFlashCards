@@ -15572,6 +15572,1904 @@
         "level": "B1",
         "category": "Extra terms"
       }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0001-how-do-you-say-housewife-une-femme-au-foyer",
+      "front": "How do you say 'housewife'?",
+      "back": "une femme au foyer",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, family",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0002-how-do-you-say-to-express-onesel-s-exprimer",
+      "front": "How do you say 'to express oneself'?",
+      "back": "s'exprimer",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, reflexive-verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0003-how-do-you-say-to-get-married-se-marier",
+      "front": "How do you say 'to get married'?",
+      "back": "se marier",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, reflexive-verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0004-how-do-you-say-earbuds-des-couteurs",
+      "front": "How do you say 'earbuds'?",
+      "back": "des écouteurs",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, technology",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0005-how-do-you-say-by-hand-la-main",
+      "front": "How do you say 'by hand'?",
+      "back": "à la main",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0006-how-do-you-say-to-sit-down-s-asseoir",
+      "front": "How do you say 'to sit down'?",
+      "back": "s'asseoir",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, reflexive-verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0007-how-do-you-say-to-meet-find-each-se-retrouver",
+      "front": "How do you say 'to meet / find each other again'?",
+      "back": "se retrouver",
+      "notes": "Can mean to meet up again or to find oneself/each other.",
+      "tags": "source:b1-handnotes, B1, vocabulary, reflexive-verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0008-how-do-you-say-to-enjoy-savor-savourer",
+      "front": "How do you say 'to enjoy / savor'?",
+      "back": "savourer",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0009-how-do-you-say-to-miss-pass-by-passer-c-t",
+      "front": "How do you say 'to miss / pass by'?",
+      "back": "passer à côté",
+      "notes": "Often used for missing an opportunity.",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0010-how-do-you-contrast-emotional-fe-ressentir-feel-emoti",
+      "front": "How do you contrast emotional feeling and physical feeling/smell?",
+      "back": "ressentir = feel emotionally; sentir = feel physically / smell",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, feelings",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0011-how-do-you-say-aloud-voix-haute",
+      "front": "How do you say 'aloud'?",
+      "back": "à voix haute",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, communication",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p01-0012-how-do-you-say-a-speaker-orator-un-orateur",
+      "front": "How do you say 'a speaker / orator'?",
+      "back": "un orateur",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, communication",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 1,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p02-0013-how-do-you-say-yourself-formally-vous-m-me",
+      "front": "How do you say 'yourself' formally?",
+      "back": "vous-même",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, pronouns",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 2,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p02-0014-how-do-you-say-hope-l-espoir",
+      "front": "How do you say 'hope'?",
+      "back": "l'espoir",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, feelings",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 2,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p02-0015-how-do-you-say-a-breath-a-puff-une-bouff-e",
+      "front": "How do you say 'a breath / a puff'?",
+      "back": "une bouffée",
+      "notes": "Common phrase: une bouffée d'air.",
+      "tags": "source:b1-handnotes, B1, vocabulary, nouns",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 2,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p02-0016-how-do-you-say-head-held-high-la-t-te-haute",
+      "front": "How do you say 'head held high'?",
+      "back": "la tête haute",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 2,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p02-0017-how-do-you-say-with-ease-effortl-avec-aisance",
+      "front": "How do you say 'with ease / effortlessly'?",
+      "back": "avec aisance",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, adverbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 2,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p02-0018-how-do-you-say-it-can-be-learned-cela-s-apprend",
+      "front": "How do you say 'It can be learned'?",
+      "back": "Cela s'apprend.",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 2,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p02-0019-how-do-you-say-to-speak-up-take--prendre-la-parole",
+      "front": "How do you say 'to speak up / take the floor'?",
+      "back": "prendre la parole",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, communication",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 2,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p02-0020-what-is-the-french-causative-pat-faire-infinitif-obje",
+      "front": "What is the French causative pattern with faire?",
+      "back": "faire + infinitif + objet",
+      "notes": "Example: faire rire Paul = to make Paul laugh.",
+      "tags": "source:b1-handnotes, B1, grammar, faire-causatif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 2,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p02-0021-how-do-you-say-to-make-your-voic-faire-entendre-votre",
+      "front": "How do you say 'to make your voice heard'?",
+      "back": "faire entendre votre voix",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, faire-causatif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 2,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p02-0022-how-do-you-say-instructions-user-un-mode-d-emploi",
+      "front": "How do you say 'instructions / user guide'?",
+      "back": "un mode d'emploi",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, daily-life",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 2,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p03-0023-how-do-you-say-politicized-politis",
+      "front": "How do you say 'politicized'?",
+      "back": "politisé",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, politics",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 3,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p03-0024-how-do-you-say-sound-tone-une-sonorit",
+      "front": "How do you say 'sound / tone'?",
+      "back": "une sonorité",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, sound",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 3,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p03-0025-how-do-you-say-jerky-choppy-saccad",
+      "front": "How do you say 'jerky / choppy'?",
+      "back": "saccadé",
+      "notes": "The note glosses it as inégal.",
+      "tags": "source:b1-handnotes, B1, vocabulary, adjectives",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 3,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p03-0026-how-do-you-say-to-mock-se-moquer",
+      "front": "How do you say 'to mock'?",
+      "back": "se moquer",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 3,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p03-0027-how-do-you-say-to-separate-detac-dissocier",
+      "front": "How do you say 'to separate / detach'?",
+      "back": "dissocier",
+      "notes": "The note gives séparer and détacher.",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 3,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p03-0028-how-do-you-say-entertainment-un-divertissement",
+      "front": "How do you say 'entertainment'?",
+      "back": "un divertissement",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, leisure",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 3,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p03-0029-how-do-you-say-to-start-launch-o-se-lancer",
+      "front": "How do you say 'to start / launch oneself into something'?",
+      "back": "se lancer",
+      "notes": "The note gives commencer.",
+      "tags": "source:b1-handnotes, B1, vocabulary, reflexive-verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 3,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p03-0030-how-do-you-say-to-compete-clash-s-affronter",
+      "front": "How do you say 'to compete / clash'?",
+      "back": "s'affronter",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, conflict",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 3,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p03-0031-how-do-you-say-raw-intensely-vif",
+      "front": "How do you say 'raw / intensely'?",
+      "back": "à vif",
+      "notes": "Used for something raw, exposed, or felt intensely.",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 3,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p04-0032-how-do-you-say-according-to-selon",
+      "front": "How do you say 'according to'?",
+      "back": "selon",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, connectors",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 4,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p04-0033-when-do-you-use-the-subjunctive-on-utilise-le-subjon",
+      "front": "When do you use the subjunctive?",
+      "back": "On utilise le subjonctif pour exprimer un sentiment, un doute, une volonté, une obligation ou un jugement.",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 4,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p04-0034-which-mood-follows-a-feeling-lik-j-ai-peur-que-subjon",
+      "front": "Which mood follows a feeling like 'J'ai peur que'?",
+      "back": "J'ai peur que + subjonctif.",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 4,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p04-0035-which-mood-follows-il-faut-que-il-faut-que-subjonct",
+      "front": "Which mood follows 'Il faut que'?",
+      "back": "Il faut que + subjonctif.",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 4,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p04-0036-which-mood-follows-doubt-or-nega-je-doute-que-subjonc",
+      "front": "Which mood follows doubt or negative opinion?",
+      "back": "Je doute que + subjonctif; Je ne pense pas que + subjonctif.",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 4,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p04-0037-which-mood-follows-wishes-such-a-je-veux-que-subjonct",
+      "front": "Which mood follows wishes such as 'Je veux que' or 'J'aimerais que'?",
+      "back": "Je veux que + subjonctif; J'aimerais que + subjonctif.",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 4,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p04-0038-how-do-you-contrast-certainty-vs-je-sais-qu-il-vient-",
+      "front": "How do you contrast certainty vs wish with venir?",
+      "back": "Je sais qu'il vient. / Je veux qu'il vienne.",
+      "notes": "Indicatif for certainty; subjonctif for volonté.",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 4,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p04-0039-what-are-the-regular-present-sub-e-es-e-ions-iez-ent",
+      "front": "What are the regular present subjunctive endings?",
+      "back": "-e, -es, -e, -ions, -iez, -ent",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 4,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p04-0040-how-do-you-form-the-regular-pres-on-prend-la-forme-il",
+      "front": "How do you form the regular present subjunctive stem?",
+      "back": "On prend la forme ils/elles au présent, on enlève -ent, puis on ajoute les terminaisons.",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 4,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p04-0041-conjugate-tre-in-the-present-sub-que-je-sois-que-tu-s",
+      "front": "Conjugate être in the present subjunctive.",
+      "back": "que je sois, que tu sois, qu'il/elle soit, que nous soyons, que vous soyez, qu'ils/elles soient",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif-irregular",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 4,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p05-0042-conjugate-avoir-in-the-present-s-que-j-aie-que-tu-aie",
+      "front": "Conjugate avoir in the present subjunctive.",
+      "back": "que j'aie, que tu aies, qu'il/elle ait, que nous ayons, que vous ayez, qu'ils/elles aient",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif-irregular",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 5,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p05-0043-conjugate-aller-in-the-present-s-que-j-aille-que-tu-a",
+      "front": "Conjugate aller in the present subjunctive.",
+      "back": "que j'aille, que tu ailles, qu'il/elle aille, que nous allions, que vous alliez, qu'ils/elles aillent",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif-irregular",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 5,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p05-0044-give-the-present-subjunctive-of--que-je-fasse-que-je-",
+      "front": "Give the present subjunctive of faire, pouvoir, and vouloir for je.",
+      "back": "que je fasse; que je puisse; que je veuille",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif-irregular",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 5,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p05-0045-which-connectors-take-the-subjun-il-faut-que-bien-que",
+      "front": "Which connectors take the subjunctive?",
+      "back": "il faut que, bien que, pour que, afin que, avant que, à condition que, jusqu'à ce que + subjonctif",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, subjonctif-connectors",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 5,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p05-0046-which-connectors-take-the-indica-apr-s-que-indicatif-",
+      "front": "Which connectors take the indicative in the notes?",
+      "back": "après que + indicatif; parce que + indicatif",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, indicatif-connectors",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 5,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p05-0047-how-do-you-say-it-s-not-a-big-de-ce-n-est-pas-grave-c",
+      "front": "How do you say 'It's not a big deal'?",
+      "back": "Ce n'est pas grave. / C'est pas grave.",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 5,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p05-0048-how-do-you-say-about-to-verb-sur-le-point-de-infi",
+      "front": "How do you say 'about to + verb'?",
+      "back": "sur le point de + infinitif",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 5,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p06-0049-how-do-you-say-lightning-la-foudre",
+      "front": "How do you say 'lightning'?",
+      "back": "la foudre",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, nature",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 6,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p06-0050-how-do-you-say-however-on-the-ot-en-revanche",
+      "front": "How do you say 'however / on the other hand'?",
+      "back": "en revanche",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, connectors",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 6,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p06-0051-how-do-you-say-it-is-about-this--il-s-agit-de",
+      "front": "How do you say 'it is about / this is about'?",
+      "back": "Il s'agit de",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 6,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p06-0052-how-do-you-say-to-press-a-button-appuyer-sur-un-bouto",
+      "front": "How do you say 'to press a button'?",
+      "back": "appuyer sur un bouton",
+      "notes": "Standard French uses sur.",
+      "tags": "source:b1-handnotes, B1, vocabulary, daily-life",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 6,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p06-0053-how-do-you-say-if-you-feel-like--si-vous-en-avez-envi",
+      "front": "How do you say 'if you feel like it'?",
+      "back": "si vous en avez envie",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 6,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p06-0054-how-do-you-say-while-walking-en-marchant",
+      "front": "How do you say 'while walking'?",
+      "back": "en marchant",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, gérondif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 6,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p06-0055-how-do-you-say-to-belong-appartenir",
+      "front": "How do you say 'to belong'?",
+      "back": "appartenir",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 6,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p06-0056-how-do-you-say-to-take-off-start-d-coller",
+      "front": "How do you say 'to take off / start'?",
+      "back": "décoller",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 6,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p06-0057-how-do-you-say-sales-des-ventes",
+      "front": "How do you say 'sales'?",
+      "back": "des ventes",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, business",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 6,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p06-0058-how-do-you-say-certainly-certes",
+      "front": "How do you say 'certainly'?",
+      "back": "certes",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, adverbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 6,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p07-0059-how-do-you-say-to-stop-end-cesser",
+      "front": "How do you say 'to stop / end'?",
+      "back": "cesser",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 7,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p07-0060-how-do-you-say-to-connect-plug-i-brancher-connecter",
+      "front": "How do you say 'to connect / plug in'?",
+      "back": "brancher / connecter",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, technology",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 7,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p07-0061-how-do-you-use-se-laisser-infini-se-laisser-infinitif",
+      "front": "How do you use 'se laisser + infinitive'?",
+      "back": "se laisser + infinitif = let / allow oneself to be or do something",
+      "notes": "Example: se laisser convaincre.",
+      "tags": "source:b1-handnotes, B1, grammar, reflexive-verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 7,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p07-0062-how-do-you-say-addicted-accro",
+      "front": "How do you say 'addicted'?",
+      "back": "accro",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, adjectives",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 7,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p07-0063-how-do-you-say-right-away-immedi-tout-de-suite",
+      "front": "How do you say 'right away / immediately'?",
+      "back": "tout de suite",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, adverbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 7,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p07-0064-how-do-you-say-very-proud-with-a-pas-peu-fier",
+      "front": "How do you say 'very proud' with an idiom?",
+      "back": "pas peu fier",
+      "notes": "Literally: not a little proud.",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 7,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p07-0065-how-do-you-say-this-allows-to-cela-permet-de-infin",
+      "front": "How do you say 'this allows to...'?",
+      "back": "cela permet de + infinitif",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 7,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0066-how-do-you-say-a-book-written-wo-un-ouvrage",
+      "front": "How do you say 'a book / written work'?",
+      "back": "un ouvrage",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, literature",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0067-how-do-you-say-inconceivable-imp-inconcevable",
+      "front": "How do you say 'inconceivable / impossible to imagine'?",
+      "back": "inconcevable",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, adjectives",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0068-which-preposition-do-you-use-wit-jouer-de-instrument",
+      "front": "Which preposition do you use with jouer for an instrument?",
+      "back": "jouer de + instrument",
+      "notes": "Examples: jouer du piano; jouer de la batterie.",
+      "tags": "source:b1-handnotes, B1, grammar, jouer",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0069-which-preposition-do-you-use-wit-jouer-sport-jeu",
+      "front": "Which preposition do you use with jouer for a sport/game?",
+      "back": "jouer à + sport/jeu",
+      "notes": "Example: jouer au football.",
+      "tags": "source:b1-handnotes, B1, grammar, jouer",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0070-how-do-you-say-to-play-on-words-jouer-sur-les-mots",
+      "front": "How do you say 'to play on words'?",
+      "back": "jouer sur les mots",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0071-unclear-page-8-card-the-note-see-se-tisser",
+      "front": "Unclear page 8 card: the note seems to pair this French verb with 'is forgotten'.",
+      "back": "se tisser",
+      "notes": "Handwritten translation is unclear; review the original page.",
+      "tags": "source:b1-handnotes, B1, vocabulary, needs-review",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": true
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0072-how-do-you-say-each-everyone-chacun-e",
+      "front": "How do you say 'each / everyone'?",
+      "back": "chacun(e)",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, pronouns",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0073-how-do-you-say-almost-presque",
+      "front": "How do you say 'almost'?",
+      "back": "presque",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, adverbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0074-how-do-you-say-spouse-un-conjoint-une-conj",
+      "front": "How do you say 'spouse'?",
+      "back": "un conjoint / une conjointe",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, family",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0075-which-words-can-express-cause-parce-que-car-puisqu",
+      "front": "Which words can express cause?",
+      "back": "parce que, car, puisque, à cause de, grâce à",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, cause",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p08-0076-which-words-can-express-conseque-donc-alors-c-est-pou",
+      "front": "Which words can express consequence?",
+      "back": "donc, alors, c'est pourquoi, du coup, si bien que, tellement ... que",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, consequence",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 8,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p09-0077-which-indefinite-words-in-the-no-quelqu-un-rien-chacu",
+      "front": "Which indefinite words in the notes are pronouns?",
+      "back": "quelqu'un, rien, chacun, tout",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, indéfinis",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 9,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p09-0078-which-indefinite-words-in-the-no-chaque-quelques-aucu",
+      "front": "Which indefinite words in the notes are adjectives?",
+      "back": "chaque, quelques, aucun",
+      "notes": "chaque = every; quelques = some; aucun = no / not any.",
+      "tags": "source:b1-handnotes, B1, grammar, indéfinis",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 9,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p09-0079-which-relative-pronoun-replaces--qui",
+      "front": "Which relative pronoun replaces the subject?",
+      "back": "qui",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, pronoms-relatifs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 9,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p09-0080-which-relative-pronoun-replaces--que-qu",
+      "front": "Which relative pronoun replaces a direct object?",
+      "back": "que / qu'",
+      "notes": "COD = complément d'objet direct.",
+      "tags": "source:b1-handnotes, B1, grammar, pronoms-relatifs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 9,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p09-0081-which-relative-pronoun-indicates-o",
+      "front": "Which relative pronoun indicates a place/link?",
+      "back": "où",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, pronoms-relatifs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 9,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p09-0082-which-relative-pronoun-replaces--dont",
+      "front": "Which relative pronoun replaces 'de + something'?",
+      "back": "dont",
+      "notes": "The note says dont replaces de + quelque chose.",
+      "tags": "source:b1-handnotes, B1, grammar, pronoms-relatifs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 9,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p10-0083-how-do-you-form-the-g-rondif-en-participe-pr-sent",
+      "front": "How do you form the gérondif?",
+      "back": "en + participe présent",
+      "notes": "Take the nous form, remove -ons, add -ant.",
+      "tags": "source:b1-handnotes, B1, grammar, gérondif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 10,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p10-0084-what-are-examples-of-regular-g-r-parler-en-parlant-fi",
+      "front": "What are examples of regular gérondif forms?",
+      "back": "parler → en parlant; finir → en finissant",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, gérondif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 10,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p10-0085-what-are-the-irregular-g-rondif--avoir-en-ayant-tre-e",
+      "front": "What are the irregular gérondif forms in the notes?",
+      "back": "avoir → en ayant; être → en étant; savoir → en sachant",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, grammar, gérondif-irregular",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 10,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p10-0086-how-do-you-say-he-walks-while-si-il-marche-en-chantan",
+      "front": "How do you say 'He walks while singing'?",
+      "back": "Il marche en chantant.",
+      "notes": "This is the gérondif.",
+      "tags": "source:b1-handnotes, B1, grammar, gérondif",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 10,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p10-0087-how-do-you-say-i-saw-a-man-singi-j-ai-vu-un-homme-cha",
+      "front": "How do you say 'I saw a man singing in the street'?",
+      "back": "J'ai vu un homme chantant dans la rue.",
+      "notes": "Here chantant is a present participle without en.",
+      "tags": "source:b1-handnotes, B1, grammar, participe-présent",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 10,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p11-0088-where-do-nationality-color-taste-apr-s-le-nom",
+      "front": "Where do nationality, color, taste, appearance, and style adjectives usually go?",
+      "back": "Après le nom.",
+      "notes": "Examples from the notes include un gâteau sucré and une église baroque.",
+      "tags": "source:b1-handnotes, B1, grammar, place-des-adjectifs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 11,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p11-0089-where-do-long-adjectives-adjecti-apr-s-le-nom",
+      "front": "Where do long adjectives, adjectives with complements, participles, and time adjectives usually go?",
+      "back": "Après le nom.",
+      "notes": "Examples: magnifique, difficile à ouvrir, déchiré, prochain/suivant.",
+      "tags": "source:b1-handnotes, B1, grammar, place-des-adjectifs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 11,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p11-0090-which-types-of-adjectives-can-go-short-common-affecti",
+      "front": "Which types of adjectives can go before the noun?",
+      "back": "Short/common, affective/evaluative, and order-number adjectives.",
+      "notes": "Examples in the notes: grand, gentil, belle, jeune, gros, premier, dernier, deuxième.",
+      "tags": "source:b1-handnotes, B1, grammar, place-des-adjectifs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 11,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p11-0091-what-is-the-difference-between-m-ma-propre-maison-my-",
+      "front": "What is the difference between 'ma propre maison' and 'ma maison propre'?",
+      "back": "ma propre maison = my own house; ma maison propre = my clean house",
+      "notes": "Position changes meaning.",
+      "tags": "source:b1-handnotes, B1, grammar, adjectifs-meaning",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 11,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p12-0092-what-is-the-difference-between-u-un-grand-homme-a-gre",
+      "front": "What is the difference between 'un grand homme' and 'un homme grand'?",
+      "back": "un grand homme = a great man; un homme grand = a tall man",
+      "notes": "Position changes meaning.",
+      "tags": "source:b1-handnotes, B1, grammar, adjectifs-meaning",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 12,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0093-how-do-you-say-childish-enfantin",
+      "front": "How do you say 'childish'?",
+      "back": "enfantin",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, adjectives",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0094-how-do-you-say-worst-pire",
+      "front": "How do you say 'worst'?",
+      "back": "pire",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, adjectives",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0095-how-do-you-say-to-cry-complain-i-chialer",
+      "front": "How do you say 'to cry / complain' informally?",
+      "back": "chialer",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, informal",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0096-how-do-you-say-with-long-sleeves-manches-longues",
+      "front": "How do you say 'with long sleeves'?",
+      "back": "à manches longues",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, clothing",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0097-how-do-you-say-otherwise-sinon",
+      "front": "How do you say 'otherwise'?",
+      "back": "sinon",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, connectors",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0098-what-does-the-suffix-able-often--able-qui-peut-tre-fa",
+      "front": "What does the suffix -able often mean?",
+      "back": "-able = qui peut être fait / can be done",
+      "notes": "Example: vendre → vendable.",
+      "tags": "source:b1-handnotes, B1, grammar, suffixe-able",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0099-which-able-spellings-were-correc-explicable-rempla-ab",
+      "front": "Which -able spellings were corrected in the notes?",
+      "back": "explicable, remplaçable, communicable",
+      "notes": "Not *expliquable, *remplaceable, or *communiquable.",
+      "tags": "source:b1-handnotes, B1, spelling, suffixe-able",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0100-how-do-you-say-to-take-root-prendre-racine",
+      "front": "How do you say 'to take root'?",
+      "back": "prendre racine",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, expressions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0101-how-do-you-say-the-next-right-la-prochaine-droite",
+      "front": "How do you say 'the next right'?",
+      "back": "la prochaine à droite",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, directions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0102-how-do-you-say-go-straight-tout-droit",
+      "front": "How do you say 'go straight'?",
+      "back": "tout droit",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, directions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0103-how-do-you-say-atm-un-distributeur",
+      "front": "How do you say 'ATM'?",
+      "back": "un distributeur",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, daily-life",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p13-0104-how-do-you-say-to-withdraw-retirer",
+      "front": "How do you say 'to withdraw'?",
+      "back": "retirer",
+      "notes": "Useful for withdrawing money.",
+      "tags": "source:b1-handnotes, B1, vocabulary, daily-life",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 13,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p14-0105-how-do-you-say-at-the-end-of-the-au-bout-de-la-rue",
+      "front": "How do you say 'at the end of the street'?",
+      "back": "au bout de la rue",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, directions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 14,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p14-0106-how-do-you-say-roundabout-le-rond-point",
+      "front": "How do you say 'roundabout'?",
+      "back": "le rond-point",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, directions",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 14,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p14-0107-how-do-you-say-weight-training-w-la-musculation-la-mu",
+      "front": "How do you say 'weight training / workout'?",
+      "back": "la musculation / la muscu",
+      "notes": "Muscu is informal.",
+      "tags": "source:b1-handnotes, B1, vocabulary, sports",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 14,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p14-0108-what-is-an-informal-abbreviation-une-r-u-une-r-union",
+      "front": "What is an informal abbreviation for 'meeting'?",
+      "back": "une réu = une réunion",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, informal",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 14,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p14-0109-unclear-slang-verb-on-page-14-me-grailler-manger",
+      "front": "Unclear slang verb on page 14 meaning 'to eat'?",
+      "back": "grailler = manger",
+      "notes": "The handwriting looks like grailler; review if needed.",
+      "tags": "source:b1-handnotes, B1, vocabulary, informal, needs-review",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 14,
+        "needs_review": true
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0110-how-do-you-say-a-show-un-spectacle",
+      "front": "How do you say 'a show'?",
+      "back": "un spectacle",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, culture",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0111-how-do-you-say-a-news-item-misce-un-fait-divers",
+      "front": "How do you say 'a news item / miscellaneous news story'?",
+      "back": "un fait divers",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, media",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0112-how-do-you-say-a-flag-un-drapeau",
+      "front": "How do you say 'a flag'?",
+      "back": "un drapeau",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, nouns",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0113-how-do-you-say-cans-containers-des-bidons",
+      "front": "How do you say 'cans / containers'?",
+      "back": "des bidons",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, objects",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0114-how-do-you-say-amazing-surprisin-tonnant",
+      "front": "How do you say 'amazing / surprising'?",
+      "back": "étonnant",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, adjectives",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0115-how-do-you-say-to-recover-collec-r-cup-rer",
+      "front": "How do you say 'to recover / collect'?",
+      "back": "récupérer",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0116-how-do-you-say-to-involve-impliquer",
+      "front": "How do you say 'to involve'?",
+      "back": "impliquer",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0117-how-do-you-say-keywords-mots-cl-s",
+      "front": "How do you say 'keywords'?",
+      "back": "mots-clés",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, writing",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0118-how-do-you-say-to-draft-write-r-diger",
+      "front": "How do you say 'to draft / write'?",
+      "back": "rédiger",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, writing",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0119-how-do-you-say-sustainable-touri-le-tourisme-durable",
+      "front": "How do you say 'sustainable tourism'?",
+      "back": "le tourisme durable",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, travel",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0120-how-do-you-say-digital-health-la-sant-num-rique",
+      "front": "How do you say 'digital health'?",
+      "back": "la santé numérique",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, technology",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p15-0121-how-do-you-say-work-of-art-une-uvre-d-art",
+      "front": "How do you say 'work of art'?",
+      "back": "une œuvre d'art",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, art",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 15,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0122-how-do-you-say-in-the-middle-of--en-pleine-nuit",
+      "front": "How do you say 'in the middle of the night / late at night'?",
+      "back": "en pleine nuit",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, time",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0123-how-do-you-say-police-officer-ge-un-gendarme",
+      "front": "How do you say 'police officer / gendarme'?",
+      "back": "un gendarme",
+      "notes": "In France, a gendarme is a member of the gendarmerie.",
+      "tags": "source:b1-handnotes, B1, vocabulary, people",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0124-how-do-you-say-to-save-sauver",
+      "front": "How do you say 'to save'?",
+      "back": "sauver",
+      "notes": "The handwritten form looks like sauve; infinitive is sauver.",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0125-unclear-note-for-few-little-on-p-peu",
+      "front": "Unclear note for 'few / little' on page 16?",
+      "back": "peu",
+      "notes": "The handwriting may say en peu; review the original.",
+      "tags": "source:b1-handnotes, B1, vocabulary, needs-review",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": true
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0126-how-do-you-say-around-nearby-aux-alentours-de",
+      "front": "How do you say 'around / nearby'?",
+      "back": "aux alentours de",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, places",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0127-how-do-you-say-restriction-limit-bridage",
+      "front": "How do you say 'restriction / limitation'?",
+      "back": "bridage",
+      "notes": "The note glosses it with restraining/limiting.",
+      "tags": "source:b1-handnotes, B1, vocabulary, nouns",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0128-how-do-you-say-explosion-detonat-d-tonation",
+      "front": "How do you say 'explosion / detonation'?",
+      "back": "détonation",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, nouns",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0129-how-do-you-say-shutters-les-volets",
+      "front": "How do you say 'shutters'?",
+      "back": "les volets",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, house",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0130-how-do-you-say-to-notice-catch-s-apercevoir",
+      "front": "How do you say 'to notice / catch sight of'?",
+      "back": "apercevoir",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0131-how-do-you-say-to-escape-s-chapper",
+      "front": "How do you say 'to escape'?",
+      "back": "s'échapper",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, reflexive-verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p16-0132-how-do-you-say-located-situ",
+      "front": "How do you say 'located'?",
+      "back": "situé",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, adjectives",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 16,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0133-how-do-you-say-to-happen-take-pl-se-passer",
+      "front": "How do you say 'to happen / take place'?",
+      "back": "se passer",
+      "notes": "The page lists se passer without a clear English gloss.",
+      "tags": "source:b1-handnotes, B1, vocabulary, reflexive-verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0134-how-do-you-say-to-rebel-revolt-se-r-volter-se-rebel",
+      "front": "How do you say 'to rebel / revolt'?",
+      "back": "se révolter / se rebeller",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, conflict",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0135-how-do-you-say-waste-gaspillage",
+      "front": "How do you say 'waste'?",
+      "back": "gaspillage",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, environment",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0136-how-do-you-say-to-obey-ob-ir",
+      "front": "How do you say 'to obey'?",
+      "back": "obéir",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0137-how-do-you-say-an-attempt-try-une-tentative",
+      "front": "How do you say 'an attempt / try'?",
+      "back": "une tentative",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, nouns",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0138-how-do-you-say-unlocking-d-verrouillage",
+      "front": "How do you say 'unlocking'?",
+      "back": "déverrouillage",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, technology",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0139-how-do-you-say-to-lead-direct-diriger",
+      "front": "How do you say 'to lead / direct'?",
+      "back": "diriger",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0140-how-do-you-say-household-le-foyer",
+      "front": "How do you say 'household'?",
+      "back": "le foyer",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, family",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0141-how-do-you-say-surgeon-chirurgien",
+      "front": "How do you say 'surgeon'?",
+      "back": "chirurgien",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, jobs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0142-how-do-you-say-despite-malgr",
+      "front": "How do you say 'despite'?",
+      "back": "malgré",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, connectors",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0143-how-do-you-say-to-overcome-surmonter",
+      "front": "How do you say 'to overcome'?",
+      "back": "surmonter",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, verbs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0144-how-do-you-say-author-writer-l-auteur",
+      "front": "How do you say 'author / writer'?",
+      "back": "l'auteur",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, jobs",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0145-how-do-you-say-a-threat-une-menace",
+      "front": "How do you say 'a threat'?",
+      "back": "une menace",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, conflict",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
+    },
+    {
+      "id": "seed-b1-handnotes-p17-0146-how-do-you-say-tasks-t-ches",
+      "front": "How do you say 'tasks'?",
+      "back": "tâches",
+      "notes": "",
+      "tags": "source:b1-handnotes, B1, vocabulary, work",
+      "direction": "en-fr",
+      "source": {
+        "file": "B1 handnotes.pdf",
+        "page": 17,
+        "needs_review": false
+      }
     }
   ]
 }

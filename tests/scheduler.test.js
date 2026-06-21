@@ -142,6 +142,19 @@ test("buildSpellingText formats French text for slow spelling", () => {
   assert.equal(buildSpellingText("l'aéroport"), "l apostrophe a é r o p o r t");
   assert.equal(buildSpellingText("un vol"), "u n. v o l");
 });
+
+test("seed deck includes B1 handnote cards", () => {
+  const seedPath = path.join(__dirname, "..", "data", "seed-cards.json");
+  const raw = fs.readFileSync(seedPath, "utf8");
+  const cards = parseImportedDeck(raw);
+  const handnoteCards = cards.filter((card) => card.tags.includes("source:b1-handnotes"));
+
+  assert.equal(handnoteCards.length, 146);
+  assert.ok(handnoteCards.every((card) => card.direction === "en-fr"));
+  assert.equal(handnoteCards[0].front, "How do you say 'housewife'?");
+  assert.equal(handnoteCards[0].back, "une femme au foyer");
+  assert.ok(handnoteCards.some((card) => card.back.includes("subjonctif")));
+});
 test("seed deck contains valid generated cards", () => {
   const seedPath = path.join(__dirname, "..", "data", "seed-cards.json");
   const raw = fs.readFileSync(seedPath, "utf8");
@@ -155,6 +168,7 @@ test("seed deck contains valid generated cards", () => {
   assert.equal(cards[0].front, "airplane");
   assert.equal(cards[0].back, "un avion");
 });
+
 
 
 

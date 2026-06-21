@@ -103,11 +103,16 @@
       }
     ]
   },
+  "b1_handnotes": {
+    "file": "b1-handnotes-source.json",
+    "cards_created": 146,
+    "needs_review": 3
+  },
   "pdf": {
     "file": "B1 handnotes.pdf",
     "pages": 17,
     "total_extractable_chars": 596,
-    "status": "image_only_notes_need_ocr_or_manual_transcription",
+    "status": "handnote_cards_imported_from_visual_transcription_json",
     "pages_detail": [
       {
         "page": 1,
@@ -196,5 +201,5 @@
       }
     ]
   },
-  "total_cards_created": 1038
+  "total_cards_created": 1184
 }
