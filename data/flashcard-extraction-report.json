@@ -1,0 +1,200 @@
+{
+  "xlsx": {
+    "file": "French_Vocab_Grouped_A1_A2_B1 (1).xlsx",
+    "cards_created": 1038,
+    "level_counts": {
+      "A1": 300,
+      "A2": 532,
+      "B1": 206
+    },
+    "top_categories": [
+      [
+        "Verbs",
+        70
+      ],
+      [
+        "Verb",
+        51
+      ],
+      [
+        "Professions, Métiers",
+        37
+      ],
+      [
+        "Toiletries and Cosmetics",
+        37
+      ],
+      [
+        "Office verbs",
+        36
+      ],
+      [
+        "Body, Le corps",
+        33
+      ],
+      [
+        "Trains, Tickets, and Seating",
+        33
+      ],
+      [
+        "Feelings, Les sentiments",
+        32
+      ],
+      [
+        "Nationalities, Nationalités",
+        31
+      ],
+      [
+        "Personality, Personnalité",
+        31
+      ],
+      [
+        "Family, Famille",
+        30
+      ],
+      [
+        "Magasins et commerces",
+        29
+      ],
+      [
+        "Les légumes (m) Vegetables",
+        28
+      ],
+      [
+        "Languages, Langues",
+        28
+      ],
+      [
+        "Les fruits (m) Fruit",
+        24
+      ],
+      [
+        "La viande , Meat",
+        24
+      ],
+      [
+        "une chambre , bedroom",
+        24
+      ],
+      [
+        "Hair, Les chevaux",
+        22
+      ],
+      [
+        "Directions, Les directions",
+        22
+      ],
+      [
+        "Vêtements d’homme",
+        19
+      ]
+    ],
+    "skipped_rows": [
+      {
+        "row": 605,
+        "cells": [
+          "une grande surface",
+          "",
+          "",
+          "une droguerie",
+          "drugstore"
+        ],
+        "reason": "incomplete left pair"
+      }
+    ]
+  },
+  "pdf": {
+    "file": "B1 handnotes.pdf",
+    "pages": 17,
+    "total_extractable_chars": 596,
+    "status": "image_only_notes_need_ocr_or_manual_transcription",
+    "pages_detail": [
+      {
+        "page": 1,
+        "extractable_chars": 50,
+        "extractable_text": "2 april Thursday, May 7, 2026 9:49 PM B1 Page 1"
+      },
+      {
+        "page": 2,
+        "extractable_chars": 9,
+        "extractable_text": "B1 Page 2"
+      },
+      {
+        "page": 3,
+        "extractable_chars": 9,
+        "extractable_text": "B1 Page 3"
+      },
+      {
+        "page": 4,
+        "extractable_chars": 48,
+        "extractable_text": "5 april Friday, May 8, 2026 9:46 AM B1 Page 4"
+      },
+      {
+        "page": 5,
+        "extractable_chars": 9,
+        "extractable_text": "B1 Page 5"
+      },
+      {
+        "page": 6,
+        "extractable_chars": 9,
+        "extractable_text": "B1 Page 6"
+      },
+      {
+        "page": 7,
+        "extractable_chars": 9,
+        "extractable_text": "B1 Page 7"
+      },
+      {
+        "page": 8,
+        "extractable_chars": 52,
+        "extractable_text": "7 April Saturday, May 9, 2026 12:54 PM B1 Page 8"
+      },
+      {
+        "page": 9,
+        "extractable_chars": 64,
+        "extractable_text": "Indifinis et relatif Thursday, May 14, 2026 8:01 PM B1 Page 9"
+      },
+      {
+        "page": 10,
+        "extractable_chars": 53,
+        "extractable_text": "Gerondif Thursday, May 14, 2026 8:25 PM B1 Page 10"
+      },
+      {
+        "page": 11,
+        "extractable_chars": 64,
+        "extractable_text": "Place des adjectifs Thursday, May 14, 2026 8:39 PM B1 Page 11"
+      },
+      {
+        "page": 12,
+        "extractable_chars": 10,
+        "extractable_text": "B1 Page 12"
+      },
+      {
+        "page": 13,
+        "extractable_chars": 50,
+        "extractable_text": "9 april Monday, May 18, 2026 3:05 PM B1 Page 13"
+      },
+      {
+        "page": 14,
+        "extractable_chars": 10,
+        "extractable_text": "B1 Page 14"
+      },
+      {
+        "page": 15,
+        "extractable_chars": 48,
+        "extractable_text": "31May Sunday, May 31, 2026 9:43 PM B1 Page 15"
+      },
+      {
+        "page": 16,
+        "extractable_chars": 50,
+        "extractable_text": "2 June Tuesday, June 2, 2026 9:28 PM B1 Page 16"
+      },
+      {
+        "page": 17,
+        "extractable_chars": 52,
+        "extractable_text": "11June Thursday, June 11, 2026 9:19 PM B1 Page 17"
+      }
+    ]
+  },
+  "total_cards_created": 1038
+}

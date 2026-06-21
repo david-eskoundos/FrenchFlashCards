@@ -1,10 +1,13 @@
-const test = require("node:test");
+﻿const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const {
   createCard,
   scheduleCard,
   getStudyQueue,
-  parseImportedDeck
+  parseImportedDeck,
+  mergeCards
 } = require("../app.js");
 
 test("createCard requires front and back text", () => {
@@ -56,4 +59,28 @@ test("getStudyQueue returns due cards before new cards", () => {
 test("parseImportedDeck rejects malformed imported data", () => {
   assert.throws(() => parseImportedDeck("{"), /Invalid JSON/);
   assert.throws(() => parseImportedDeck(JSON.stringify({ cards: [{ front: "x" }] })), /Back is required/);
+});
+
+test("mergeCards preserves existing cards and adds missing seed cards", () => {
+  const existing = createCard({ id: "seed-xlsx-1", front: "changed", back: "changed" });
+  const seed = [
+    createCard({ id: "seed-xlsx-1", front: "bonjour", back: "hello" }),
+    createCard({ id: "seed-xlsx-2", front: "merci", back: "thank you" })
+  ];
+
+  const merged = mergeCards([existing], seed);
+  assert.equal(merged.length, 2);
+  assert.equal(merged.find((card) => card.id === "seed-xlsx-1").front, "changed");
+  assert.equal(merged.find((card) => card.id === "seed-xlsx-2").front, "merci");
+});
+
+test("seed deck contains valid generated cards", () => {
+  const seedPath = path.join(__dirname, "..", "data", "seed-cards.json");
+  const raw = fs.readFileSync(seedPath, "utf8");
+  const cards = parseImportedDeck(raw);
+
+  assert.ok(cards.length > 700);
+  assert.equal(cards.length, new Set(cards.map((card) => card.id)).size);
+  assert.ok(cards.every((card) => card.front && card.back));
+  assert.ok(cards.some((card) => card.tags.includes("B1")));
 });

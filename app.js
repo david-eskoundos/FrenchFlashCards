@@ -1,4 +1,6 @@
 ﻿const STORAGE_KEY = "french-flashcards-v1";
+const SEED_DECK_URL = "data/seed-cards.json";
+const SEED_DECK_VERSION = 1;
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -94,6 +96,26 @@ function parseImportedDeck(jsonText) {
   return rawCards.map((card) => createCard(card));
 }
 
+function mergeCards(existingCards, incomingCards) {
+  const existingIds = new Set(existingCards.map((card) => card.id));
+  const additions = incomingCards.filter((card) => !existingIds.has(card.id));
+  return [...existingCards, ...additions];
+}
+
+function readStoredDeck() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return { cards: [], seedDeckVersion: 0 };
+    const parsed = JSON.parse(stored);
+    return {
+      cards: parseImportedDeck(stored),
+      seedDeckVersion: Number(parsed.seedDeckVersion || 0)
+    };
+  } catch {
+    return { cards: [], seedDeckVersion: 0 };
+  }
+}
+
 function startBrowserApp() {
   const els = {
     dueCount: document.getElementById("dueCount"),
@@ -120,8 +142,10 @@ function startBrowserApp() {
     message: document.getElementById("message")
   };
 
+  const storedDeck = readStoredDeck();
   const state = {
-    cards: loadCards(),
+    cards: storedDeck.cards,
+    seedDeckVersion: storedDeck.seedDeckVersion,
     queue: [],
     currentIndex: 0,
     revealed: false
@@ -131,21 +155,34 @@ function startBrowserApp() {
     els.message.textContent = text;
   }
 
-  function loadCards() {
+  function saveCards() {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (!stored) return [];
-      return parseImportedDeck(stored);
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ version: 1, seedDeckVersion: state.seedDeckVersion, cards: state.cards })
+      );
     } catch {
-      return [];
+      setMessage("Storage failed. Export your cards before closing this browser.");
     }
   }
 
-  function saveCards() {
+  async function loadSeedCards() {
+    if (state.seedDeckVersion >= SEED_DECK_VERSION) return;
+
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, cards: state.cards }));
+      const response = await fetch(SEED_DECK_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error("Seed deck unavailable");
+      const text = await response.text();
+      const seedCards = parseImportedDeck(text);
+      const before = state.cards.length;
+      state.cards = mergeCards(state.cards, seedCards);
+      state.seedDeckVersion = SEED_DECK_VERSION;
+      saveCards();
+      renderAll();
+      const added = state.cards.length - before;
+      if (added > 0) setMessage(`Loaded ${added} built-in cards.`);
     } catch {
-      setMessage("Storage failed. Export your cards before closing this browser.");
+      setMessage("Built-in cards could not be loaded. You can still add your own cards.");
     }
   }
 
@@ -181,7 +218,7 @@ function startBrowserApp() {
       els.cardTags.textContent = "";
       els.cardPrompt.textContent = state.cards.length
         ? "No cards are due right now."
-        : "Add your first French card to begin.";
+        : "Loading built-in cards...";
       els.cardAnswer.textContent = "";
       els.cardNotes.textContent = state.cards.length ? "Come back later or add a new card." : "";
       els.revealBtn.disabled = true;
@@ -310,7 +347,7 @@ function startBrowserApp() {
   els.search.addEventListener("input", renderBrowse);
 
   els.exportBtn.addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify({ version: 1, cards: state.cards }, null, 2)], {
+    const blob = new Blob([JSON.stringify({ version: 1, seedDeckVersion: state.seedDeckVersion, cards: state.cards }, null, 2)], {
       type: "application/json"
     });
     const link = document.createElement("a");
@@ -323,9 +360,7 @@ function startBrowserApp() {
   els.importBtn.addEventListener("click", () => {
     try {
       const imported = parseImportedDeck(els.importText.value);
-      const byId = new Map(state.cards.map((card) => [card.id, card]));
-      imported.forEach((card) => byId.set(card.id, card));
-      state.cards = Array.from(byId.values());
+      state.cards = mergeCards(state.cards, imported);
       saveCards();
       els.importText.value = "";
       setMessage(`Imported ${imported.length} cards.`);
@@ -336,6 +371,7 @@ function startBrowserApp() {
   });
 
   renderAll();
+  loadSeedCards();
 }
 
 if (typeof module !== "undefined") {
@@ -344,7 +380,8 @@ if (typeof module !== "undefined") {
     createCard,
     scheduleCard,
     getStudyQueue,
-    parseImportedDeck
+    parseImportedDeck,
+    mergeCards
   };
 }
 

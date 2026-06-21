@@ -1,4 +1,4 @@
-# Local study source files will be processed into cards later.
+﻿# Local study source files will be processed into cards later.
 *.pdf
 *.docx
 *.pptx
@@ -6,4 +6,4 @@
 
 # Verification artifacts.
 screenshots/
-
+tmp/
