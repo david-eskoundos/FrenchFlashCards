@@ -8,8 +8,11 @@ const {
   getStudyQueue,
   parseImportedDeck,
   mergeCards,
+  syncSeedCards,
   resetLearning,
-  createCloudPayload
+  createCloudPayload,
+  getFrenchText,
+  buildSpellingText
 } = require("../app.js");
 
 test("createCard requires front and back text", () => {
@@ -76,6 +79,29 @@ test("mergeCards preserves existing cards and adds missing seed cards", () => {
   assert.equal(merged.find((card) => card.id === "seed-xlsx-2").front, "merci");
 });
 
+
+test("syncSeedCards updates built-in card text while preserving learning progress", () => {
+  const oldSeed = {
+    ...createCard({ id: "seed-xlsx-1", front: "bonjour", back: "hello", direction: "fr-en" }),
+    repetitions: 3,
+    intervalDays: 7,
+    dueAt: "2026-07-10T00:00:00.000Z"
+  };
+  const userCard = createCard({ id: "user-1", front: "custom", back: "personnel" });
+  const newSeed = createCard({ id: "seed-xlsx-1", front: "hello", back: "bonjour", direction: "en-fr", tags: "source:xlsx" });
+
+  const synced = syncSeedCards([oldSeed, userCard], [newSeed]);
+  const migrated = synced.find((card) => card.id === "seed-xlsx-1");
+
+  assert.equal(synced.length, 2);
+  assert.equal(migrated.front, "hello");
+  assert.equal(migrated.back, "bonjour");
+  assert.equal(migrated.direction, "en-fr");
+  assert.equal(migrated.repetitions, 3);
+  assert.equal(migrated.intervalDays, 7);
+  assert.equal(migrated.dueAt, "2026-07-10T00:00:00.000Z");
+  assert.equal(synced.find((card) => card.id === "user-1").front, "custom");
+});
 test("resetLearning keeps card text and clears scheduling progress", () => {
   const now = new Date("2026-06-21T10:00:00.000Z");
   const learned = scheduleCard(createCard({ front: "hello", back: "bonjour", tags: "A1" }, now), "good", now);
@@ -104,6 +130,18 @@ test("createCloudPayload stores versioned cards and seed version", () => {
   assert.equal(payload.cards[0].front, "merci");
 });
 
+test("getFrenchText chooses the French side based on card direction", () => {
+  const frenchFirst = createCard({ front: "bonjour", back: "hello", direction: "fr-en" });
+  const frenchBack = createCard({ front: "thank you", back: "merci", direction: "en-fr" });
+
+  assert.equal(getFrenchText(frenchFirst), "bonjour");
+  assert.equal(getFrenchText(frenchBack), "merci");
+});
+
+test("buildSpellingText formats French text for slow spelling", () => {
+  assert.equal(buildSpellingText("l'aéroport"), "l apostrophe a é r o p o r t");
+  assert.equal(buildSpellingText("un vol"), "u n. v o l");
+});
 test("seed deck contains valid generated cards", () => {
   const seedPath = path.join(__dirname, "..", "data", "seed-cards.json");
   const raw = fs.readFileSync(seedPath, "utf8");
@@ -113,4 +151,14 @@ test("seed deck contains valid generated cards", () => {
   assert.equal(cards.length, new Set(cards.map((card) => card.id)).size);
   assert.ok(cards.every((card) => card.front && card.back));
   assert.ok(cards.some((card) => card.tags.includes("B1")));
+  assert.ok(cards.every((card) => card.direction === "en-fr"));
+  assert.equal(cards[0].front, "airplane");
+  assert.equal(cards[0].back, "un avion");
 });
+
+
+
+
+
+
+

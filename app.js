@@ -1,7 +1,7 @@
 ﻿const STORAGE_KEY = "french-flashcards-v1";
 const CLOUD_SETTINGS_KEY = "french-flashcards-cloud-settings-v1";
 const SEED_DECK_URL = "data/seed-cards.json";
-const SEED_DECK_VERSION = 1;
+const SEED_DECK_VERSION = 2;
 const GIST_FILE_NAME = "french-flashcards-progress.json";
 
 function toIso(date) {
@@ -104,6 +104,26 @@ function mergeCards(existingCards, incomingCards) {
   return [...existingCards, ...additions];
 }
 
+
+function syncSeedCards(existingCards, seedCards) {
+  const seedById = new Map(seedCards.map((card) => [card.id, card]));
+  const existingIds = new Set(existingCards.map((card) => card.id));
+  const syncedExisting = existingCards.map((card) => {
+    const seed = seedById.get(card.id);
+    if (!seed) return card;
+    return {
+      ...card,
+      front: seed.front,
+      back: seed.back,
+      notes: seed.notes,
+      tags: seed.tags,
+      direction: seed.direction,
+      source: seed.source
+    };
+  });
+  const additions = seedCards.filter((card) => !existingIds.has(card.id));
+  return [...syncedExisting, ...additions];
+}
 function resetLearning(cards, now = new Date()) {
   return cards.map((card) => ({
     ...card,
@@ -126,6 +146,22 @@ function createCloudPayload(cards, seedDeckVersion, now = new Date()) {
   };
 }
 
+function getFrenchText(card) {
+  return card.direction === "en-fr" ? card.back : card.front;
+}
+
+function buildSpellingText(text) {
+  return normalizeText(text)
+    .toLowerCase()
+    .replace(/[\u2019']/g, " apostrophe ")
+    .replace(/-/g, " tiret ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => (word === "apostrophe" || word === "tiret" ? word : Array.from(word).join(" ")))
+    .join(". ")
+    .replace(/\. apostrophe\./g, " apostrophe")
+    .replace(/\. tiret\./g, " tiret");
+}
 function readStoredDeck() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -163,6 +199,9 @@ function startBrowserApp() {
     exportBtn: document.getElementById("exportBtn"),
     importText: document.getElementById("importText"),
     importBtn: document.getElementById("importBtn"),
+    listenBtn: document.getElementById("listenBtn"),
+    spellBtn: document.getElementById("spellBtn"),
+    spellingLine: document.getElementById("spellingLine"),
     githubToken: document.getElementById("githubToken"),
     gistId: document.getElementById("gistId"),
     autoSync: document.getElementById("autoSync"),
@@ -230,7 +269,7 @@ function startBrowserApp() {
       const text = await response.text();
       const seedCards = parseImportedDeck(text);
       const before = state.cards.length;
-      state.cards = mergeCards(state.cards, seedCards);
+      state.cards = syncSeedCards(state.cards, seedCards);
       state.seedDeckVersion = SEED_DECK_VERSION;
       saveCards({ cloud: false });
       renderAll();
@@ -347,6 +386,35 @@ function startBrowserApp() {
     els.ratingGrid.hidden = false;
   }
 
+  function speakFrenchText(text, options = {}) {
+    if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+      setMessage("Voice reading is not supported in this browser.");
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "fr-FR";
+    utterance.rate = options.rate || 0.9;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function speakCurrentFrench() {
+    const card = currentCard();
+    if (!card) return;
+    const french = getFrenchText(card);
+    els.spellingLine.textContent = french;
+    speakFrenchText(french, { rate: 0.88 });
+  }
+
+  function spellCurrentFrench() {
+    const card = currentCard();
+    if (!card) return;
+    const spelling = buildSpellingText(getFrenchText(card));
+    els.spellingLine.textContent = `Spelling: ${spelling}`;
+    speakFrenchText(spelling, { rate: 0.65 });
+  }
+
   function cloudHeaders() {
     return {
       Accept: "application/vnd.github+json",
@@ -445,6 +513,8 @@ function startBrowserApp() {
 
   els.flashcard.addEventListener("click", revealCurrent);
   els.revealBtn.addEventListener("click", revealCurrent);
+  els.listenBtn.addEventListener("click", speakCurrentFrench);
+  els.spellBtn.addEventListener("click", spellCurrentFrench);
 
   els.ratingGrid.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-rating]");
@@ -558,11 +628,23 @@ if (typeof module !== "undefined") {
     getStudyQueue,
     parseImportedDeck,
     mergeCards,
+    syncSeedCards,
     resetLearning,
-    createCloudPayload
+    createCloudPayload,
+    getFrenchText,
+    buildSpellingText
   };
 }
 
 if (typeof window !== "undefined") {
   window.addEventListener("DOMContentLoaded", startBrowserApp);
 }
+
+
+
+
+
+
+
+
+

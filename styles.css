@@ -153,6 +153,8 @@ h1 {
 }
 
 #revealBtn,
+#listenBtn,
+#spellBtn,
 form button[type="submit"],
 #exportBtn,
 #importBtn,
@@ -170,6 +172,19 @@ form button[type="submit"],
   background: #fff7f4;
 }
 
+
+.audio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.spelling-line {
+  min-height: 22px;
+  margin: 0;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
 .rating-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -299,3 +314,5 @@ select {
     font-size: 34px;
   }
 }
+
+

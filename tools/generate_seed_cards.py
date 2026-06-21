@@ -75,16 +75,16 @@ def extract_xlsx_cards():
             else:
                 skipped.append({"row": row_index + 1, "cells": cells, "reason": "incomplete right pair"})
 
-        for front, back in pairs:
+        for french, english in pairs:
             number = len(cards) + 1
             tags = ", ".join(filter(None, ["source:xlsx", level, category]))
             cards.append({
-                "id": card_id(front, back, number),
-                "front": front,
-                "back": back,
+                "id": card_id(french, english, number),
+                "front": english,
+                "back": french,
                 "notes": f"{category} - {level}" if level else category,
                 "tags": tags,
-                "direction": "fr-en",
+                "direction": "en-fr",
                 "source": {
                     "file": XLSX.name,
                     "sheet": "Grouped Vocab",
@@ -125,6 +125,7 @@ categories = Counter(card["source"]["category"] for card in cards)
 seed_payload = {
     "version": 1,
     "generatedAt": "2026-06-21T00:00:00.000Z",
+    "displayDirection": "en-fr",
     "cards": cards
 }
 report = {
@@ -142,3 +143,6 @@ report = {
 (DATA_DIR / "seed-cards.json").write_text(json.dumps(seed_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 (REPORT_DIR / "flashcard-extraction-report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 print(json.dumps(report, ensure_ascii=False, indent=2)[:4000])
+
+
+

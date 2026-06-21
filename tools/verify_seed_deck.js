@@ -36,6 +36,9 @@ console.log(JSON.stringify({
   levelCounts,
   pdfStatus: extractionReport ? extractionReport.pdf.status : "missing report",
   pdfExtractableChars: extractionReport ? extractionReport.pdf.total_extractable_chars : null,
-  skippedSpreadsheetRows: extractionReport ? extractionReport.xlsx.skipped_rows.length : null
+  skippedSpreadsheetRows: extractionReport ? extractionReport.xlsx.skipped_rows.length : null,
+  direction: "en-fr",
+  firstCard: { front: cards[0].front, back: cards[0].back }
 }, null, 2));
+
 
