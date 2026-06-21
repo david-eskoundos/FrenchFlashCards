@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   color-scheme: light;
   --ink: #17201a;
   --muted: #5f6b63;
@@ -155,10 +155,19 @@ h1 {
 #revealBtn,
 form button[type="submit"],
 #exportBtn,
-#importBtn {
+#importBtn,
+#saveSyncBtn,
+#syncNowBtn,
+#loadCloudBtn {
   background: var(--accent);
   color: white;
   border-color: var(--accent-strong);
+}
+
+.danger {
+  border-color: var(--warn);
+  color: var(--warn);
+  background: #fff7f4;
 }
 
 .rating-grid {
@@ -196,15 +205,44 @@ form button[type="submit"],
 }
 
 form,
-.tab-panel {
+.tab-panel,
+.tool-group {
   display: grid;
   gap: 12px;
+}
+
+.tool-group {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
 }
 
 label {
   display: grid;
   gap: 6px;
   color: var(--muted);
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.check-row input {
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.button-row button {
+  min-width: 0;
+  padding: 8px;
 }
 
 input,

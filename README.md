@@ -16,6 +16,22 @@ The `B1 handnotes.pdf` file was inspected, but its useful notes are image-based.
 
 Use active recall: answer before revealing. Use the rating buttons honestly so missed cards return soon and easy cards wait longer. Good flashcards are small and specific: one word, one expression, or one grammar decision per card.
 
+## GitHub Sync
+
+The app can save learning progress to a private GitHub Gist from the Data tab.
+
+1. Create a GitHub fine-grained or classic token with permission to create/edit Gists.
+2. Paste the token into `GitHub token`.
+3. Leave `Gist ID` blank the first time and press `Sync now`; the app creates a private Gist and fills the ID.
+4. Turn on `Auto-save learning to GitHub` and press `Save sync`.
+5. On another browser or iPhone, paste the same token and Gist ID, then press `Load GitHub`.
+
+The token is stored only in that browser's local storage. Do not use this on a shared device.
+
+## Reset Learning
+
+The `Reset learning` button keeps all flashcards but clears ratings, due dates, intervals, repetitions, and lapses so every card starts fresh.
+
 ## Local Use
 
 Open `index.html` in a browser, or run a local static server:

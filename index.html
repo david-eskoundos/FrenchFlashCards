@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -75,6 +75,19 @@
           <button id="exportBtn" type="button">Export JSON</button>
           <label>Import JSON <textarea id="importText" rows="5"></textarea></label>
           <button id="importBtn" type="button">Import cards</button>
+
+          <div class="tool-group" aria-label="GitHub sync">
+            <label>GitHub token <input id="githubToken" type="password" autocomplete="off" inputmode="text"></label>
+            <label>Gist ID <input id="gistId" type="text" autocomplete="off"></label>
+            <label class="check-row"><input id="autoSync" type="checkbox"> Auto-save learning to GitHub</label>
+            <div class="button-row">
+              <button id="saveSyncBtn" type="button">Save sync</button>
+              <button id="syncNowBtn" type="button">Sync now</button>
+              <button id="loadCloudBtn" type="button">Load GitHub</button>
+            </div>
+          </div>
+
+          <button class="danger" id="resetLearningBtn" type="button">Reset learning</button>
         </section>
       </section>
     </section>

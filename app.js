@@ -1,6 +1,8 @@
 ﻿const STORAGE_KEY = "french-flashcards-v1";
+const CLOUD_SETTINGS_KEY = "french-flashcards-cloud-settings-v1";
 const SEED_DECK_URL = "data/seed-cards.json";
 const SEED_DECK_VERSION = 1;
+const GIST_FILE_NAME = "french-flashcards-progress.json";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -102,6 +104,28 @@ function mergeCards(existingCards, incomingCards) {
   return [...existingCards, ...additions];
 }
 
+function resetLearning(cards, now = new Date()) {
+  return cards.map((card) => ({
+    ...card,
+    updatedAt: toIso(now),
+    dueAt: toIso(now),
+    intervalDays: 0,
+    ease: 2.5,
+    repetitions: 0,
+    lapses: 0
+  }));
+}
+
+function createCloudPayload(cards, seedDeckVersion, now = new Date()) {
+  return {
+    app: "FrenchFlashCards",
+    version: 1,
+    seedDeckVersion,
+    savedAt: toIso(now),
+    cards
+  };
+}
+
 function readStoredDeck() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -139,6 +163,13 @@ function startBrowserApp() {
     exportBtn: document.getElementById("exportBtn"),
     importText: document.getElementById("importText"),
     importBtn: document.getElementById("importBtn"),
+    githubToken: document.getElementById("githubToken"),
+    gistId: document.getElementById("gistId"),
+    autoSync: document.getElementById("autoSync"),
+    saveSyncBtn: document.getElementById("saveSyncBtn"),
+    syncNowBtn: document.getElementById("syncNowBtn"),
+    loadCloudBtn: document.getElementById("loadCloudBtn"),
+    resetLearningBtn: document.getElementById("resetLearningBtn"),
     message: document.getElementById("message")
   };
 
@@ -146,21 +177,45 @@ function startBrowserApp() {
   const state = {
     cards: storedDeck.cards,
     seedDeckVersion: storedDeck.seedDeckVersion,
+    cloud: readCloudSettings(),
     queue: [],
     currentIndex: 0,
-    revealed: false
+    revealed: false,
+    cloudSaveTimer: null,
+    cloudSaveInFlight: false
   };
 
   function setMessage(text) {
     els.message.textContent = text;
   }
 
-  function saveCards() {
+  function readCloudSettings() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(CLOUD_SETTINGS_KEY) || "{}");
+      return {
+        token: normalizeText(parsed.token),
+        gistId: normalizeText(parsed.gistId),
+        autoSync: Boolean(parsed.autoSync)
+      };
+    } catch {
+      return { token: "", gistId: "", autoSync: false };
+    }
+  }
+
+  function saveCloudSettings() {
+    localStorage.setItem(CLOUD_SETTINGS_KEY, JSON.stringify(state.cloud));
+    els.githubToken.value = state.cloud.token;
+    els.gistId.value = state.cloud.gistId;
+    els.autoSync.checked = state.cloud.autoSync;
+  }
+
+  function saveCards(options = {}) {
     try {
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({ version: 1, seedDeckVersion: state.seedDeckVersion, cards: state.cards })
       );
+      if (options.cloud !== false) queueCloudSave();
     } catch {
       setMessage("Storage failed. Export your cards before closing this browser.");
     }
@@ -177,7 +232,7 @@ function startBrowserApp() {
       const before = state.cards.length;
       state.cards = mergeCards(state.cards, seedCards);
       state.seedDeckVersion = SEED_DECK_VERSION;
-      saveCards();
+      saveCards({ cloud: false });
       renderAll();
       const added = state.cards.length - before;
       if (added > 0) setMessage(`Loaded ${added} built-in cards.`);
@@ -292,6 +347,87 @@ function startBrowserApp() {
     els.ratingGrid.hidden = false;
   }
 
+  function cloudHeaders() {
+    return {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${state.cloud.token}`,
+      "Content-Type": "application/json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    };
+  }
+
+  async function saveToGithub(options = {}) {
+    if (!state.cloud.token) {
+      if (!options.silent) setMessage("Add a GitHub token before syncing.");
+      return false;
+    }
+
+    if (state.cloudSaveInFlight) return false;
+    state.cloudSaveInFlight = true;
+    const payload = createCloudPayload(state.cards, state.seedDeckVersion);
+    const content = JSON.stringify(payload, null, 2);
+    const body = state.cloud.gistId
+      ? { files: { [GIST_FILE_NAME]: { content } } }
+      : {
+          description: "French Flashcards progress",
+          public: false,
+          files: { [GIST_FILE_NAME]: { content } }
+        };
+    const url = state.cloud.gistId ? `https://api.github.com/gists/${state.cloud.gistId}` : "https://api.github.com/gists";
+    const method = state.cloud.gistId ? "PATCH" : "POST";
+
+    try {
+      const response = await fetch(url, { method, headers: cloudHeaders(), body: JSON.stringify(body) });
+      if (!response.ok) throw new Error(`GitHub sync failed (${response.status})`);
+      const result = await response.json();
+      if (!state.cloud.gistId && result.id) {
+        state.cloud.gistId = result.id;
+        saveCloudSettings();
+      }
+      if (!options.silent) setMessage("Learning saved to GitHub.");
+      return true;
+    } catch (error) {
+      if (!options.silent) setMessage(error.message);
+      return false;
+    } finally {
+      state.cloudSaveInFlight = false;
+    }
+  }
+
+  function queueCloudSave() {
+    if (!state.cloud.autoSync || !state.cloud.token) return;
+    window.clearTimeout(state.cloudSaveTimer);
+    state.cloudSaveTimer = window.setTimeout(() => {
+      saveToGithub({ silent: true });
+    }, 700);
+  }
+
+  async function loadFromGithub() {
+    if (!state.cloud.token || !state.cloud.gistId) {
+      setMessage("Add a GitHub token and Gist ID before loading.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://api.github.com/gists/${state.cloud.gistId}`, {
+        headers: cloudHeaders()
+      });
+      if (!response.ok) throw new Error(`GitHub load failed (${response.status})`);
+      const gist = await response.json();
+      const file = gist.files && gist.files[GIST_FILE_NAME];
+      if (!file || !file.content) throw new Error("No flashcard progress file found in this Gist.");
+      const payload = JSON.parse(file.content);
+      const cloudCards = parseImportedDeck(JSON.stringify(payload));
+      state.cards = mergeCards(cloudCards, state.cards);
+      state.seedDeckVersion = Number(payload.seedDeckVersion || state.seedDeckVersion);
+      saveCards({ cloud: false });
+      renderAll();
+      setMessage(`Loaded ${cloudCards.length} cards from GitHub.`);
+    } catch (error) {
+      setMessage(error.message || "GitHub load failed.");
+    }
+  }
+
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       document.querySelectorAll(".tab").forEach((candidate) => candidate.classList.remove("is-active"));
@@ -347,7 +483,7 @@ function startBrowserApp() {
   els.search.addEventListener("input", renderBrowse);
 
   els.exportBtn.addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify({ version: 1, seedDeckVersion: state.seedDeckVersion, cards: state.cards }, null, 2)], {
+    const blob = new Blob([JSON.stringify(createCloudPayload(state.cards, state.seedDeckVersion), null, 2)], {
       type: "application/json"
     });
     const link = document.createElement("a");
@@ -370,6 +506,46 @@ function startBrowserApp() {
     }
   });
 
+  els.saveSyncBtn.addEventListener("click", () => {
+    state.cloud = {
+      token: normalizeText(els.githubToken.value),
+      gistId: normalizeText(els.gistId.value),
+      autoSync: els.autoSync.checked
+    };
+    saveCloudSettings();
+    setMessage("GitHub sync settings saved on this device.");
+  });
+
+  els.syncNowBtn.addEventListener("click", () => {
+    state.cloud = {
+      token: normalizeText(els.githubToken.value),
+      gistId: normalizeText(els.gistId.value),
+      autoSync: els.autoSync.checked
+    };
+    saveCloudSettings();
+    saveToGithub();
+  });
+
+  els.loadCloudBtn.addEventListener("click", () => {
+    state.cloud = {
+      token: normalizeText(els.githubToken.value),
+      gistId: normalizeText(els.gistId.value),
+      autoSync: els.autoSync.checked
+    };
+    saveCloudSettings();
+    loadFromGithub();
+  });
+
+  els.resetLearningBtn.addEventListener("click", () => {
+    if (!confirm("Reset all learning progress? Cards stay, ratings and due dates restart.")) return;
+    state.cards = resetLearning(state.cards);
+    state.currentIndex = 0;
+    saveCards();
+    renderAll();
+    setMessage("Learning progress reset.");
+  });
+
+  saveCloudSettings();
   renderAll();
   loadSeedCards();
 }
@@ -381,7 +557,9 @@ if (typeof module !== "undefined") {
     scheduleCard,
     getStudyQueue,
     parseImportedDeck,
-    mergeCards
+    mergeCards,
+    resetLearning,
+    createCloudPayload
   };
 }
 

@@ -7,7 +7,9 @@ const {
   scheduleCard,
   getStudyQueue,
   parseImportedDeck,
-  mergeCards
+  mergeCards,
+  resetLearning,
+  createCloudPayload
 } = require("../app.js");
 
 test("createCard requires front and back text", () => {
@@ -72,6 +74,34 @@ test("mergeCards preserves existing cards and adds missing seed cards", () => {
   assert.equal(merged.length, 2);
   assert.equal(merged.find((card) => card.id === "seed-xlsx-1").front, "changed");
   assert.equal(merged.find((card) => card.id === "seed-xlsx-2").front, "merci");
+});
+
+test("resetLearning keeps card text and clears scheduling progress", () => {
+  const now = new Date("2026-06-21T10:00:00.000Z");
+  const learned = scheduleCard(createCard({ front: "hello", back: "bonjour", tags: "A1" }, now), "good", now);
+  const reset = resetLearning([learned], new Date("2026-07-01T12:00:00.000Z"));
+
+  assert.equal(reset.length, 1);
+  assert.equal(reset[0].front, "hello");
+  assert.equal(reset[0].back, "bonjour");
+  assert.equal(reset[0].tags, "A1");
+  assert.equal(reset[0].repetitions, 0);
+  assert.equal(reset[0].lapses, 0);
+  assert.equal(reset[0].intervalDays, 0);
+  assert.equal(reset[0].ease, 2.5);
+  assert.equal(reset[0].dueAt, "2026-07-01T12:00:00.000Z");
+});
+
+test("createCloudPayload stores versioned cards and seed version", () => {
+  const card = createCard({ id: "card-1", front: "merci", back: "thank you" });
+  const payload = createCloudPayload([card], 2, new Date("2026-07-01T12:00:00.000Z"));
+
+  assert.equal(payload.app, "FrenchFlashCards");
+  assert.equal(payload.version, 1);
+  assert.equal(payload.seedDeckVersion, 2);
+  assert.equal(payload.savedAt, "2026-07-01T12:00:00.000Z");
+  assert.equal(payload.cards.length, 1);
+  assert.equal(payload.cards[0].front, "merci");
 });
 
 test("seed deck contains valid generated cards", () => {
