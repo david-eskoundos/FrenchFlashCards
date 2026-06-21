@@ -1,0 +1,9 @@
+# Local study source files will be processed into cards later.
+*.pdf
+*.docx
+*.pptx
+*.xlsx
+
+# Verification artifacts.
+screenshots/
+

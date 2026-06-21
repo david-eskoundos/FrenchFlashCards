@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>French Flashcards</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="kicker">French study</p>
+        <h1>Flashcards</h1>
+      </div>
+      <div class="stats" aria-live="polite">
+        <span><strong id="dueCount">0</strong> due</span>
+        <span><strong id="newCount">0</strong> new</span>
+      </div>
+    </header>
+
+    <section class="workspace" aria-label="Flashcard workspace">
+      <section class="study-panel" aria-label="Study card">
+        <div class="card-shell">
+          <div class="card-meta">
+            <span id="cardPosition">No cards</span>
+            <span id="cardTags"></span>
+          </div>
+          <button class="flashcard" id="flashcard" type="button">
+            <span id="cardPrompt">Add your first French card to begin.</span>
+            <span id="cardAnswer" hidden></span>
+          </button>
+          <p class="notes" id="cardNotes"></p>
+        </div>
+        <div class="actions">
+          <button id="revealBtn" type="button">Reveal</button>
+          <div class="rating-grid" id="ratingGrid" hidden>
+            <button data-rating="again" type="button">Again</button>
+            <button data-rating="hard" type="button">Hard</button>
+            <button data-rating="good" type="button">Good</button>
+            <button data-rating="easy" type="button">Easy</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="manage-panel" aria-label="Manage cards">
+        <nav class="tabs" aria-label="Card tools">
+          <button class="tab is-active" data-tab="add" type="button">Add</button>
+          <button class="tab" data-tab="browse" type="button">Browse</button>
+          <button class="tab" data-tab="data" type="button">Data</button>
+        </nav>
+
+        <section class="tab-panel is-active" id="tab-add">
+          <form id="cardForm">
+            <label>Front <textarea id="front" required rows="3"></textarea></label>
+            <label>Back <textarea id="back" required rows="3"></textarea></label>
+            <label>Notes <input id="notes" type="text"></label>
+            <label>Tags <input id="tags" type="text" placeholder="vocab, B1"></label>
+            <label>Direction
+              <select id="direction">
+                <option value="fr-en">French to meaning</option>
+                <option value="en-fr">Meaning to French</option>
+              </select>
+            </label>
+            <button type="submit">Save card</button>
+          </form>
+        </section>
+
+        <section class="tab-panel" id="tab-browse" hidden>
+          <input id="search" type="search" placeholder="Search cards">
+          <div class="card-list" id="cardList"></div>
+        </section>
+
+        <section class="tab-panel" id="tab-data" hidden>
+          <button id="exportBtn" type="button">Export JSON</button>
+          <label>Import JSON <textarea id="importText" rows="5"></textarea></label>
+          <button id="importBtn" type="button">Import cards</button>
+        </section>
+      </section>
+    </section>
+
+    <p class="message" id="message" role="status" aria-live="polite"></p>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
