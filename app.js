@@ -1,8 +1,9 @@
-﻿const STORAGE_KEY = "french-flashcards-v1";
+const STORAGE_KEY = "french-flashcards-v1";
 const CLOUD_SETTINGS_KEY = "french-flashcards-cloud-settings-v1";
 const SEED_DECK_URL = "data/seed-cards.json";
 const SEED_DECK_VERSION = 3;
 const GIST_FILE_NAME = "french-flashcards-progress.json";
+const BROWSE_PAGE_SIZE = 25;
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -195,6 +196,8 @@ function startBrowserApp() {
     tags: document.getElementById("tags"),
     direction: document.getElementById("direction"),
     search: document.getElementById("search"),
+    browseCount: document.getElementById("browseCount"),
+    showMoreCardsBtn: document.getElementById("showMoreCardsBtn"),
     cardList: document.getElementById("cardList"),
     exportBtn: document.getElementById("exportBtn"),
     importText: document.getElementById("importText"),
@@ -220,6 +223,7 @@ function startBrowserApp() {
     queue: [],
     currentIndex: 0,
     revealed: false,
+    browseVisibleCount: BROWSE_PAGE_SIZE,
     cloudSaveTimer: null,
     cloudSaveInFlight: false
   };
@@ -333,8 +337,13 @@ function startBrowserApp() {
       const haystack = `${card.front} ${card.back} ${card.notes} ${card.tags}`.toLowerCase();
       return haystack.includes(query);
     });
+    const visibleCards = cards.slice(0, state.browseVisibleCount);
 
     els.cardList.innerHTML = "";
+    els.browseCount.textContent = `${visibleCards.length} of ${cards.length} cards shown`;
+    els.showMoreCardsBtn.hidden = visibleCards.length >= cards.length;
+    els.showMoreCardsBtn.textContent = `Show ${Math.min(BROWSE_PAGE_SIZE, cards.length - visibleCards.length)} more`;
+
     if (!cards.length) {
       const empty = document.createElement("p");
       empty.textContent = "No cards found.";
@@ -342,7 +351,7 @@ function startBrowserApp() {
       return;
     }
 
-    for (const card of cards) {
+    for (const card of visibleCards) {
       const item = document.createElement("article");
       item.className = "list-item";
 
@@ -550,7 +559,15 @@ function startBrowserApp() {
     }
   });
 
-  els.search.addEventListener("input", renderBrowse);
+  els.search.addEventListener("input", () => {
+    state.browseVisibleCount = BROWSE_PAGE_SIZE;
+    renderBrowse();
+  });
+
+  els.showMoreCardsBtn.addEventListener("click", () => {
+    state.browseVisibleCount += BROWSE_PAGE_SIZE;
+    renderBrowse();
+  });
 
   els.exportBtn.addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(createCloudPayload(state.cards, state.seedDeckVersion), null, 2)], {

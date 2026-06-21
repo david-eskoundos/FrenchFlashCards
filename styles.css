@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   color-scheme: light;
   --ink: #17201a;
   --muted: #5f6b63;
@@ -269,6 +269,21 @@ select {
   padding: 10px;
   background: white;
   color: var(--ink);
+}
+
+.browse-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.browse-summary button {
+  min-height: 38px;
+  padding: 6px 10px;
+  white-space: nowrap;
 }
 
 .card-list {
