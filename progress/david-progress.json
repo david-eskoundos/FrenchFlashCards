@@ -4,7 +4,7 @@
   "user": "david",
   "progressPath": "progress/david-progress.json",
   "seedDeckVersion": 3,
-  "savedAt": "2026-06-22T14:59:04.897Z",
+  "savedAt": "2026-06-22T15:00:13.217Z",
   "stats": {
     "total": 1184,
     "studied": 19,
@@ -304,11 +304,11 @@
       "tags": "source:xlsx, A2, People",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:52:38.680Z",
-      "dueAt": "2026-06-21T21:02:38.680Z",
-      "intervalDays": 0,
-      "ease": 2.3,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:00:10.211Z",
+      "dueAt": "2026-06-24T15:00:10.211Z",
+      "intervalDays": 2,
+      "ease": 2.45,
+      "repetitions": 1,
       "lapses": 1
     },
     {
