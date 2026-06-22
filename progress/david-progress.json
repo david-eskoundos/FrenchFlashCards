@@ -4,10 +4,10 @@
   "user": "david",
   "progressPath": "progress/david-progress.json",
   "seedDeckVersion": 3,
-  "savedAt": "2026-06-22T15:09:11.084Z",
+  "savedAt": "2026-06-22T15:12:18.721Z",
   "stats": {
     "total": 1184,
-    "studied": 44,
+    "studied": 50,
     "learnedPercent": 4
   },
   "cards": [
@@ -814,11 +814,11 @@
       "tags": "source:xlsx, A1, Body, Le corps",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:09:13.336Z",
+      "dueAt": "2026-06-24T15:09:13.336Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -844,11 +844,11 @@
       "tags": "source:xlsx, A1, Body, Le corps",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
+      "updatedAt": "2026-06-22T15:09:21.125Z",
+      "dueAt": "2026-06-23T15:09:21.125Z",
+      "intervalDays": 1,
       "ease": 2.5,
-      "repetitions": 0,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -874,11 +874,11 @@
       "tags": "source:xlsx, A1, Body, Le corps",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:09:26.728Z",
+      "dueAt": "2026-06-24T15:09:26.728Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -904,11 +904,11 @@
       "tags": "source:xlsx, A1, Body, Le corps",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
+      "updatedAt": "2026-06-22T15:09:32.384Z",
+      "dueAt": "2026-06-23T15:09:32.384Z",
+      "intervalDays": 1,
       "ease": 2.5,
-      "repetitions": 0,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -934,11 +934,11 @@
       "tags": "source:xlsx, A1, Body, Le corps",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:09:39.689Z",
+      "dueAt": "2026-06-24T15:09:39.689Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -964,11 +964,11 @@
       "tags": "source:xlsx, A1, Body, Le corps",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:12:15.716Z",
+      "dueAt": "2026-06-24T15:12:15.716Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
