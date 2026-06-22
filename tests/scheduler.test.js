@@ -14,6 +14,7 @@ const {
   resetLearning,
   createCloudPayload,
   shouldRetryRepoSave,
+  formatGitHubError,
   createRepoSaveBody,
   getLearningStats,
   getFrenchText,
@@ -188,6 +189,13 @@ test("shouldRetryRepoSave retries GitHub conflict responses only", () => {
   assert.equal(shouldRetryRepoSave(409), true);
   assert.equal(shouldRetryRepoSave(401), false);
   assert.equal(shouldRetryRepoSave(422), false);
+});
+
+test("formatGitHubError includes status and detail", () => {
+  assert.equal(
+    formatGitHubError("GitHub repo save", 403, "Resource not accessible by personal access token"),
+    "GitHub repo save failed (403): Resource not accessible by personal access token"
+  );
 });
 
 test("getFrenchText chooses the French side based on card direction", () => {

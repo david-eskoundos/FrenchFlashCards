@@ -206,6 +206,29 @@ function shouldRetryRepoSave(status) {
   return status === 409;
 }
 
+function formatGitHubError(action, status, detail = "") {
+  const suffix = detail ? `: ${detail}` : ".";
+  return `${action} failed (${status})${suffix}`;
+}
+
+async function readGitHubError(response, action) {
+  let detail = "";
+  try {
+    const text = await response.text();
+    if (text) {
+      try {
+        const parsed = JSON.parse(text);
+        detail = parsed.message || text.slice(0, 160);
+      } catch {
+        detail = text.slice(0, 160);
+      }
+    }
+  } catch {
+    detail = "";
+  }
+  return new Error(formatGitHubError(action, response.status, detail));
+}
+
 function getFrenchText(card) {
   return card.direction === "en-fr" ? card.back : card.front;
 }
@@ -504,7 +527,7 @@ function startBrowserApp() {
       headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
     });
     if (response.status === 404) return "";
-    if (!response.ok) throw new Error(`GitHub progress lookup failed (${response.status})`);
+    if (!response.ok) throw await readGitHubError(response, "GitHub progress lookup");
     const file = await response.json();
     return file.sha || "";
   }
@@ -521,6 +544,7 @@ function startBrowserApp() {
     }
 
     state.cloudSaveInFlight = true;
+    if (!options.silent) setMessage("Saving progress to GitHub repo...");
     const payload = createCloudPayload(state.cards, state.seedDeckVersion);
     const content = JSON.stringify(payload, null, 2);
 
@@ -540,10 +564,10 @@ function startBrowserApp() {
         }
 
         lastStatus = response.status;
-        if (!shouldRetryRepoSave(response.status)) break;
+        if (!shouldRetryRepoSave(response.status)) throw await readGitHubError(response, "GitHub repo save");
       }
 
-      throw new Error(`GitHub repo save failed (${lastStatus})`);
+      throw new Error(formatGitHubError("GitHub repo save", lastStatus, "the progress file kept changing; try Sync now again"));
     } catch (error) {
       if (!options.silent) setMessage(error.message || "GitHub repo save failed.");
       return false;
@@ -571,11 +595,12 @@ function startBrowserApp() {
     }
 
     try {
+      setMessage("Loading progress from repo...");
       const response = await fetch(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
         headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
       });
       if (response.status === 404) throw new Error(`No progress file found at ${PROGRESS_FILE_PATH}.`);
-      if (!response.ok) throw new Error(`GitHub repo load failed (${response.status})`);
+      if (!response.ok) throw await readGitHubError(response, "GitHub repo load");
       const file = await response.json();
       const payload = JSON.parse(decodeBase64(file.content || ""));
       const cloudCards = parseImportedDeck(JSON.stringify(payload));
@@ -731,6 +756,7 @@ if (typeof module !== "undefined") {
     resetLearning,
     createCloudPayload,
     shouldRetryRepoSave,
+    formatGitHubError,
     createRepoSaveBody,
     getLearningStats,
     getFrenchText,

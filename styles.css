@@ -260,15 +260,26 @@ label {
   height: 18px;
 }
 
-.button-row {
+.button-row,
+.load-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
-.button-row button {
+.sync-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.button-row button,
+.load-row button {
   min-width: 0;
   padding: 8px;
+}
+
+#loadCloudBtn {
+  border-color: var(--gold);
+  color: #7b4d08;
+  background: #fffaf0;
 }
 
 input,

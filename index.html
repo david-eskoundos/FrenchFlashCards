@@ -90,10 +90,12 @@
             <label>GitHub token <input id="githubToken" type="password" autocomplete="off" inputmode="text"></label>
             <p class="sync-path">Progress file: <code id="progressPath">progress/david-progress.json</code></p>
             <label class="check-row"><input id="autoSync" type="checkbox"> Auto-save learning to my repo</label>
-            <div class="button-row">
+            <div class="button-row sync-actions">
               <button id="saveSyncBtn" type="button">Save sync</button>
               <button id="syncNowBtn" type="button">Sync now</button>
-              <button id="loadCloudBtn" type="button">Load repo</button>
+            </div>
+            <div class="load-row">
+              <button id="loadCloudBtn" type="button">Load repo progress</button>
             </div>
           </div>
 
