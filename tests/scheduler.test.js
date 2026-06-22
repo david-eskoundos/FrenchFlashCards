@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const {
+  normalizeToken,
   createCard,
   scheduleCard,
   getStudyQueue,
@@ -25,6 +26,10 @@ const {
   getFrenchText,
   buildSpellingText
 } = require("../app.js");
+
+test("normalizeToken removes pasted whitespace and invisible characters", () => {
+  assert.equal(normalizeToken("  github_pat_abc\n123\u200B  "), "github_pat_abc123");
+});
 
 test("createCard requires front and back text", () => {
   assert.throws(() => createCard({ front: "", back: "bonjour" }), /Front is required/);

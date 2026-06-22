@@ -9,7 +9,7 @@ const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
 const REPO_SAVE_MAX_ATTEMPTS = 3;
-const APP_VERSION = "20260622-iphone-sync2";
+const APP_VERSION = "20260622-token-cleanup";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -25,6 +25,10 @@ function addDays(date, days) {
 
 function normalizeText(value) {
   return String(value || "").trim();
+}
+
+function normalizeToken(value) {
+  return normalizeText(value).replace(/[\s\u200B-\u200D\uFEFF]/g, "");
 }
 
 function createCard(input, now = new Date()) {
@@ -445,7 +449,7 @@ function startBrowserApp() {
     try {
       const parsed = JSON.parse(localStorage.getItem(CLOUD_SETTINGS_KEY) || "{}");
       return {
-        token: normalizeText(parsed.token),
+        token: normalizeToken(parsed.token),
         autoSync: Boolean(parsed.autoSync)
       };
     } catch {
@@ -659,13 +663,14 @@ function startBrowserApp() {
     speakFrenchText(spelling, { rate: 0.65 });
   }
 
-  function cloudHeaders() {
-    return {
+  function cloudHeaders(options = {}) {
+    const headers = {
       Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${state.cloud.token}`,
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${normalizeToken(state.cloud.token)}`,
       "X-GitHub-Api-Version": "2022-11-28"
     };
+    if (options.jsonBody) headers["Content-Type"] = "application/json";
+    return headers;
   }
 
   function progressFileUrl() {
@@ -704,7 +709,7 @@ function startBrowserApp() {
         const sha = await fetchProgressFileSha();
         const response = await githubRequest(progressFileUrl(), {
           method: "PUT",
-          headers: cloudHeaders(),
+          headers: cloudHeaders({ jsonBody: true }),
           body: JSON.stringify(createRepoSaveBody(content, sha))
         });
 
@@ -775,7 +780,7 @@ function startBrowserApp() {
   }
   async function testGithubToken() {
     state.cloud = {
-      token: normalizeText(els.githubToken.value),
+      token: normalizeToken(els.githubToken.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
@@ -786,6 +791,12 @@ function startBrowserApp() {
     }
 
     try {
+      setMessage("Testing GitHub connection...");
+      const publicResponse = await githubRequest("https://api.github.com/rate_limit", {
+        headers: { Accept: "application/vnd.github+json", "Cache-Control": "no-cache" }
+      });
+      if (!publicResponse.ok) throw await readGitHubError(publicResponse, "GitHub public API test");
+
       setMessage("Testing GitHub token...");
       const repoResponse = await githubRequest(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`, {
         headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
@@ -898,7 +909,7 @@ function startBrowserApp() {
 
   els.saveSyncBtn.addEventListener("click", () => {
     state.cloud = {
-      token: normalizeText(els.githubToken.value),
+      token: normalizeToken(els.githubToken.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
@@ -909,7 +920,7 @@ function startBrowserApp() {
 
   els.syncNowBtn.addEventListener("click", () => {
     state.cloud = {
-      token: normalizeText(els.githubToken.value),
+      token: normalizeToken(els.githubToken.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
@@ -918,7 +929,7 @@ function startBrowserApp() {
 
   els.loadCloudBtn.addEventListener("click", () => {
     state.cloud = {
-      token: normalizeText(els.githubToken.value),
+      token: normalizeToken(els.githubToken.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
@@ -943,6 +954,7 @@ if (typeof module !== "undefined") {
   module.exports = {
     APP_VERSION,
     STORAGE_KEY,
+    normalizeToken,
     createCard,
     scheduleCard,
     getStudyQueue,
