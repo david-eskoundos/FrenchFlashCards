@@ -4,10 +4,10 @@
   "user": "david",
   "progressPath": "progress/david-progress.json",
   "seedDeckVersion": 3,
-  "savedAt": "2026-06-22T15:04:23.349Z",
+  "savedAt": "2026-06-22T15:05:26.780Z",
   "stats": {
     "total": 1184,
-    "studied": 24,
+    "studied": 27,
     "learnedPercent": 2
   },
   "cards": [
@@ -454,11 +454,11 @@
       "tags": "source:xlsx, B1, Verbs",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:04:35.187Z",
+      "dueAt": "2026-06-24T15:04:35.187Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -484,12 +484,12 @@
       "tags": "source:xlsx, B1, Verbs",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
+      "updatedAt": "2026-06-22T15:05:10.087Z",
+      "dueAt": "2026-06-22T15:15:10.087Z",
       "intervalDays": 0,
-      "ease": 2.5,
+      "ease": 2.3,
       "repetitions": 0,
-      "lapses": 0
+      "lapses": 1
     },
     {
       "id": "seed-xlsx-0033-une-escale-stopover",
@@ -514,12 +514,12 @@
       "tags": "source:xlsx, B1, Verbs",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
+      "updatedAt": "2026-06-22T15:05:23.776Z",
+      "dueAt": "2026-06-22T15:15:23.776Z",
       "intervalDays": 0,
-      "ease": 2.5,
+      "ease": 2.3,
       "repetitions": 0,
-      "lapses": 0
+      "lapses": 1
     },
     {
       "id": "seed-xlsx-0035-un-billet-aller-retour-round-trip-ticket",
