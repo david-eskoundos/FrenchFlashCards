@@ -1,0 +1,14 @@
+{
+  "app": "FrenchFlashCards",
+  "version": 2,
+  "user": "david",
+  "progressPath": "progress/david-progress.json",
+  "seedDeckVersion": 3,
+  "savedAt": "2026-06-22T00:00:00.000Z",
+  "stats": {
+    "total": 0,
+    "studied": 0,
+    "learnedPercent": 0
+  },
+  "cards": []
+}

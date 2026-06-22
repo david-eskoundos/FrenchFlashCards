@@ -14,6 +14,7 @@
         <h1>Flashcards</h1>
       </div>
       <div class="stats" aria-live="polite">
+        <span><strong id="learnedPercent">0%</strong> learned</span>
         <span><strong id="dueCount">0</strong> due</span>
         <span><strong id="newCount">0</strong> new</span>
       </div>
@@ -85,14 +86,14 @@
           <label>Import JSON <textarea id="importText" rows="5"></textarea></label>
           <button id="importBtn" type="button">Import cards</button>
 
-          <div class="tool-group" aria-label="GitHub sync">
+          <div class="tool-group" aria-label="GitHub repo sync">
             <label>GitHub token <input id="githubToken" type="password" autocomplete="off" inputmode="text"></label>
-            <label>Gist ID <input id="gistId" type="text" autocomplete="off"></label>
-            <label class="check-row"><input id="autoSync" type="checkbox"> Auto-save learning to GitHub</label>
+            <p class="sync-path">Progress file: <code id="progressPath">progress/david-progress.json</code></p>
+            <label class="check-row"><input id="autoSync" type="checkbox"> Auto-save learning to my repo</label>
             <div class="button-row">
               <button id="saveSyncBtn" type="button">Save sync</button>
               <button id="syncNowBtn" type="button">Sync now</button>
-              <button id="loadCloudBtn" type="button">Load GitHub</button>
+              <button id="loadCloudBtn" type="button">Load repo</button>
             </div>
           </div>
 

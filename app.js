@@ -2,7 +2,11 @@ const STORAGE_KEY = "french-flashcards-v1";
 const CLOUD_SETTINGS_KEY = "french-flashcards-cloud-settings-v1";
 const SEED_DECK_URL = "data/seed-cards.json";
 const SEED_DECK_VERSION = 3;
-const GIST_FILE_NAME = "french-flashcards-progress.json";
+const PROGRESS_USER = "david";
+const GITHUB_REPO_OWNER = "david-eskoundos";
+const GITHUB_REPO_NAME = "FrenchFlashCards";
+const GITHUB_REPO_BRANCH = "main";
+const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
 
 function toIso(date) {
@@ -137,14 +141,39 @@ function resetLearning(cards, now = new Date()) {
   }));
 }
 
+function getLearningStats(cards) {
+  const total = cards.length;
+  const studied = cards.filter((card) => card.repetitions > 0 || card.lapses > 0).length;
+  const learnedPercent = total ? Math.round((studied / total) * 100) : 0;
+  return { total, studied, learnedPercent };
+}
+
 function createCloudPayload(cards, seedDeckVersion, now = new Date()) {
   return {
     app: "FrenchFlashCards",
-    version: 1,
+    version: 2,
+    user: PROGRESS_USER,
+    progressPath: PROGRESS_FILE_PATH,
     seedDeckVersion,
     savedAt: toIso(now),
+    stats: getLearningStats(cards),
     cards
   };
+}
+
+function encodeBase64(text) {
+  const bytes = new TextEncoder().encode(text);
+  let binary = "";
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary);
+}
+
+function decodeBase64(text) {
+  const binary = atob(text.replace(/\s/g, ""));
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
 }
 
 function getFrenchText(card) {
@@ -181,6 +210,7 @@ function startBrowserApp() {
   const els = {
     dueCount: document.getElementById("dueCount"),
     newCount: document.getElementById("newCount"),
+    learnedPercent: document.getElementById("learnedPercent"),
     cardPosition: document.getElementById("cardPosition"),
     cardTags: document.getElementById("cardTags"),
     flashcard: document.getElementById("flashcard"),
@@ -206,7 +236,7 @@ function startBrowserApp() {
     spellBtn: document.getElementById("spellBtn"),
     spellingLine: document.getElementById("spellingLine"),
     githubToken: document.getElementById("githubToken"),
-    gistId: document.getElementById("gistId"),
+    progressPath: document.getElementById("progressPath"),
     autoSync: document.getElementById("autoSync"),
     saveSyncBtn: document.getElementById("saveSyncBtn"),
     syncNowBtn: document.getElementById("syncNowBtn"),
@@ -237,18 +267,17 @@ function startBrowserApp() {
       const parsed = JSON.parse(localStorage.getItem(CLOUD_SETTINGS_KEY) || "{}");
       return {
         token: normalizeText(parsed.token),
-        gistId: normalizeText(parsed.gistId),
         autoSync: Boolean(parsed.autoSync)
       };
     } catch {
-      return { token: "", gistId: "", autoSync: false };
+      return { token: "", autoSync: false };
     }
   }
 
   function saveCloudSettings() {
     localStorage.setItem(CLOUD_SETTINGS_KEY, JSON.stringify(state.cloud));
     els.githubToken.value = state.cloud.token;
-    els.gistId.value = state.cloud.gistId;
+    els.progressPath.textContent = PROGRESS_FILE_PATH;
     els.autoSync.checked = state.cloud.autoSync;
   }
 
@@ -300,6 +329,7 @@ function startBrowserApp() {
     const fresh = state.cards.filter((card) => card.repetitions === 0 && card.lapses === 0).length;
     els.dueCount.textContent = String(due);
     els.newCount.textContent = String(fresh);
+    els.learnedPercent.textContent = `${getLearningStats(state.cards).learnedPercent}%`;
   }
 
   function renderStudy() {
@@ -433,78 +463,90 @@ function startBrowserApp() {
     };
   }
 
+  function progressFileUrl() {
+    return `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${PROGRESS_FILE_PATH}`;
+  }
+
+  async function fetchProgressFileSha() {
+    const response = await fetch(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
+      headers: cloudHeaders()
+    });
+    if (response.status === 404) return "";
+    if (!response.ok) throw new Error(`GitHub progress lookup failed (${response.status})`);
+    const file = await response.json();
+    return file.sha || "";
+  }
+
   async function saveToGithub(options = {}) {
     if (!state.cloud.token) {
       if (!options.silent) setMessage("Add a GitHub token before syncing.");
       return false;
     }
 
-    if (state.cloudSaveInFlight) return false;
+    if (state.cloudSaveInFlight) {
+      state.cloudSavePending = true;
+      return false;
+    }
     state.cloudSaveInFlight = true;
     const payload = createCloudPayload(state.cards, state.seedDeckVersion);
     const content = JSON.stringify(payload, null, 2);
-    const body = state.cloud.gistId
-      ? { files: { [GIST_FILE_NAME]: { content } } }
-      : {
-          description: "French Flashcards progress",
-          public: false,
-          files: { [GIST_FILE_NAME]: { content } }
-        };
-    const url = state.cloud.gistId ? `https://api.github.com/gists/${state.cloud.gistId}` : "https://api.github.com/gists";
-    const method = state.cloud.gistId ? "PATCH" : "POST";
 
     try {
-      const response = await fetch(url, { method, headers: cloudHeaders(), body: JSON.stringify(body) });
-      if (!response.ok) throw new Error(`GitHub sync failed (${response.status})`);
-      const result = await response.json();
-      if (!state.cloud.gistId && result.id) {
-        state.cloud.gistId = result.id;
-        saveCloudSettings();
-      }
-      if (!options.silent) setMessage("Learning saved to GitHub.");
+      const sha = await fetchProgressFileSha();
+      const body = {
+        message: `chore: update ${PROGRESS_USER} learning progress`,
+        content: encodeBase64(content),
+        branch: GITHUB_REPO_BRANCH
+      };
+      if (sha) body.sha = sha;
+
+      const response = await fetch(progressFileUrl(), {
+        method: "PUT",
+        headers: cloudHeaders(),
+        body: JSON.stringify(body)
+      });
+      if (!response.ok) throw new Error(`GitHub repo save failed (${response.status})`);
+      if (!options.silent) setMessage(`Learning saved to ${PROGRESS_FILE_PATH}.`);
       return true;
     } catch (error) {
-      if (!options.silent) setMessage(error.message);
+      if (!options.silent) setMessage(error.message || "GitHub repo save failed.");
       return false;
     } finally {
       state.cloudSaveInFlight = false;
     }
   }
-
   function queueCloudSave() {
     if (!state.cloud.autoSync || !state.cloud.token) return;
     window.clearTimeout(state.cloudSaveTimer);
     state.cloudSaveTimer = window.setTimeout(() => {
       saveToGithub({ silent: true });
-    }, 700);
+    }, 3000);
   }
 
   async function loadFromGithub() {
-    if (!state.cloud.token || !state.cloud.gistId) {
-      setMessage("Add a GitHub token and Gist ID before loading.");
+    if (!state.cloud.token) {
+      setMessage("Add a GitHub token before loading repo progress.");
       return;
     }
 
     try {
-      const response = await fetch(`https://api.github.com/gists/${state.cloud.gistId}`, {
+      const response = await fetch(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
         headers: cloudHeaders()
       });
-      if (!response.ok) throw new Error(`GitHub load failed (${response.status})`);
-      const gist = await response.json();
-      const file = gist.files && gist.files[GIST_FILE_NAME];
-      if (!file || !file.content) throw new Error("No flashcard progress file found in this Gist.");
-      const payload = JSON.parse(file.content);
+      if (response.status === 404) throw new Error(`No progress file found at ${PROGRESS_FILE_PATH}.`);
+      if (!response.ok) throw new Error(`GitHub repo load failed (${response.status})`);
+      const file = await response.json();
+      const payload = JSON.parse(decodeBase64(file.content || ""));
       const cloudCards = parseImportedDeck(JSON.stringify(payload));
       state.cards = mergeCards(cloudCards, state.cards);
       state.seedDeckVersion = Number(payload.seedDeckVersion || state.seedDeckVersion);
       saveCards({ cloud: false });
       renderAll();
-      setMessage(`Loaded ${cloudCards.length} cards from GitHub.`);
+      setMessage(`Loaded ${cloudCards.length} cards from ${PROGRESS_FILE_PATH}.`);
     } catch (error) {
-      setMessage(error.message || "GitHub load failed.");
+      setMessage(error.message || "GitHub repo load failed.");
     }
   }
-
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       document.querySelectorAll(".tab").forEach((candidate) => candidate.classList.remove("is-active"));
@@ -596,17 +638,15 @@ function startBrowserApp() {
   els.saveSyncBtn.addEventListener("click", () => {
     state.cloud = {
       token: normalizeText(els.githubToken.value),
-      gistId: normalizeText(els.gistId.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
-    setMessage("GitHub sync settings saved on this device.");
+    setMessage("Repo sync settings saved on this device.");
   });
 
   els.syncNowBtn.addEventListener("click", () => {
     state.cloud = {
       token: normalizeText(els.githubToken.value),
-      gistId: normalizeText(els.gistId.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
@@ -616,7 +656,6 @@ function startBrowserApp() {
   els.loadCloudBtn.addEventListener("click", () => {
     state.cloud = {
       token: normalizeText(els.githubToken.value),
-      gistId: normalizeText(els.gistId.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
@@ -648,6 +687,7 @@ if (typeof module !== "undefined") {
     syncSeedCards,
     resetLearning,
     createCloudPayload,
+    getLearningStats,
     getFrenchText,
     buildSpellingText
   };

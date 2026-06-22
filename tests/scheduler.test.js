@@ -1,4 +1,4 @@
-ï»¿const test = require("node:test");
+const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -11,6 +11,7 @@ const {
   syncSeedCards,
   resetLearning,
   createCloudPayload,
+  getLearningStats,
   getFrenchText,
   buildSpellingText
 } = require("../app.js");
@@ -118,14 +119,27 @@ test("resetLearning keeps card text and clears scheduling progress", () => {
   assert.equal(reset[0].dueAt, "2026-07-01T12:00:00.000Z");
 });
 
-test("createCloudPayload stores versioned cards and seed version", () => {
+test("getLearningStats reports studied percentage", () => {
+  const now = new Date("2026-06-21T10:00:00.000Z");
+  const fresh = createCard({ front: "fresh", back: "nouveau" }, now);
+  const studied = scheduleCard(createCard({ front: "studied", back: "etudie" }, now), "good", now);
+  const missed = scheduleCard(createCard({ front: "missed", back: "manque" }, now), "again", now);
+  const stats = getLearningStats([fresh, studied, missed]);
+
+  assert.deepEqual(stats, { total: 3, studied: 2, learnedPercent: 67 });
+});
+
+test("createCloudPayload stores david repo progress metadata", () => {
   const card = createCard({ id: "card-1", front: "merci", back: "thank you" });
-  const payload = createCloudPayload([card], 2, new Date("2026-07-01T12:00:00.000Z"));
+  const payload = createCloudPayload([card], 3, new Date("2026-07-01T12:00:00.000Z"));
 
   assert.equal(payload.app, "FrenchFlashCards");
-  assert.equal(payload.version, 1);
-  assert.equal(payload.seedDeckVersion, 2);
+  assert.equal(payload.version, 2);
+  assert.equal(payload.user, "david");
+  assert.equal(payload.progressPath, "progress/david-progress.json");
+  assert.equal(payload.seedDeckVersion, 3);
   assert.equal(payload.savedAt, "2026-07-01T12:00:00.000Z");
+  assert.deepEqual(payload.stats, { total: 1, studied: 0, learnedPercent: 0 });
   assert.equal(payload.cards.length, 1);
   assert.equal(payload.cards[0].front, "merci");
 });
@@ -139,7 +153,7 @@ test("getFrenchText chooses the French side based on card direction", () => {
 });
 
 test("buildSpellingText formats French text for slow spelling", () => {
-  assert.equal(buildSpellingText("l'aÃ©roport"), "l apostrophe a Ã© r o p o r t");
+  assert.equal(buildSpellingText("l'aéroport"), "l apostrophe a é r o p o r t");
   assert.equal(buildSpellingText("un vol"), "u n. v o l");
 });
 
