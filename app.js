@@ -115,6 +115,17 @@ function mergeCards(existingCards, incomingCards) {
 }
 
 
+function mergeCardsByLatestProgress(localCards, cloudCards) {
+  const merged = new Map(localCards.map((card) => [card.id, card]));
+  cloudCards.forEach((cloudCard) => {
+    const localCard = merged.get(cloudCard.id);
+    if (!localCard || new Date(cloudCard.updatedAt).getTime() > new Date(localCard.updatedAt).getTime()) {
+      merged.set(cloudCard.id, cloudCard);
+    }
+  });
+  return Array.from(merged.values());
+}
+
 function syncSeedCards(existingCards, seedCards) {
   const seedById = new Map(seedCards.map((card) => [card.id, card]));
   const existingIds = new Set(existingCards.map((card) => card.id));
@@ -568,7 +579,7 @@ function startBrowserApp() {
       const file = await response.json();
       const payload = JSON.parse(decodeBase64(file.content || ""));
       const cloudCards = parseImportedDeck(JSON.stringify(payload));
-      state.cards = mergeCards(cloudCards, state.cards);
+      state.cards = mergeCardsByLatestProgress(state.cards, cloudCards);
       state.seedDeckVersion = Number(payload.seedDeckVersion || state.seedDeckVersion);
       saveCards({ cloud: false });
       renderAll();
@@ -715,6 +726,7 @@ if (typeof module !== "undefined") {
     hasBeenStudied,
     parseImportedDeck,
     mergeCards,
+    mergeCardsByLatestProgress,
     syncSeedCards,
     resetLearning,
     createCloudPayload,

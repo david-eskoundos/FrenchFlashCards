@@ -9,6 +9,7 @@ const {
   hasBeenStudied,
   parseImportedDeck,
   mergeCards,
+  mergeCardsByLatestProgress,
   syncSeedCards,
   resetLearning,
   createCloudPayload,
@@ -93,6 +94,23 @@ test("mergeCards preserves existing cards and adds missing seed cards", () => {
   assert.equal(merged.find((card) => card.id === "seed-xlsx-2").front, "merci");
 });
 
+
+test("mergeCardsByLatestProgress keeps newer local progress", () => {
+  const olderCloud = {
+    ...createCard({ id: "card-1", front: "hello", back: "bonjour" }, new Date("2026-06-21T10:00:00.000Z")),
+    updatedAt: "2026-06-21T10:00:00.000Z",
+    repetitions: 1
+  };
+  const newerLocal = {
+    ...olderCloud,
+    updatedAt: "2026-06-22T10:00:00.000Z",
+    repetitions: 3
+  };
+  const merged = mergeCardsByLatestProgress([newerLocal], [olderCloud]);
+
+  assert.equal(merged.length, 1);
+  assert.equal(merged[0].repetitions, 3);
+});
 
 test("syncSeedCards updates built-in card text while preserving learning progress", () => {
   const oldSeed = {
