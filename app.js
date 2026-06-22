@@ -9,6 +9,7 @@ const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
 const REPO_SAVE_MAX_ATTEMPTS = 3;
+const APP_VERSION = "20260622-iphone-sync2";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -403,12 +404,15 @@ function startBrowserApp() {
     showMoreCardsBtn: document.getElementById("showMoreCardsBtn"),
     cardList: document.getElementById("cardList"),
     exportBtn: document.getElementById("exportBtn"),
+    copyBackupBtn: document.getElementById("copyBackupBtn"),
+    backupText: document.getElementById("backupText"),
     importText: document.getElementById("importText"),
     importBtn: document.getElementById("importBtn"),
     listenBtn: document.getElementById("listenBtn"),
     spellBtn: document.getElementById("spellBtn"),
     spellingLine: document.getElementById("spellingLine"),
     githubToken: document.getElementById("githubToken"),
+    appVersion: document.getElementById("appVersion"),
     progressPath: document.getElementById("progressPath"),
     autoSync: document.getElementById("autoSync"),
     saveSyncBtn: document.getElementById("saveSyncBtn"),
@@ -452,8 +456,33 @@ function startBrowserApp() {
   function saveCloudSettings() {
     localStorage.setItem(CLOUD_SETTINGS_KEY, JSON.stringify(state.cloud));
     els.githubToken.value = state.cloud.token;
+    els.appVersion.textContent = APP_VERSION;
     els.progressPath.textContent = PROGRESS_FILE_PATH;
     els.autoSync.checked = state.cloud.autoSync;
+  }
+
+  function createBackupJson() {
+    return JSON.stringify(createCloudPayload(state.cards, state.seedDeckVersion), null, 2);
+  }
+
+  async function copyBackupToClipboard() {
+    const backup = createBackupJson();
+    els.backupText.hidden = false;
+    els.backupText.value = backup;
+    els.backupText.focus();
+    els.backupText.select();
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(backup);
+        setMessage("Backup copied. If GitHub sync still fails, send me this exported JSON.");
+        return;
+      }
+      document.execCommand("copy");
+      setMessage("Backup selected and copied. If GitHub sync still fails, send me this exported JSON.");
+    } catch {
+      setMessage("Backup is shown below. Select it and copy it if GitHub sync still fails.");
+    }
   }
 
   function saveCards(options = {}) {
@@ -838,7 +867,10 @@ function startBrowserApp() {
   });
 
   els.exportBtn.addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify(createCloudPayload(state.cards, state.seedDeckVersion), null, 2)], {
+    const backup = createBackupJson();
+    els.backupText.hidden = false;
+    els.backupText.value = backup;
+    const blob = new Blob([backup], {
       type: "application/json"
     });
     const link = document.createElement("a");
@@ -846,7 +878,10 @@ function startBrowserApp() {
     link.download = "french-flashcards.json";
     link.click();
     URL.revokeObjectURL(link.href);
+    setMessage("Backup JSON is shown below too. Keep it until Sync now succeeds.");
   });
+
+  els.copyBackupBtn.addEventListener("click", copyBackupToClipboard);
 
   els.importBtn.addEventListener("click", () => {
     try {
@@ -906,6 +941,7 @@ function startBrowserApp() {
 
 if (typeof module !== "undefined") {
   module.exports = {
+    APP_VERSION,
     STORAGE_KEY,
     createCard,
     scheduleCard,

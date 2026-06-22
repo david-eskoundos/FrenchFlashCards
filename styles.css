@@ -157,6 +157,7 @@ h1 {
 #spellBtn,
 form button[type="submit"],
 #exportBtn,
+#copyBackupBtn,
 #importBtn,
 #saveSyncBtn,
 #testTokenBtn,
@@ -351,3 +352,10 @@ select {
 }
 
 
+
+
+.backup-text {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  min-height: 120px;
+}

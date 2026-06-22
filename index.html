@@ -83,11 +83,14 @@
 
         <section class="tab-panel" id="tab-data" hidden>
           <button id="exportBtn" type="button">Export JSON</button>
+          <button id="copyBackupBtn" type="button">Copy backup</button>
+          <textarea class="backup-text" id="backupText" rows="5" readonly hidden></textarea>
           <label>Import JSON <textarea id="importText" rows="5"></textarea></label>
           <button id="importBtn" type="button">Import cards</button>
 
           <div class="tool-group" aria-label="GitHub repo sync">
             <label>GitHub token <input id="githubToken" type="password" autocomplete="off" inputmode="text"></label>
+            <p class="sync-path">App version: <code id="appVersion">loading</code></p>
             <p class="sync-path">Progress file: <code id="progressPath">progress/david-progress.json</code></p>
             <label class="check-row"><input id="autoSync" type="checkbox"> Auto-save learning to my repo</label>
             <div class="button-row sync-actions">
@@ -107,7 +110,7 @@
 
     <p class="message" id="message" role="status" aria-live="polite"></p>
   </main>
-  <script src="app.js"></script>
+  <script src="app.js?v=20260622-iphone-sync2"></script>
 </body>
 </html>
 
