@@ -4,10 +4,10 @@
   "user": "david",
   "progressPath": "progress/david-progress.json",
   "seedDeckVersion": 3,
-  "savedAt": "2026-06-22T15:00:13.217Z",
+  "savedAt": "2026-06-22T15:02:07.773Z",
   "stats": {
     "total": 1184,
-    "studied": 19,
+    "studied": 21,
     "learnedPercent": 2
   },
   "cards": [
@@ -139,11 +139,11 @@
       "tags": "source:xlsx, A2, Tickets and Documents",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
+      "updatedAt": "2026-06-22T15:00:26.115Z",
+      "dueAt": "2026-06-23T15:00:26.115Z",
+      "intervalDays": 1,
       "ease": 2.5,
-      "repetitions": 0,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -259,11 +259,11 @@
       "tags": "source:xlsx, A2, Luggage",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
+      "updatedAt": "2026-06-22T15:02:04.765Z",
+      "dueAt": "2026-06-23T15:02:04.765Z",
+      "intervalDays": 1,
       "ease": 2.5,
-      "repetitions": 0,
+      "repetitions": 1,
       "lapses": 0
     },
     {
