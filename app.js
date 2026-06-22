@@ -164,16 +164,70 @@ function getLearningStats(cards) {
   return { total, studied, learnedPercent };
 }
 
+function isSeedCard(card) {
+  return String(card.id || "").startsWith("seed-");
+}
+
+function hasProgress(card) {
+  return hasBeenStudied(card) || card.intervalDays > 0 || card.ease !== 2.5;
+}
+
+function createProgressEntry(card) {
+  const progress = {
+    id: card.id,
+    updatedAt: card.updatedAt,
+    dueAt: card.dueAt,
+    intervalDays: card.intervalDays,
+    ease: card.ease,
+    repetitions: card.repetitions,
+    lapses: card.lapses
+  };
+  if (!isSeedCard(card)) {
+    return {
+      ...progress,
+      front: card.front,
+      back: card.back,
+      notes: card.notes,
+      tags: card.tags,
+      direction: card.direction,
+      createdAt: card.createdAt
+    };
+  }
+  return progress;
+}
+
+function createProgressEntries(cards) {
+  return cards.filter((card) => hasProgress(card) || !isSeedCard(card)).map(createProgressEntry);
+}
+
+function applyProgressEntries(cards, progressEntries) {
+  const cardsById = new Map(cards.map((card) => [card.id, card]));
+  progressEntries.forEach((progress) => {
+    const existing = cardsById.get(progress.id);
+    if (existing) {
+      cardsById.set(progress.id, { ...existing, ...progress });
+      return;
+    }
+    if (progress.front && progress.back) cardsById.set(progress.id, createCard(progress));
+  });
+  return Array.from(cardsById.values());
+}
+
+function extractCloudCards(payload) {
+  if (Array.isArray(payload.cardProgress)) return applyProgressEntries([], payload.cardProgress);
+  return parseImportedDeck(JSON.stringify(payload));
+}
+
 function createCloudPayload(cards, seedDeckVersion, now = new Date()) {
   return {
     app: "FrenchFlashCards",
-    version: 2,
+    version: 3,
     user: PROGRESS_USER,
     progressPath: PROGRESS_FILE_PATH,
     seedDeckVersion,
     savedAt: toIso(now),
     stats: getLearningStats(cards),
-    cards
+    cardProgress: createProgressEntries(cards)
   };
 }
 
@@ -603,8 +657,10 @@ function startBrowserApp() {
       if (!response.ok) throw await readGitHubError(response, "GitHub repo load");
       const file = await response.json();
       const payload = JSON.parse(decodeBase64(file.content || ""));
-      const cloudCards = parseImportedDeck(JSON.stringify(payload));
-      state.cards = mergeCardsByLatestProgress(state.cards, cloudCards);
+      const cloudCards = Array.isArray(payload.cardProgress)
+        ? applyProgressEntries(state.cards, payload.cardProgress)
+        : parseImportedDeck(JSON.stringify(payload));
+      state.cards = Array.isArray(payload.cardProgress) ? cloudCards : mergeCardsByLatestProgress(state.cards, cloudCards);
       state.seedDeckVersion = Number(payload.seedDeckVersion || state.seedDeckVersion);
       saveCards({ cloud: false });
       renderAll();
@@ -755,6 +811,9 @@ if (typeof module !== "undefined") {
     syncSeedCards,
     resetLearning,
     createCloudPayload,
+    extractCloudCards,
+    applyProgressEntries,
+    createProgressEntries,
     shouldRetryRepoSave,
     formatGitHubError,
     createRepoSaveBody,

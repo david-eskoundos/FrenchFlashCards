@@ -13,6 +13,8 @@ const {
   syncSeedCards,
   resetLearning,
   createCloudPayload,
+  applyProgressEntries,
+  createProgressEntries,
   shouldRetryRepoSave,
   formatGitHubError,
   createRepoSaveBody,
@@ -161,19 +163,50 @@ test("getLearningStats reports studied percentage", () => {
   assert.deepEqual(stats, { total: 3, studied: 2, learnedPercent: 67 });
 });
 
-test("createCloudPayload stores david repo progress metadata", () => {
+test("createCloudPayload stores compact david repo progress metadata", () => {
   const card = createCard({ id: "card-1", front: "merci", back: "thank you" });
-  const payload = createCloudPayload([card], 3, new Date("2026-07-01T12:00:00.000Z"));
+  const studied = scheduleCard(card, "good", new Date("2026-07-01T12:00:00.000Z"));
+  const payload = createCloudPayload([studied], 3, new Date("2026-07-01T12:00:00.000Z"));
 
   assert.equal(payload.app, "FrenchFlashCards");
-  assert.equal(payload.version, 2);
+  assert.equal(payload.version, 3);
   assert.equal(payload.user, "david");
   assert.equal(payload.progressPath, "progress/david-progress.json");
   assert.equal(payload.seedDeckVersion, 3);
   assert.equal(payload.savedAt, "2026-07-01T12:00:00.000Z");
-  assert.deepEqual(payload.stats, { total: 1, studied: 0, learnedPercent: 0 });
-  assert.equal(payload.cards.length, 1);
-  assert.equal(payload.cards[0].front, "merci");
+  assert.deepEqual(payload.stats, { total: 1, studied: 1, learnedPercent: 100 });
+  assert.equal(payload.cardProgress.length, 1);
+  assert.equal(payload.cardProgress[0].id, "card-1");
+  assert.equal(payload.cardProgress[0].front, "merci");
+});
+
+test("createProgressEntries stores only progressed seed cards", () => {
+  const now = new Date("2026-07-01T12:00:00.000Z");
+  const fresh = createCard({ id: "seed-xlsx-fresh", front: "fresh", back: "frais" }, now);
+  const studied = scheduleCard(createCard({ id: "seed-xlsx-studied", front: "studied", back: "etudie" }, now), "good", now);
+  const entries = createProgressEntries([fresh, studied]);
+
+  assert.equal(entries.length, 1);
+  assert.equal(entries[0].id, "seed-xlsx-studied");
+  assert.equal(entries[0].front, undefined);
+});
+
+test("applyProgressEntries applies compact seed progress", () => {
+  const now = new Date("2026-07-01T12:00:00.000Z");
+  const seed = createCard({ id: "seed-xlsx-1", front: "hello", back: "bonjour" }, now);
+  const merged = applyProgressEntries([seed], [{
+    id: "seed-xlsx-1",
+    updatedAt: "2026-07-02T12:00:00.000Z",
+    dueAt: "2026-07-03T12:00:00.000Z",
+    intervalDays: 1,
+    ease: 2.45,
+    repetitions: 1,
+    lapses: 0
+  }]);
+
+  assert.equal(merged[0].front, "hello");
+  assert.equal(merged[0].repetitions, 1);
+  assert.equal(merged[0].dueAt, "2026-07-03T12:00:00.000Z");
 });
 
 test("createRepoSaveBody includes content, branch, and latest sha", () => {
