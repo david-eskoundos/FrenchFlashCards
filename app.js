@@ -8,6 +8,7 @@ const GITHUB_REPO_NAME = "FrenchFlashCards";
 const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
+const REPO_SAVE_MAX_ATTEMPTS = 3;
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -180,6 +181,20 @@ function decodeBase64(text) {
   return new TextDecoder().decode(bytes);
 }
 
+function createRepoSaveBody(content, sha = "") {
+  const body = {
+    message: `chore: update ${PROGRESS_USER} learning progress`,
+    content: encodeBase64(content),
+    branch: GITHUB_REPO_BRANCH
+  };
+  if (sha) body.sha = sha;
+  return body;
+}
+
+function shouldRetryRepoSave(status) {
+  return status === 409;
+}
+
 function getFrenchText(card) {
   return card.direction === "en-fr" ? card.back : card.front;
 }
@@ -259,7 +274,8 @@ function startBrowserApp() {
     revealed: false,
     browseVisibleCount: BROWSE_PAGE_SIZE,
     cloudSaveTimer: null,
-    cloudSaveInFlight: false
+    cloudSaveInFlight: false,
+    cloudSavePending: false
   };
 
   function setMessage(text) {
@@ -474,7 +490,7 @@ function startBrowserApp() {
 
   async function fetchProgressFileSha() {
     const response = await fetch(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
-      headers: cloudHeaders()
+      headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
     });
     if (response.status === 404) return "";
     if (!response.ok) throw new Error(`GitHub progress lookup failed (${response.status})`);
@@ -492,34 +508,43 @@ function startBrowserApp() {
       state.cloudSavePending = true;
       return false;
     }
+
     state.cloudSaveInFlight = true;
     const payload = createCloudPayload(state.cards, state.seedDeckVersion);
     const content = JSON.stringify(payload, null, 2);
 
     try {
-      const sha = await fetchProgressFileSha();
-      const body = {
-        message: `chore: update ${PROGRESS_USER} learning progress`,
-        content: encodeBase64(content),
-        branch: GITHUB_REPO_BRANCH
-      };
-      if (sha) body.sha = sha;
+      let lastStatus = 0;
+      for (let attempt = 1; attempt <= REPO_SAVE_MAX_ATTEMPTS; attempt += 1) {
+        const sha = await fetchProgressFileSha();
+        const response = await fetch(progressFileUrl(), {
+          method: "PUT",
+          headers: cloudHeaders(),
+          body: JSON.stringify(createRepoSaveBody(content, sha))
+        });
 
-      const response = await fetch(progressFileUrl(), {
-        method: "PUT",
-        headers: cloudHeaders(),
-        body: JSON.stringify(body)
-      });
-      if (!response.ok) throw new Error(`GitHub repo save failed (${response.status})`);
-      if (!options.silent) setMessage(`Learning saved to ${PROGRESS_FILE_PATH}.`);
-      return true;
+        if (response.ok) {
+          if (!options.silent) setMessage(`Learning saved to ${PROGRESS_FILE_PATH}.`);
+          return true;
+        }
+
+        lastStatus = response.status;
+        if (!shouldRetryRepoSave(response.status)) break;
+      }
+
+      throw new Error(`GitHub repo save failed (${lastStatus})`);
     } catch (error) {
       if (!options.silent) setMessage(error.message || "GitHub repo save failed.");
       return false;
     } finally {
       state.cloudSaveInFlight = false;
+      if (state.cloudSavePending) {
+        state.cloudSavePending = false;
+        queueCloudSave();
+      }
     }
   }
+
   function queueCloudSave() {
     if (!state.cloud.autoSync || !state.cloud.token) return;
     window.clearTimeout(state.cloudSaveTimer);
@@ -536,7 +561,7 @@ function startBrowserApp() {
 
     try {
       const response = await fetch(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
-        headers: cloudHeaders()
+        headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
       });
       if (response.status === 404) throw new Error(`No progress file found at ${PROGRESS_FILE_PATH}.`);
       if (!response.ok) throw new Error(`GitHub repo load failed (${response.status})`);
@@ -693,6 +718,8 @@ if (typeof module !== "undefined") {
     syncSeedCards,
     resetLearning,
     createCloudPayload,
+    shouldRetryRepoSave,
+    createRepoSaveBody,
     getLearningStats,
     getFrenchText,
     buildSpellingText

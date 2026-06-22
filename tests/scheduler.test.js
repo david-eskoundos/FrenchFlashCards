@@ -12,6 +12,8 @@ const {
   syncSeedCards,
   resetLearning,
   createCloudPayload,
+  shouldRetryRepoSave,
+  createRepoSaveBody,
   getLearningStats,
   getFrenchText,
   buildSpellingText
@@ -153,6 +155,21 @@ test("createCloudPayload stores david repo progress metadata", () => {
   assert.deepEqual(payload.stats, { total: 1, studied: 0, learnedPercent: 0 });
   assert.equal(payload.cards.length, 1);
   assert.equal(payload.cards[0].front, "merci");
+});
+
+test("createRepoSaveBody includes content, branch, and latest sha", () => {
+  const body = createRepoSaveBody("progress text", "abc123");
+
+  assert.equal(body.message, "chore: update david learning progress");
+  assert.equal(body.branch, "main");
+  assert.equal(body.sha, "abc123");
+  assert.equal(Buffer.from(body.content, "base64").toString("utf8"), "progress text");
+});
+
+test("shouldRetryRepoSave retries GitHub conflict responses only", () => {
+  assert.equal(shouldRetryRepoSave(409), true);
+  assert.equal(shouldRetryRepoSave(401), false);
+  assert.equal(shouldRetryRepoSave(422), false);
 });
 
 test("getFrenchText chooses the French side based on card direction", () => {
