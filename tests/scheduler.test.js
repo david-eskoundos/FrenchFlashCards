@@ -17,6 +17,8 @@ const {
   createProgressEntries,
   shouldRetryRepoSave,
   formatGitHubError,
+  formatNetworkError,
+  getLatestProgressTime,
   createRepoSaveBody,
   getLearningStats,
   getFrenchText,
@@ -229,6 +231,22 @@ test("formatGitHubError includes status and detail", () => {
     formatGitHubError("GitHub repo save", 403, "Resource not accessible by personal access token"),
     "GitHub repo save failed (403): Resource not accessible by personal access token"
   );
+});
+
+test("formatNetworkError gives useful guidance for Safari Load failed", () => {
+  assert.equal(
+    formatNetworkError("GitHub repo load", new Error("Load failed")),
+    "GitHub repo load failed: Safari could not reach GitHub. Export JSON first, then check the token and try again."
+  );
+});
+
+test("getLatestProgressTime ignores fresh cards and returns newest studied update", () => {
+  const now = new Date("2026-07-01T12:00:00.000Z");
+  const fresh = createCard({ id: "seed-fresh", front: "fresh", back: "frais" }, now);
+  const older = scheduleCard(createCard({ id: "seed-old", front: "old", back: "vieux" }, now), "good", new Date("2026-07-02T12:00:00.000Z"));
+  const newer = scheduleCard(createCard({ id: "seed-new", front: "new", back: "nouveau" }, now), "hard", new Date("2026-07-03T12:00:00.000Z"));
+
+  assert.equal(getLatestProgressTime([fresh, older, newer]), new Date("2026-07-03T12:00:00.000Z").getTime());
 });
 
 test("getFrenchText chooses the French side based on card direction", () => {

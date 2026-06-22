@@ -200,6 +200,14 @@ function createProgressEntries(cards) {
   return cards.filter((card) => hasProgress(card) || !isSeedCard(card)).map(createProgressEntry);
 }
 
+function getLatestProgressTime(cards) {
+  return cards.reduce((latest, card) => {
+    if (!hasProgress(card)) return latest;
+    const updatedAt = new Date(card.updatedAt).getTime();
+    return Number.isFinite(updatedAt) && updatedAt > latest ? updatedAt : latest;
+  }, 0);
+}
+
 function applyProgressEntries(cards, progressEntries) {
   const cardsById = new Map(cards.map((card) => [card.id, card]));
   progressEntries.forEach((progress) => {
@@ -263,6 +271,21 @@ function shouldRetryRepoSave(status) {
 function formatGitHubError(action, status, detail = "") {
   const suffix = detail ? `: ${detail}` : ".";
   return `${action} failed (${status})${suffix}`;
+}
+
+function formatNetworkError(action, error) {
+  const detail = error && error.message ? error.message : "network request failed";
+  const genericNetworkErrors = new Set([
+    "Failed to fetch",
+    "Load failed",
+    "NetworkError when attempting to fetch resource."
+  ]);
+
+  if (genericNetworkErrors.has(detail)) {
+    return `${action} failed: Safari could not reach GitHub. Export JSON first, then check the token and try again.`;
+  }
+
+  return `${action} failed: ${detail}`;
 }
 
 async function readGitHubError(response, action) {
@@ -346,6 +369,7 @@ function startBrowserApp() {
     progressPath: document.getElementById("progressPath"),
     autoSync: document.getElementById("autoSync"),
     saveSyncBtn: document.getElementById("saveSyncBtn"),
+    testTokenBtn: document.getElementById("testTokenBtn"),
     syncNowBtn: document.getElementById("syncNowBtn"),
     loadCloudBtn: document.getElementById("loadCloudBtn"),
     resetLearningBtn: document.getElementById("resetLearningBtn"),
@@ -623,7 +647,7 @@ function startBrowserApp() {
 
       throw new Error(formatGitHubError("GitHub repo save", lastStatus, "the progress file kept changing; try Sync now again"));
     } catch (error) {
-      if (!options.silent) setMessage(error.message || "GitHub repo save failed.");
+      if (!options.silent) setMessage(formatNetworkError("GitHub repo save", error));
       return false;
     } finally {
       state.cloudSaveInFlight = false;
@@ -660,15 +684,52 @@ function startBrowserApp() {
       const cloudCards = Array.isArray(payload.cardProgress)
         ? applyProgressEntries(state.cards, payload.cardProgress)
         : parseImportedDeck(JSON.stringify(payload));
+      const localStats = getLearningStats(state.cards);
+      const cloudStats = getLearningStats(cloudCards);
+      const localProgressTime = getLatestProgressTime(state.cards);
+      const cloudProgressTime = getLatestProgressTime(cloudCards);
+      if (localProgressTime > cloudProgressTime) {
+        setMessage(`Repo progress is older (${cloudStats.learnedPercent}%). Phone progress is newer (${localStats.learnedPercent}%). Press Sync now to upload the phone.`);
+        return;
+      }
       state.cards = Array.isArray(payload.cardProgress) ? cloudCards : mergeCardsByLatestProgress(state.cards, cloudCards);
       state.seedDeckVersion = Number(payload.seedDeckVersion || state.seedDeckVersion);
       saveCards({ cloud: false });
       renderAll();
       setMessage(`Loaded ${cloudCards.length} cards from ${PROGRESS_FILE_PATH}.`);
     } catch (error) {
-      setMessage(error.message || "GitHub repo load failed.");
+      setMessage(formatNetworkError("GitHub repo load", error));
     }
   }
+  async function testGithubToken() {
+    state.cloud = {
+      token: normalizeText(els.githubToken.value),
+      autoSync: els.autoSync.checked
+    };
+    saveCloudSettings();
+
+    if (!state.cloud.token) {
+      setMessage("Add a GitHub token before testing.");
+      return;
+    }
+
+    try {
+      setMessage("Testing GitHub token...");
+      const repoResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`, {
+        headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
+      });
+      if (!repoResponse.ok) throw await readGitHubError(repoResponse, "GitHub token test");
+      const repo = await repoResponse.json();
+      const canWrite = !repo.permissions || repo.permissions.push || repo.permissions.admin || repo.permissions.maintain;
+      await fetchProgressFileSha();
+      setMessage(canWrite
+        ? "Token can access this repo. Press Sync now to save phone progress."
+        : "Token can read the repo but may not write. Give it Contents: Read and write.");
+    } catch (error) {
+      setMessage(formatNetworkError("GitHub token test", error));
+    }
+  }
+
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       document.querySelectorAll(".tab").forEach((candidate) => candidate.classList.remove("is-active"));
@@ -766,6 +827,8 @@ function startBrowserApp() {
     setMessage("Repo sync settings saved on this device.");
   });
 
+  els.testTokenBtn.addEventListener("click", testGithubToken);
+
   els.syncNowBtn.addEventListener("click", () => {
     state.cloud = {
       token: normalizeText(els.githubToken.value),
@@ -816,6 +879,8 @@ if (typeof module !== "undefined") {
     createProgressEntries,
     shouldRetryRepoSave,
     formatGitHubError,
+    formatNetworkError,
+    getLatestProgressTime,
     createRepoSaveBody,
     getLearningStats,
     getFrenchText,

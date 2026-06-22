@@ -159,6 +159,7 @@ form button[type="submit"],
 #exportBtn,
 #importBtn,
 #saveSyncBtn,
+#testTokenBtn,
 #syncNowBtn,
 #loadCloudBtn {
   background: var(--accent);
@@ -266,9 +267,6 @@ label {
   gap: 8px;
 }
 
-.sync-actions {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
 
 .button-row button,
 .load-row button {
