@@ -4,11 +4,11 @@
   "user": "david",
   "progressPath": "progress/david-progress.json",
   "seedDeckVersion": 3,
-  "savedAt": "2026-06-22T15:08:00.108Z",
+  "savedAt": "2026-06-22T15:09:11.084Z",
   "stats": {
     "total": 1184,
-    "studied": 36,
-    "learnedPercent": 3
+    "studied": 44,
+    "learnedPercent": 4
   },
   "cards": [
     {
@@ -439,11 +439,11 @@
       "tags": "source:xlsx, B1, Verbs",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:08:00.601Z",
+      "dueAt": "2026-06-24T15:08:00.601Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -559,11 +559,11 @@
       "tags": "source:xlsx, B1, Tickets and Documents",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:08:03.835Z",
+      "dueAt": "2026-06-24T15:08:03.835Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -634,11 +634,11 @@
       "tags": "source:xlsx, B1, People",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:08:21.654Z",
+      "dueAt": "2026-06-23T15:08:21.654Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -664,12 +664,12 @@
       "tags": "source:xlsx, B1, People",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
+      "updatedAt": "2026-06-22T15:08:31.109Z",
+      "dueAt": "2026-06-22T15:18:31.109Z",
       "intervalDays": 0,
-      "ease": 2.5,
+      "ease": 2.3,
       "repetitions": 0,
-      "lapses": 0
+      "lapses": 1
     },
     {
       "id": "seed-xlsx-0045-d-clarer-to-declare",
@@ -694,11 +694,11 @@
       "tags": "source:xlsx, B1, Verbs",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:08:50.052Z",
+      "dueAt": "2026-06-23T15:08:50.052Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -724,11 +724,11 @@
       "tags": "source:xlsx, A1, Body, Le corps",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:08:52.272Z",
+      "dueAt": "2026-06-24T15:08:52.272Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -754,11 +754,11 @@
       "tags": "source:xlsx, A1, Body, Le corps",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:08:56.976Z",
+      "dueAt": "2026-06-24T15:08:56.976Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -784,11 +784,11 @@
       "tags": "source:xlsx, A1, Body, Le corps",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:09:08.081Z",
+      "dueAt": "2026-06-24T15:09:08.081Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
