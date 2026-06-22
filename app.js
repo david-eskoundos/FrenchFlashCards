@@ -9,7 +9,7 @@ const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
 const REPO_SAVE_MAX_ATTEMPTS = 3;
-const APP_VERSION = "20260622-token-cleanup";
+const APP_VERSION = "20260622-sync-server";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -29,6 +29,10 @@ function normalizeText(value) {
 
 function normalizeToken(value) {
   return normalizeText(value).replace(/[\s\u200B-\u200D\uFEFF]/g, "");
+}
+
+function normalizeUrl(value) {
+  return normalizeText(value).replace(/\/+$/, "");
 }
 
 function createCard(input, now = new Date()) {
@@ -416,6 +420,7 @@ function startBrowserApp() {
     spellBtn: document.getElementById("spellBtn"),
     spellingLine: document.getElementById("spellingLine"),
     githubToken: document.getElementById("githubToken"),
+    syncServerUrl: document.getElementById("syncServerUrl"),
     appVersion: document.getElementById("appVersion"),
     progressPath: document.getElementById("progressPath"),
     autoSync: document.getElementById("autoSync"),
@@ -450,16 +455,18 @@ function startBrowserApp() {
       const parsed = JSON.parse(localStorage.getItem(CLOUD_SETTINGS_KEY) || "{}");
       return {
         token: normalizeToken(parsed.token),
+        syncServerUrl: normalizeUrl(parsed.syncServerUrl),
         autoSync: Boolean(parsed.autoSync)
       };
     } catch {
-      return { token: "", autoSync: false };
+      return { token: "", syncServerUrl: "", autoSync: false };
     }
   }
 
   function saveCloudSettings() {
     localStorage.setItem(CLOUD_SETTINGS_KEY, JSON.stringify(state.cloud));
     els.githubToken.value = state.cloud.token;
+    els.syncServerUrl.value = state.cloud.syncServerUrl || "";
     els.appVersion.textContent = APP_VERSION;
     els.progressPath.textContent = PROGRESS_FILE_PATH;
     els.autoSync.checked = state.cloud.autoSync;
@@ -663,6 +670,28 @@ function startBrowserApp() {
     speakFrenchText(spelling, { rate: 0.65 });
   }
 
+  function hasSyncServer() {
+    return Boolean(normalizeUrl(state.cloud.syncServerUrl));
+  }
+
+  function syncServerUrl(path = "") {
+    return `${normalizeUrl(state.cloud.syncServerUrl)}${path}`;
+  }
+
+  async function syncServerRequest(path, options = {}) {
+    const response = await githubRequest(syncServerUrl(path), {
+      method: options.method || "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache"
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined
+    });
+    if (!response.ok) throw await readGitHubError(response, options.action || "Sync server");
+    return response.json();
+  }
+
   function cloudHeaders(options = {}) {
     const headers = {
       Accept: "application/vnd.github+json",
@@ -688,8 +717,8 @@ function startBrowserApp() {
   }
 
   async function saveToGithub(options = {}) {
-    if (!state.cloud.token) {
-      if (!options.silent) setMessage("Add a GitHub token before syncing.");
+    if (!hasSyncServer() && !state.cloud.token) {
+      if (!options.silent) setMessage("Add a GitHub token or sync server before syncing.");
       return false;
     }
 
@@ -704,6 +733,16 @@ function startBrowserApp() {
     const content = JSON.stringify(payload, null, 2);
 
     try {
+      if (hasSyncServer()) {
+        await syncServerRequest("/progress", {
+          method: "PUT",
+          body: payload,
+          action: "Sync server save"
+        });
+        if (!options.silent) setMessage("Learning saved through sync server.");
+        return true;
+      }
+
       let lastStatus = 0;
       for (let attempt = 1; attempt <= REPO_SAVE_MAX_ATTEMPTS; attempt += 1) {
         const sha = await fetchProgressFileSha();
@@ -744,20 +783,25 @@ function startBrowserApp() {
   }
 
   async function loadFromGithub() {
-    if (!state.cloud.token) {
-      setMessage("Add a GitHub token before loading repo progress.");
+    if (!hasSyncServer() && !state.cloud.token) {
+      setMessage("Add a GitHub token or sync server before loading repo progress.");
       return;
     }
 
     try {
-      setMessage("Loading progress from repo...");
-      const response = await githubRequest(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
-        headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
-      });
-      if (response.status === 404) throw new Error(`No progress file found at ${PROGRESS_FILE_PATH}.`);
-      if (!response.ok) throw await readGitHubError(response, "GitHub repo load");
-      const file = await response.json();
-      const payload = JSON.parse(decodeBase64(file.content || ""));
+      setMessage(hasSyncServer() ? "Loading progress from sync server..." : "Loading progress from repo...");
+      let payload;
+      if (hasSyncServer()) {
+        payload = await syncServerRequest("/progress", { action: "Sync server load" });
+      } else {
+        const response = await githubRequest(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
+          headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
+        });
+        if (response.status === 404) throw new Error(`No progress file found at ${PROGRESS_FILE_PATH}.`);
+        if (!response.ok) throw await readGitHubError(response, "GitHub repo load");
+        const file = await response.json();
+        payload = JSON.parse(decodeBase64(file.content || ""));
+      }
       const cloudCards = Array.isArray(payload.cardProgress)
         ? applyProgressEntries(state.cards, payload.cardProgress)
         : parseImportedDeck(JSON.stringify(payload));
@@ -781,12 +825,24 @@ function startBrowserApp() {
   async function testGithubToken() {
     state.cloud = {
       token: normalizeToken(els.githubToken.value),
+      syncServerUrl: normalizeUrl(els.syncServerUrl.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
 
+    if (hasSyncServer()) {
+      try {
+        setMessage("Testing sync server...");
+        await syncServerRequest("/health", { action: "Sync server test" });
+        setMessage("Sync server works. Press Sync now.");
+      } catch (error) {
+        setMessage(formatNetworkError("Sync server test", error));
+      }
+      return;
+    }
+
     if (!state.cloud.token) {
-      setMessage("Add a GitHub token before testing.");
+      setMessage("Add a GitHub token or sync server before testing.");
       return;
     }
 
@@ -910,6 +966,7 @@ function startBrowserApp() {
   els.saveSyncBtn.addEventListener("click", () => {
     state.cloud = {
       token: normalizeToken(els.githubToken.value),
+      syncServerUrl: normalizeUrl(els.syncServerUrl.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
@@ -921,6 +978,7 @@ function startBrowserApp() {
   els.syncNowBtn.addEventListener("click", () => {
     state.cloud = {
       token: normalizeToken(els.githubToken.value),
+      syncServerUrl: normalizeUrl(els.syncServerUrl.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
@@ -930,6 +988,7 @@ function startBrowserApp() {
   els.loadCloudBtn.addEventListener("click", () => {
     state.cloud = {
       token: normalizeToken(els.githubToken.value),
+      syncServerUrl: normalizeUrl(els.syncServerUrl.value),
       autoSync: els.autoSync.checked
     };
     saveCloudSettings();
@@ -955,6 +1014,7 @@ if (typeof module !== "undefined") {
     APP_VERSION,
     STORAGE_KEY,
     normalizeToken,
+    normalizeUrl,
     createCard,
     scheduleCard,
     getStudyQueue,

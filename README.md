@@ -186,3 +186,24 @@ https://david-eskoundos.github.io/FrenchFlashCards/
 - When adding many cards, update the source file, regenerate `data/seed-cards.json`, update the verification report, and run tests.
 - If changing the built-in deck, bump `SEED_DECK_VERSION` in `app.js` so existing browsers receive the new cards.
 - Do not remove user learning progress during deck updates; built-in card text can update while scheduling state is preserved.
+
+
+## iPhone Sync Server Option
+
+If iPhone Chrome/Safari shows `Browser network request failed` when the app talks directly to GitHub, use the included Cloudflare Worker as a tiny sync server. This avoids browser-to-GitHub API blocking and keeps the GitHub token out of the phone browser.
+
+One-time setup:
+
+1. Create a Cloudflare Worker.
+2. Copy `worker/progress-sync-worker.js` into the Worker editor.
+3. Add a Worker secret named `GITHUB_TOKEN` with a fine-grained GitHub token that has `Contents: Read and write` for this repo.
+4. Optional Worker variables:
+   - `ALLOWED_ORIGIN=https://david-eskoundos.github.io`
+   - `GITHUB_OWNER=david-eskoundos`
+   - `GITHUB_REPO=FrenchFlashCards`
+   - `GITHUB_BRANCH=main`
+   - `PROGRESS_FILE_PATH=progress/david-progress.json`
+5. Deploy the Worker and copy its URL.
+6. In the flashcard app Data tab, paste that URL into `Sync server URL`, press `Save sync`, then `Test token`, then `Sync now`.
+
+When `Sync server URL` is filled, the app uses the Worker instead of calling GitHub directly from the browser.
