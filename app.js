@@ -273,19 +273,62 @@ function formatGitHubError(action, status, detail = "") {
   return `${action} failed (${status})${suffix}`;
 }
 
-function formatNetworkError(action, error) {
+function isGenericNetworkError(error) {
   const detail = error && error.message ? error.message : "network request failed";
-  const genericNetworkErrors = new Set([
+  return new Set([
     "Failed to fetch",
     "Load failed",
     "NetworkError when attempting to fetch resource."
-  ]);
+  ]).has(detail);
+}
 
-  if (genericNetworkErrors.has(detail)) {
-    return `${action} failed: Safari could not reach GitHub. Export JSON first, then check the token and try again.`;
+function formatNetworkError(action, error) {
+  const detail = error && error.message ? error.message : "network request failed";
+  if (isGenericNetworkError(error)) {
+    return `${action} failed: Browser could not reach GitHub. Keep this token, export JSON as backup, then try again on Chrome or Wi-Fi.`;
   }
 
   return `${action} failed: ${detail}`;
+}
+
+function createXhrResponse(xhr) {
+  return {
+    ok: xhr.status >= 200 && xhr.status < 300,
+    status: xhr.status,
+    async text() {
+      return xhr.responseText || "";
+    },
+    async json() {
+      return JSON.parse(xhr.responseText || "{}");
+    }
+  };
+}
+
+function requestWithXhr(url, options = {}) {
+  return new Promise((resolve, reject) => {
+    if (typeof XMLHttpRequest === "undefined") {
+      reject(new Error("XMLHttpRequest is not available"));
+      return;
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open(options.method || "GET", url, true);
+    xhr.timeout = 20000;
+    Object.entries(options.headers || {}).forEach(([key, value]) => xhr.setRequestHeader(key, value));
+    xhr.onload = () => resolve(createXhrResponse(xhr));
+    xhr.onerror = () => reject(new Error("Browser network request failed"));
+    xhr.ontimeout = () => reject(new Error("GitHub request timed out"));
+    xhr.send(options.body || null);
+  });
+}
+
+async function githubRequest(url, options = {}) {
+  try {
+    return await fetch(url, options);
+  } catch (error) {
+    if (isGenericNetworkError(error)) return requestWithXhr(url, options);
+    throw error;
+  }
 }
 
 async function readGitHubError(response, action) {
@@ -601,7 +644,7 @@ function startBrowserApp() {
   }
 
   async function fetchProgressFileSha() {
-    const response = await fetch(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
+    const response = await githubRequest(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
       headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
     });
     if (response.status === 404) return "";
@@ -630,7 +673,7 @@ function startBrowserApp() {
       let lastStatus = 0;
       for (let attempt = 1; attempt <= REPO_SAVE_MAX_ATTEMPTS; attempt += 1) {
         const sha = await fetchProgressFileSha();
-        const response = await fetch(progressFileUrl(), {
+        const response = await githubRequest(progressFileUrl(), {
           method: "PUT",
           headers: cloudHeaders(),
           body: JSON.stringify(createRepoSaveBody(content, sha))
@@ -674,7 +717,7 @@ function startBrowserApp() {
 
     try {
       setMessage("Loading progress from repo...");
-      const response = await fetch(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
+      const response = await githubRequest(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
         headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
       });
       if (response.status === 404) throw new Error(`No progress file found at ${PROGRESS_FILE_PATH}.`);
@@ -715,7 +758,7 @@ function startBrowserApp() {
 
     try {
       setMessage("Testing GitHub token...");
-      const repoResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`, {
+      const repoResponse = await githubRequest(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`, {
         headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
       });
       if (!repoResponse.ok) throw await readGitHubError(repoResponse, "GitHub token test");
@@ -879,6 +922,7 @@ if (typeof module !== "undefined") {
     createProgressEntries,
     shouldRetryRepoSave,
     formatGitHubError,
+    isGenericNetworkError,
     formatNetworkError,
     getLatestProgressTime,
     createRepoSaveBody,

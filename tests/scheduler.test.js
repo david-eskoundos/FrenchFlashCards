@@ -17,6 +17,7 @@ const {
   createProgressEntries,
   shouldRetryRepoSave,
   formatGitHubError,
+  isGenericNetworkError,
   formatNetworkError,
   getLatestProgressTime,
   createRepoSaveBody,
@@ -233,10 +234,13 @@ test("formatGitHubError includes status and detail", () => {
   );
 });
 
-test("formatNetworkError gives useful guidance for Safari Load failed", () => {
+test("formatNetworkError gives useful guidance for browser Load failed", () => {
+  const error = new Error("Load failed");
+
+  assert.equal(isGenericNetworkError(error), true);
   assert.equal(
-    formatNetworkError("GitHub repo load", new Error("Load failed")),
-    "GitHub repo load failed: Safari could not reach GitHub. Export JSON first, then check the token and try again."
+    formatNetworkError("GitHub repo load", error),
+    "GitHub repo load failed: Browser could not reach GitHub. Keep this token, export JSON as backup, then try again on Chrome or Wi-Fi."
   );
 });
 
