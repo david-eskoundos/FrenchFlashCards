@@ -4,11 +4,11 @@
   "user": "david",
   "progressPath": "progress/david-progress.json",
   "seedDeckVersion": 3,
-  "savedAt": "2026-06-22T15:05:26.780Z",
+  "savedAt": "2026-06-22T15:06:31.594Z",
   "stats": {
     "total": 1184,
-    "studied": 27,
-    "learnedPercent": 2
+    "studied": 31,
+    "learnedPercent": 3
   },
   "cards": [
     {
@@ -169,12 +169,12 @@
       "tags": "source:xlsx, A2, Tickets and Documents",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:55:54.286Z",
-      "dueAt": "2026-06-21T21:05:54.286Z",
+      "updatedAt": "2026-06-22T15:06:10.260Z",
+      "dueAt": "2026-06-22T15:16:10.260Z",
       "intervalDays": 0,
-      "ease": 2.3,
+      "ease": 2.1,
       "repetitions": 0,
-      "lapses": 1
+      "lapses": 2
     },
     {
       "id": "seed-xlsx-0012-en-avance-early",
@@ -289,11 +289,11 @@
       "tags": "source:xlsx, A2, People",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:06:17.259Z",
+      "dueAt": "2026-06-23T15:06:17.259Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -409,11 +409,11 @@
       "tags": "source:xlsx, B1, Verbs",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:06:28.590Z",
+      "dueAt": "2026-06-23T15:06:28.590Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -544,11 +544,11 @@
       "tags": "source:xlsx, B1, Tickets and Documents",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
+      "updatedAt": "2026-06-22T15:05:34.655Z",
+      "dueAt": "2026-06-23T15:05:34.655Z",
+      "intervalDays": 1,
       "ease": 2.5,
-      "repetitions": 0,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -574,11 +574,11 @@
       "tags": "source:xlsx, B1, Tickets and Documents",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
+      "updatedAt": "2026-06-22T15:05:45.297Z",
+      "dueAt": "2026-06-23T15:05:45.297Z",
+      "intervalDays": 1,
       "ease": 2.5,
-      "repetitions": 0,
+      "repetitions": 1,
       "lapses": 0
     },
     {
