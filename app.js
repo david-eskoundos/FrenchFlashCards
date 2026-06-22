@@ -81,10 +81,14 @@ function scheduleCard(card, rating, now = new Date()) {
   return next;
 }
 
+function hasBeenStudied(card) {
+  return card.repetitions > 0 || card.lapses > 0;
+}
+
 function getStudyQueue(cards, now = new Date()) {
   const nowTime = new Date(now).getTime();
   const due = cards
-    .filter((card) => card.repetitions > 0 && new Date(card.dueAt).getTime() <= nowTime)
+    .filter((card) => hasBeenStudied(card) && new Date(card.dueAt).getTime() <= nowTime)
     .sort((a, b) => new Date(a.dueAt) - new Date(b.dueAt));
   const fresh = cards.filter((card) => card.repetitions === 0 && card.lapses === 0);
   return [...due, ...fresh];
@@ -143,7 +147,7 @@ function resetLearning(cards, now = new Date()) {
 
 function getLearningStats(cards) {
   const total = cards.length;
-  const studied = cards.filter((card) => card.repetitions > 0 || card.lapses > 0).length;
+  const studied = cards.filter(hasBeenStudied).length;
   const learnedPercent = total ? Math.round((studied / total) * 100) : 0;
   return { total, studied, learnedPercent };
 }
@@ -325,7 +329,7 @@ function startBrowserApp() {
 
   function renderStats() {
     const now = Date.now();
-    const due = state.cards.filter((card) => card.repetitions > 0 && new Date(card.dueAt).getTime() <= now).length;
+    const due = state.cards.filter((card) => hasBeenStudied(card) && new Date(card.dueAt).getTime() <= now).length;
     const fresh = state.cards.filter((card) => card.repetitions === 0 && card.lapses === 0).length;
     els.dueCount.textContent = String(due);
     els.newCount.textContent = String(fresh);
@@ -390,7 +394,8 @@ function startBrowserApp() {
       const back = document.createElement("span");
       back.textContent = card.back;
       const meta = document.createElement("span");
-      meta.textContent = `${card.tags || "untagged"} - due ${new Date(card.dueAt).toLocaleDateString()}`;
+      const status = hasBeenStudied(card) ? `due ${new Date(card.dueAt).toLocaleDateString()}` : "new card";
+      meta.textContent = `${card.tags || "untagged"} - ${status}`;
 
       const actions = document.createElement("div");
       actions.className = "list-actions";
@@ -682,6 +687,7 @@ if (typeof module !== "undefined") {
     createCard,
     scheduleCard,
     getStudyQueue,
+    hasBeenStudied,
     parseImportedDeck,
     mergeCards,
     syncSeedCards,

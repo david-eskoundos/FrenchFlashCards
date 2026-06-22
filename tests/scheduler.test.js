@@ -6,6 +6,7 @@ const {
   createCard,
   scheduleCard,
   getStudyQueue,
+  hasBeenStudied,
   parseImportedDeck,
   mergeCards,
   syncSeedCards,
@@ -60,6 +61,16 @@ test("getStudyQueue returns due cards before new cards", () => {
 
   const queue = getStudyQueue([future, fresh, due], now);
   assert.deepEqual(queue.map((card) => card.front), ["due", "new"]);
+});
+test("getStudyQueue returns again cards after their retry delay", () => {
+  const start = new Date("2026-06-21T10:00:00.000Z");
+  const retry = scheduleCard(createCard({ front: "again", back: "encore" }, start), "again", start);
+  const earlyQueue = getStudyQueue([retry], new Date("2026-06-21T10:09:00.000Z"));
+  const dueQueue = getStudyQueue([retry], new Date("2026-06-21T10:10:00.000Z"));
+
+  assert.equal(hasBeenStudied(retry), true);
+  assert.deepEqual(earlyQueue.map((card) => card.front), []);
+  assert.deepEqual(dueQueue.map((card) => card.front), ["again"]);
 });
 
 test("parseImportedDeck rejects malformed imported data", () => {
