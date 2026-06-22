@@ -4,10 +4,10 @@
   "user": "david",
   "progressPath": "progress/david-progress.json",
   "seedDeckVersion": 3,
-  "savedAt": "2026-06-22T15:02:07.773Z",
+  "savedAt": "2026-06-22T15:04:23.349Z",
   "stats": {
     "total": 1184,
-    "studied": 21,
+    "studied": 24,
     "learnedPercent": 2
   },
   "cards": [
@@ -319,11 +319,11 @@
       "tags": "source:xlsx, A2, Verbs",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:02:16.607Z",
+      "dueAt": "2026-06-24T15:02:16.607Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -379,11 +379,11 @@
       "tags": "source:xlsx, A2, Verbs",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
+      "updatedAt": "2026-06-22T15:02:35.929Z",
+      "dueAt": "2026-06-23T15:02:35.929Z",
+      "intervalDays": 1,
       "ease": 2.5,
-      "repetitions": 0,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -424,11 +424,11 @@
       "tags": "source:xlsx, B1, Verbs",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:04:20.343Z",
+      "dueAt": "2026-06-24T15:04:20.343Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
