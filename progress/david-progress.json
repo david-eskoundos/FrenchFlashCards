@@ -4,10 +4,10 @@
   "user": "david",
   "progressPath": "progress/david-progress.json",
   "seedDeckVersion": 3,
-  "savedAt": "2026-06-22T15:06:31.594Z",
+  "savedAt": "2026-06-22T15:08:00.108Z",
   "stats": {
     "total": 1184,
-    "studied": 31,
+    "studied": 36,
     "learnedPercent": 3
   },
   "cards": [
@@ -199,11 +199,11 @@
       "tags": "source:xlsx, A2, Tickets and Documents",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:07:57.101Z",
+      "dueAt": "2026-06-24T15:07:57.101Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -469,11 +469,11 @@
       "tags": "source:xlsx, B1, Verbs",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:06:52.784Z",
+      "dueAt": "2026-06-23T15:06:52.784Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -529,11 +529,11 @@
       "tags": "source:xlsx, B1, Tickets and Documents",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:06:59.824Z",
+      "dueAt": "2026-06-24T15:06:59.824Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -589,11 +589,11 @@
       "tags": "source:xlsx, B1, Luggage",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
+      "updatedAt": "2026-06-22T15:07:09.934Z",
+      "dueAt": "2026-06-23T15:07:09.934Z",
+      "intervalDays": 1,
       "ease": 2.5,
-      "repetitions": 0,
+      "repetitions": 1,
       "lapses": 0
     },
     {
@@ -619,11 +619,11 @@
       "tags": "source:xlsx, B1, Luggage",
       "direction": "en-fr",
       "createdAt": "2026-06-21T20:43:44.501Z",
-      "updatedAt": "2026-06-21T20:43:44.501Z",
-      "dueAt": "2026-06-21T20:43:44.501Z",
-      "intervalDays": 0,
-      "ease": 2.5,
-      "repetitions": 0,
+      "updatedAt": "2026-06-22T15:07:19.785Z",
+      "dueAt": "2026-06-23T15:07:19.785Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
       "lapses": 0
     },
     {
