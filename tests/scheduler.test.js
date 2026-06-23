@@ -22,6 +22,7 @@ const {
   formatNetworkError,
   getLatestProgressTime,
   createRepoSaveBody,
+  createTimestampedBackupFilename,
   getLearningStats,
   getFrenchText,
   buildSpellingText
@@ -224,6 +225,13 @@ test("createRepoSaveBody includes content, branch, and latest sha", () => {
   assert.equal(body.branch, "main");
   assert.equal(body.sha, "abc123");
   assert.equal(Buffer.from(body.content, "base64").toString("utf8"), "progress text");
+});
+
+test("createTimestampedBackupFilename includes an ISO timestamp safe for filenames", () => {
+  assert.equal(
+    createTimestampedBackupFilename(new Date("2026-06-22T20:15:30.123Z")),
+    "french-flashcards-2026-06-22T20-15-30-123Z.json"
+  );
 });
 
 test("shouldRetryRepoSave retries GitHub conflict responses only", () => {

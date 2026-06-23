@@ -43,47 +43,19 @@ The B1 handnotes were imported from a visual transcription JSON file. Three of t
 5. Use `Listen` for pronunciation.
 6. Use `Spell` when you want the exact French spelling.
 
-## Sync And Saving
+## Saving And Backups
 
-The app always saves progress in the current browser with `localStorage`. On the same iPhone/browser, you can close the page and come back later.
+The app saves progress automatically in the current browser with `localStorage`. On the same iPhone/browser, you can close the page and come back later.
 
-For backup across devices, the app can also save David's progress directly into this public repo file:
+Use the `Data` tab for manual backups:
 
-```text
-progress/david-progress.json
-```
+- `Export JSON` downloads a timestamped backup file, for example `french-flashcards-2026-06-22T20-15-30-123Z.json`.
+- `Copy backup` shows the same JSON on screen and tries to copy it to the clipboard.
+- `Import JSON` restores cards/progress from a backup.
+- `Reset learning` clears scheduling progress but keeps the cards.
 
-This file is intentionally named with `david` so more users can be added later with their own files, for example `progress/another-user-progress.json`.
+For best safety, export a JSON backup after each study session or whenever you have made important progress.
 
-### First-Time Repo Sync
-
-1. Create a GitHub fine-grained token for this repository.
-2. Paste it into `GitHub token` in the app's `Data` tab.
-3. Check `Auto-save learning to my repo`.
-4. Press `Save sync` so this browser remembers the token and auto-save setting.
-5. Press `Sync now` once to write the first real progress backup to `progress/david-progress.json`.
-
-### Normal Daily Use
-
-- If `Auto-save learning to my repo` is checked, you do not need to press `Sync now` every time.
-- Press `Sync now` manually when you want an immediate repo backup.
-- Press `Load repo` only on a new browser, phone, laptop, or after clearing browser data.
-- Keep `Reset learning` for the rare case where you want every card to start fresh again.
-
-The GitHub token is stored only in that browser's local storage. Do not use it on a shared device. Because this repository is public, the progress file is also public.
-
-### Fine-Grained Token Steps
-
-1. Open GitHub, then go to `Settings` -> `Developer settings` -> `Personal access tokens` -> `Fine-grained tokens`.
-2. Choose `Generate new token`.
-3. Name it something like `FrenchFlashCards iPhone`.
-4. Set an expiration you are comfortable with, for example 90 days or 1 year.
-5. Under repository access, choose `Only select repositories`.
-6. Select `david-eskoundos/FrenchFlashCards`.
-7. Under repository permissions, set `Contents` to `Read and write`.
-8. Leave everything else as `No access` unless GitHub requires metadata read access automatically.
-9. Generate the token and copy it immediately.
-10. Paste it into the app's `GitHub token` field, check auto-save, then press `Save sync` and `Sync now`.
 ## Working On Another Laptop Or Codex
 
 Clone the repo:
@@ -113,11 +85,11 @@ No build step is required. This is a static HTML/CSS/JavaScript app.
 | --- | --- |
 | `index.html` | Main page structure. |
 | `styles.css` | Mobile-first UI styles. |
-| `app.js` | Flashcard app, scheduler, local save, GitHub repo sync, audio, spelling, browse pagination. |
+| `app.js` | Flashcard app, scheduler, local save, timestamped JSON export, audio, spelling, browse pagination. |
 | `data/seed-cards.json` | Generated built-in deck used by the website. |
 | `data/flashcard-extraction-report.json` | Verification/report metadata for the generated deck. |
 | `data/b1-handnotes-source.json` | Source JSON for the 146 B1 handnote cards. |
-| `progress/david-progress.json` | David's repo-backed learning progress file. The app updates this through the GitHub API. |
+| `progress/david-progress.json` | Old repo-backed progress backup kept for reference. The app no longer updates it automatically. |
 | `tools/generate_seed_cards.py` | Regenerates the built-in deck from source materials. |
 | `tools/verify_seed_deck.js` | Validates counts, IDs, direction, and required card fields. |
 | `tests/scheduler.test.js` | Node tests for scheduler, import/sync helpers, spelling, and deck integrity. |
@@ -188,22 +160,3 @@ https://david-eskoundos.github.io/FrenchFlashCards/
 - Do not remove user learning progress during deck updates; built-in card text can update while scheduling state is preserved.
 
 
-## iPhone Sync Server Option
-
-If iPhone Chrome/Safari shows `Browser network request failed` when the app talks directly to GitHub, use the included Cloudflare Worker as a tiny sync server. This avoids browser-to-GitHub API blocking and keeps the GitHub token out of the phone browser.
-
-One-time setup:
-
-1. Create a Cloudflare Worker.
-2. Copy `worker/progress-sync-worker.js` into the Worker editor.
-3. Add a Worker secret named `GITHUB_TOKEN` with a fine-grained GitHub token that has `Contents: Read and write` for this repo.
-4. Optional Worker variables:
-   - `ALLOWED_ORIGIN=https://david-eskoundos.github.io`
-   - `GITHUB_OWNER=david-eskoundos`
-   - `GITHUB_REPO=FrenchFlashCards`
-   - `GITHUB_BRANCH=main`
-   - `PROGRESS_FILE_PATH=progress/david-progress.json`
-5. Deploy the Worker and copy its URL.
-6. In the flashcard app Data tab, paste that URL into `Sync server URL`, press `Save sync`, then `Test token`, then `Sync now`.
-
-When `Sync server URL` is filled, the app uses the Worker instead of calling GitHub directly from the browser.

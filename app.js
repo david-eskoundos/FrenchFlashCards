@@ -9,7 +9,7 @@ const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
 const REPO_SAVE_MAX_ATTEMPTS = 3;
-const APP_VERSION = "20260622-sync-server";
+const APP_VERSION = "20260622-local-export";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -33,6 +33,11 @@ function normalizeToken(value) {
 
 function normalizeUrl(value) {
   return normalizeText(value).replace(/\/+$/, "");
+}
+
+function createTimestampedBackupFilename(now = new Date()) {
+  const stamp = now.toISOString().replace(/[:.]/g, "-");
+  return `french-flashcards-${stamp}.json`;
 }
 
 function createCard(input, now = new Date()) {
@@ -419,15 +424,6 @@ function startBrowserApp() {
     listenBtn: document.getElementById("listenBtn"),
     spellBtn: document.getElementById("spellBtn"),
     spellingLine: document.getElementById("spellingLine"),
-    githubToken: document.getElementById("githubToken"),
-    syncServerUrl: document.getElementById("syncServerUrl"),
-    appVersion: document.getElementById("appVersion"),
-    progressPath: document.getElementById("progressPath"),
-    autoSync: document.getElementById("autoSync"),
-    saveSyncBtn: document.getElementById("saveSyncBtn"),
-    testTokenBtn: document.getElementById("testTokenBtn"),
-    syncNowBtn: document.getElementById("syncNowBtn"),
-    loadCloudBtn: document.getElementById("loadCloudBtn"),
     resetLearningBtn: document.getElementById("resetLearningBtn"),
     message: document.getElementById("message")
   };
@@ -436,14 +432,10 @@ function startBrowserApp() {
   const state = {
     cards: storedDeck.cards,
     seedDeckVersion: storedDeck.seedDeckVersion,
-    cloud: readCloudSettings(),
     queue: [],
     currentIndex: 0,
     revealed: false,
-    browseVisibleCount: BROWSE_PAGE_SIZE,
-    cloudSaveTimer: null,
-    cloudSaveInFlight: false,
-    cloudSavePending: false
+    browseVisibleCount: BROWSE_PAGE_SIZE
   };
 
   function setMessage(text) {
@@ -486,13 +478,13 @@ function startBrowserApp() {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(backup);
-        setMessage("Backup copied. If GitHub sync still fails, send me this exported JSON.");
+        setMessage("Backup copied.");
         return;
       }
       document.execCommand("copy");
-      setMessage("Backup selected and copied. If GitHub sync still fails, send me this exported JSON.");
+      setMessage("Backup selected and copied.");
     } catch {
-      setMessage("Backup is shown below. Select it and copy it if GitHub sync still fails.");
+      setMessage("Backup is shown below. Select it and copy it.");
     }
   }
 
@@ -502,7 +494,7 @@ function startBrowserApp() {
         STORAGE_KEY,
         JSON.stringify({ version: 1, seedDeckVersion: state.seedDeckVersion, cards: state.cards })
       );
-      if (options.cloud !== false) queueCloudSave();
+      if (options.cloud !== false) setMessage("Saved in this browser.");
     } catch {
       setMessage("Storage failed. Export your cards before closing this browser.");
     }
@@ -942,10 +934,10 @@ function startBrowserApp() {
     });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "french-flashcards.json";
+    link.download = createTimestampedBackupFilename();
     link.click();
     URL.revokeObjectURL(link.href);
-    setMessage("Backup JSON is shown below too. Keep it until Sync now succeeds.");
+    setMessage("Exported timestamped JSON backup. Progress is also saved in this browser.");
   });
 
   els.copyBackupBtn.addEventListener("click", copyBackupToClipboard);
@@ -963,38 +955,6 @@ function startBrowserApp() {
     }
   });
 
-  els.saveSyncBtn.addEventListener("click", () => {
-    state.cloud = {
-      token: normalizeToken(els.githubToken.value),
-      syncServerUrl: normalizeUrl(els.syncServerUrl.value),
-      autoSync: els.autoSync.checked
-    };
-    saveCloudSettings();
-    setMessage("Repo sync settings saved on this device.");
-  });
-
-  els.testTokenBtn.addEventListener("click", testGithubToken);
-
-  els.syncNowBtn.addEventListener("click", () => {
-    state.cloud = {
-      token: normalizeToken(els.githubToken.value),
-      syncServerUrl: normalizeUrl(els.syncServerUrl.value),
-      autoSync: els.autoSync.checked
-    };
-    saveCloudSettings();
-    saveToGithub();
-  });
-
-  els.loadCloudBtn.addEventListener("click", () => {
-    state.cloud = {
-      token: normalizeToken(els.githubToken.value),
-      syncServerUrl: normalizeUrl(els.syncServerUrl.value),
-      autoSync: els.autoSync.checked
-    };
-    saveCloudSettings();
-    loadFromGithub();
-  });
-
   els.resetLearningBtn.addEventListener("click", () => {
     if (!confirm("Reset all learning progress? Cards stay, ratings and due dates restart.")) return;
     state.cards = resetLearning(state.cards);
@@ -1004,7 +964,6 @@ function startBrowserApp() {
     setMessage("Learning progress reset.");
   });
 
-  saveCloudSettings();
   renderAll();
   loadSeedCards();
 }
@@ -1034,6 +993,7 @@ if (typeof module !== "undefined") {
     formatNetworkError,
     getLatestProgressTime,
     createRepoSaveBody,
+    createTimestampedBackupFilename,
     getLearningStats,
     getFrenchText,
     buildSpellingText

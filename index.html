@@ -82,27 +82,12 @@
         </section>
 
         <section class="tab-panel" id="tab-data" hidden>
+          <p class="local-save-note">Progress saves automatically in this browser on this device. Export JSON regularly for your own backup.</p>
           <button id="exportBtn" type="button">Export JSON</button>
           <button id="copyBackupBtn" type="button">Copy backup</button>
           <textarea class="backup-text" id="backupText" rows="5" readonly hidden></textarea>
           <label>Import JSON <textarea id="importText" rows="5"></textarea></label>
           <button id="importBtn" type="button">Import cards</button>
-
-          <div class="tool-group" aria-label="GitHub repo sync">
-            <label>GitHub token <input id="githubToken" type="password" autocomplete="off" inputmode="text"></label>
-            <label>Sync server URL <input id="syncServerUrl" type="url" autocomplete="off" inputmode="url" placeholder="optional"></label>
-            <p class="sync-path">App version: <code id="appVersion">loading</code></p>
-            <p class="sync-path">Progress file: <code id="progressPath">progress/david-progress.json</code></p>
-            <label class="check-row"><input id="autoSync" type="checkbox"> Auto-save learning to my repo</label>
-            <div class="button-row sync-actions">
-              <button id="saveSyncBtn" type="button">Save sync</button>
-              <button id="testTokenBtn" type="button">Test token</button>
-              <button id="syncNowBtn" type="button">Sync now</button>
-            </div>
-            <div class="load-row">
-              <button id="loadCloudBtn" type="button">Load repo progress</button>
-            </div>
-          </div>
 
           <button class="danger" id="resetLearningBtn" type="button">Reset learning</button>
         </section>
@@ -111,7 +96,7 @@
 
     <p class="message" id="message" role="status" aria-live="polite"></p>
   </main>
-  <script src="app.js?v=20260622-token-cleanup"></script>
+  <script src="app.js?v=20260622-local-export"></script>
 </body>
 </html>
 
