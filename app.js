@@ -8,6 +8,7 @@ const PROGRESS_USER = "david";
 const SUPABASE_PROGRESS_TABLE = "flashcard_progress";
 const DEFAULT_SUPABASE_URL = "https://fnmixmpfpnxmutspisip.supabase.co";
 const DEFAULT_SUPABASE_KEY = "sb_publishable_4UTG8D_G5staocT4D5pGaA_eadBfI_f";
+const BOOT_FLAG = "__frenchFlashcardsBooted";
 const GITHUB_REPO_OWNER = "david-eskoundos";
 const GITHUB_REPO_NAME = "FrenchFlashCards";
 const GITHUB_REPO_BRANCH = "main";
@@ -1146,7 +1147,12 @@ if (typeof module !== "undefined") {
 }
 
 if (typeof window !== "undefined") {
-  window.addEventListener("DOMContentLoaded", startBrowserApp);
+  window[BOOT_FLAG] = true;
+  if (document.readyState === "loading") {
+    window.addEventListener("DOMContentLoaded", startBrowserApp);
+  } else {
+    startBrowserApp();
+  }
 }
 
 

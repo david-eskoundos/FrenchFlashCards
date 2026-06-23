@@ -115,7 +115,20 @@
 
     <p class="message" id="message" role="status" aria-live="polite"></p>
   </main>
-  <script src="app.js?v=20260623-rest-sync"></script>
+  <script src="app.js?v=20260623-boot-fix"></script>
+  <script>
+    window.setTimeout(function () {
+      if (window.__frenchFlashcardsBooted) return;
+      var message = document.getElementById("message");
+      if (message) message.textContent = "App script did not start. Reloading app code...";
+      var script = document.createElement("script");
+      script.src = "app.js?v=20260623-boot-fix-fallback";
+      script.onerror = function () {
+        if (message) message.textContent = "App script could not load. Check network, then refresh.";
+      };
+      document.body.appendChild(script);
+    }, 1200);
+  </script>
 </body>
 </html>
 
