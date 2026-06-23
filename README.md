@@ -14,8 +14,8 @@ Repository: https://github.com/david-eskoundos/FrenchFlashCards
 - Reads French aloud with the browser speech voice.
 - Spells the French answer slowly with the `Spell` button.
 - Saves progress locally in the browser.
-- Can save David's learning progress automatically to `progress/david-progress.json` in this repo.
-- Works as a static GitHub Pages site: no server or database is required.
+- Can sync learning progress through Supabase email magic-link auth.
+- Works as a static GitHub Pages site; Supabase is optional for cross-device sync.
 
 ## Current Deck
 
@@ -45,7 +45,18 @@ The B1 handnotes were imported from a visual transcription JSON file. Three of t
 
 ## Saving And Backups
 
-The app saves progress automatically in the current browser with `localStorage`. On the same iPhone/browser, you can close the page and come back later.
+The app saves progress automatically in the current browser with `localStorage` before any cloud request. On the same iPhone/browser, you can close the page and come back later.
+
+For cross-device progress, configure Supabase in the `Data` tab:
+
+1. Create a Supabase project.
+2. Run `docs/supabase-setup.sql` in the Supabase SQL editor.
+3. Enable email magic links in Supabase Auth.
+4. Add `https://david-eskoundos.github.io/FrenchFlashCards/` as an allowed redirect URL.
+5. Paste the Supabase project URL and publishable key into the app.
+6. Enter your email and press `Send magic link`.
+
+After sign-in, `Sync now` uploads this device's progress and `Load cloud` restores newer cloud progress. Auto sync uploads changes after ratings, imports, card edits, and resets.
 
 Use the `Data` tab for manual backups:
 
@@ -89,7 +100,8 @@ No build step is required. This is a static HTML/CSS/JavaScript app.
 | `data/seed-cards.json` | Generated built-in deck used by the website. |
 | `data/flashcard-extraction-report.json` | Verification/report metadata for the generated deck. |
 | `data/b1-handnotes-source.json` | Source JSON for the 146 B1 handnote cards. |
-| `progress/david-progress.json` | Old repo-backed progress backup kept for reference. The app no longer updates it automatically. |
+| `docs/supabase-setup.sql` | Supabase table and Row Level Security setup for cloud progress. |
+| `progress/david-progress.json` | Latest repo reference progress backup. The app no longer updates it automatically. |
 | `tools/generate_seed_cards.py` | Regenerates the built-in deck from source materials. |
 | `tools/verify_seed_deck.js` | Validates counts, IDs, direction, and required card fields. |
 | `tests/scheduler.test.js` | Node tests for scheduler, import/sync helpers, spelling, and deck integrity. |

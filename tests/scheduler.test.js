@@ -14,6 +14,9 @@ const {
   syncSeedCards,
   resetLearning,
   createCloudPayload,
+  createSupabaseProgressRow,
+  extractSupabaseProgressPayload,
+  shouldApplyCloudProgress,
   applyProgressEntries,
   createProgressEntries,
   shouldRetryRepoSave,
@@ -189,6 +192,38 @@ test("createCloudPayload stores compact david repo progress metadata", () => {
   assert.equal(payload.cardProgress[0].front, "merci");
 });
 
+test("createSupabaseProgressRow stores one compact progress row for the signed-in user", () => {
+  const now = new Date("2026-07-01T12:00:00.000Z");
+  const studied = scheduleCard(createCard({ id: "seed-xlsx-1", front: "hello", back: "bonjour" }, now), "good", now);
+  const row = createSupabaseProgressRow("user-123", [studied], 3, now);
+
+  assert.equal(row.user_id, "user-123");
+  assert.equal(row.app, "FrenchFlashCards");
+  assert.equal(row.seed_deck_version, 3);
+  assert.equal(row.saved_at, "2026-07-01T12:00:00.000Z");
+  assert.equal(row.updated_at, "2026-07-01T12:00:00.000Z");
+  assert.equal(row.progress.cardProgress.length, 1);
+  assert.equal(row.progress.cardProgress[0].id, "seed-xlsx-1");
+  assert.equal(row.progress.cardProgress[0].front, undefined);
+});
+
+test("extractSupabaseProgressPayload returns the stored compact progress payload", () => {
+  const payload = createCloudPayload([], 3, new Date("2026-07-01T12:00:00.000Z"));
+  const row = { progress: payload, seed_deck_version: 2, saved_at: "2026-07-02T12:00:00.000Z" };
+
+  assert.equal(extractSupabaseProgressPayload(row), payload);
+});
+
+test("shouldApplyCloudProgress accepts newer cloud progress and keeps newer local progress", () => {
+  const now = new Date("2026-07-01T12:00:00.000Z");
+  const localOlder = scheduleCard(createCard({ id: "seed-local", front: "old", back: "vieux" }, now), "good", new Date("2026-07-02T12:00:00.000Z"));
+  const cloudNewer = scheduleCard(createCard({ id: "seed-cloud", front: "new", back: "nouveau" }, now), "hard", new Date("2026-07-03T12:00:00.000Z"));
+  const localNewer = scheduleCard(createCard({ id: "seed-local-new", front: "newer", back: "plus nouveau" }, now), "easy", new Date("2026-07-04T12:00:00.000Z"));
+
+  assert.equal(shouldApplyCloudProgress([localOlder], [cloudNewer]), true);
+  assert.equal(shouldApplyCloudProgress([localNewer], [cloudNewer]), false);
+});
+
 test("createProgressEntries stores only progressed seed cards", () => {
   const now = new Date("2026-07-01T12:00:00.000Z");
   const fresh = createCard({ id: "seed-xlsx-fresh", front: "fresh", back: "frais" }, now);
@@ -266,6 +301,12 @@ test("getLatestProgressTime ignores fresh cards and returns newest studied updat
   assert.equal(getLatestProgressTime([fresh, older, newer]), new Date("2026-07-03T12:00:00.000Z").getTime());
 });
 
+test("getLatestProgressTime includes custom cards even before study", () => {
+  const custom = createCard({ id: "card-custom", front: "custom", back: "personnel" }, new Date("2026-07-05T12:00:00.000Z"));
+
+  assert.equal(getLatestProgressTime([custom]), new Date("2026-07-05T12:00:00.000Z").getTime());
+});
+
 test("getFrenchText chooses the French side based on card direction", () => {
   const frenchFirst = createCard({ front: "bonjour", back: "hello", direction: "fr-en" });
   const frenchBack = createCard({ front: "thank you", back: "merci", direction: "en-fr" });
@@ -275,7 +316,7 @@ test("getFrenchText chooses the French side based on card direction", () => {
 });
 
 test("buildSpellingText formats French text for slow spelling", () => {
-  assert.equal(buildSpellingText("l'aéroport"), "l apostrophe a é r o p o r t");
+  assert.equal(buildSpellingText("l'aÃ©roport"), "l apostrophe a Ã© r o p o r t");
   assert.equal(buildSpellingText("un vol"), "u n. v o l");
 });
 

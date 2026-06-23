@@ -82,7 +82,26 @@
         </section>
 
         <section class="tab-panel" id="tab-data" hidden>
-          <p class="local-save-note">Progress saves automatically in this browser on this device. Export JSON regularly for your own backup.</p>
+          <p class="local-save-note">Progress saves automatically in this browser first. Supabase sync is optional for continuing on another device.</p>
+          <section class="cloud-sync" aria-label="Supabase cloud sync">
+            <div class="cloud-header">
+              <div>
+                <h2>Cloud sync</h2>
+                <p id="cloudStatus">Cloud sync is not configured.</p>
+              </div>
+              <span class="version-pill" id="appVersion">loading</span>
+            </div>
+            <label>Supabase project URL <input id="supabaseUrl" type="url" placeholder="https://your-project.supabase.co"></label>
+            <label>Supabase publishable key <input id="supabaseKey" type="password" autocomplete="off" placeholder="eyJ..."></label>
+            <label>Email <input id="supabaseEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
+            <label class="checkbox-row"><input id="supabaseAutoSync" type="checkbox"> Auto sync after each save</label>
+            <div class="cloud-actions">
+              <button id="supabaseSignInBtn" type="button">Send magic link</button>
+              <button id="supabaseSignOutBtn" type="button">Sign out</button>
+              <button id="supabaseLoadBtn" type="button">Load cloud</button>
+              <button id="supabaseSyncBtn" type="button">Sync now</button>
+            </div>
+          </section>
           <button id="exportBtn" type="button">Export JSON</button>
           <button id="copyBackupBtn" type="button">Copy backup</button>
           <textarea class="backup-text" id="backupText" rows="5" readonly hidden></textarea>
@@ -96,7 +115,8 @@
 
     <p class="message" id="message" role="status" aria-live="polite"></p>
   </main>
-  <script src="app.js?v=20260622-local-export"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js?v=20260623-supabase-sync"></script>
 </body>
 </html>
 
