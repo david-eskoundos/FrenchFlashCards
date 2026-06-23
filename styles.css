@@ -285,6 +285,19 @@ select {
   color: var(--accent-strong);
 }
 
+.script-warning {
+  margin: 0 0 12px;
+  border: 1px solid var(--warn);
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff7f4;
+  color: var(--warn);
+}
+
+.js-enabled .script-warning {
+  display: none;
+}
+
 @media (min-width: 780px) {
   .app {
     padding: 28px;

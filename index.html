@@ -5,9 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>French Flashcards</title>
   <link rel="stylesheet" href="styles.css">
+  <script>
+    document.documentElement.className = "js-enabled";
+  </script>
 </head>
 <body>
   <main class="app">
+    <noscript>
+      <p class="message">JavaScript is disabled or blocked. The flashcards need JavaScript to load and sync.</p>
+    </noscript>
+    <p class="script-warning">JavaScript is not running yet. If this stays visible, the browser is blocking the app script.</p>
     <header class="topbar">
       <div>
         <p class="kicker">French study</p>
@@ -120,11 +127,17 @@
     window.setTimeout(function () {
       if (window.__frenchFlashcardsBooted) return;
       var message = document.getElementById("message");
+      var warning = document.querySelector(".script-warning");
       if (message) message.textContent = "App script did not start. Reloading app code...";
+      if (warning) {
+        warning.style.display = "block";
+        warning.textContent = "App script did not start. Reloading app code...";
+      }
       var script = document.createElement("script");
       script.src = "app.js?v=20260623-boot-fix-fallback";
       script.onerror = function () {
         if (message) message.textContent = "App script could not load. Check network, then refresh.";
+        if (warning) warning.textContent = "App script could not load. Check network, then refresh.";
       };
       document.body.appendChild(script);
     }, 1200);
