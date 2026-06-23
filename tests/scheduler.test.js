@@ -14,6 +14,9 @@ const {
   syncSeedCards,
   resetLearning,
   createCloudPayload,
+  createSupabaseProgressRow,
+  extractSupabaseProgressPayload,
+  decodeJwtPayload,
   applyProgressEntries,
   createProgressEntries,
   shouldRetryRepoSave,
@@ -189,6 +192,34 @@ test("createCloudPayload stores compact david repo progress metadata", () => {
   assert.equal(payload.cardProgress[0].front, "merci");
 });
 
+test("createSupabaseProgressRow stores compact progress for one authenticated user", () => {
+  const now = new Date("2026-07-01T12:00:00.000Z");
+  const studied = scheduleCard(createCard({ id: "seed-xlsx-1", front: "hello", back: "bonjour" }, now), "good", now);
+  const row = createSupabaseProgressRow("user-123", [studied], 3, now);
+
+  assert.equal(row.user_id, "user-123");
+  assert.equal(row.app, "FrenchFlashCards");
+  assert.equal(row.seed_deck_version, 3);
+  assert.equal(row.saved_at, "2026-07-01T12:00:00.000Z");
+  assert.equal(row.updated_at, "2026-07-01T12:00:00.000Z");
+  assert.equal(row.progress.cardProgress.length, 1);
+  assert.equal(row.progress.cardProgress[0].id, "seed-xlsx-1");
+  assert.equal(row.progress.cardProgress[0].front, undefined);
+});
+
+test("extractSupabaseProgressPayload returns progress stored in row", () => {
+  const payload = createCloudPayload([], 3, new Date("2026-07-01T12:00:00.000Z"));
+  assert.equal(extractSupabaseProgressPayload({ progress: payload }), payload);
+  assert.throws(() => extractSupabaseProgressPayload(null), /No cloud progress found/);
+});
+
+test("decodeJwtPayload reads email and subject from Supabase access token", () => {
+  const payload = Buffer.from(JSON.stringify({ sub: "user-123", email: "david@example.com" })).toString("base64url");
+  const token = `header.${payload}.signature`;
+
+  assert.deepEqual(decodeJwtPayload(token), { sub: "user-123", email: "david@example.com" });
+});
+
 test("createProgressEntries stores only progressed seed cards", () => {
   const now = new Date("2026-07-01T12:00:00.000Z");
   const fresh = createCard({ id: "seed-xlsx-fresh", front: "fresh", back: "frais" }, now);
@@ -275,7 +306,7 @@ test("getFrenchText chooses the French side based on card direction", () => {
 });
 
 test("buildSpellingText formats French text for slow spelling", () => {
-  assert.equal(buildSpellingText("l'aéroport"), "l apostrophe a é r o p o r t");
+  assert.equal(buildSpellingText("l'aÃ©roport"), "l apostrophe a Ã© r o p o r t");
   assert.equal(buildSpellingText("un vol"), "u n. v o l");
 });
 
