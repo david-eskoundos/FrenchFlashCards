@@ -17,6 +17,7 @@ const {
   createSupabaseProgressRow,
   extractSupabaseProgressPayload,
   shouldApplyCloudProgress,
+  shouldApplyRepoProgressBackup,
   applyProgressEntries,
   createProgressEntries,
   shouldRetryRepoSave,
@@ -222,6 +223,16 @@ test("shouldApplyCloudProgress accepts newer cloud progress and keeps newer loca
 
   assert.equal(shouldApplyCloudProgress([localOlder], [cloudNewer]), true);
   assert.equal(shouldApplyCloudProgress([localNewer], [cloudNewer]), false);
+});
+
+test("shouldApplyRepoProgressBackup restores progress only for empty local starts", () => {
+  const now = new Date("2026-07-01T12:00:00.000Z");
+  const studiedBackup = scheduleCard(createCard({ id: "seed-backup", front: "backup", back: "sauvegarde" }, now), "good", now);
+  const freshLocal = createCard({ id: "seed-local", front: "fresh", back: "frais" }, now);
+
+  assert.equal(shouldApplyRepoProgressBackup([], [studiedBackup]), true);
+  assert.equal(shouldApplyRepoProgressBackup([freshLocal], [studiedBackup]), false);
+  assert.equal(shouldApplyRepoProgressBackup([], [freshLocal]), false);
 });
 
 test("createProgressEntries stores only progressed seed cards", () => {

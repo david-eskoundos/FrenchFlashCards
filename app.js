@@ -2,6 +2,7 @@ const STORAGE_KEY = "french-flashcards-v1";
 const CLOUD_SETTINGS_KEY = "french-flashcards-cloud-settings-v1";
 const SEED_DECK_URL = "data/seed-cards.json";
 const SEED_DECK_VERSION = 3;
+const REPO_PROGRESS_URL = "progress/david-progress.json";
 const PROGRESS_USER = "david";
 const SUPABASE_PROGRESS_TABLE = "flashcard_progress";
 const DEFAULT_SUPABASE_URL = "https://fnmixmpfpnxmutspisip.supabase.co";
@@ -12,7 +13,7 @@ const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
 const REPO_SAVE_MAX_ATTEMPTS = 3;
-const APP_VERSION = "20260623-supabase-status";
+const APP_VERSION = "20260623-progress-recovery";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -277,6 +278,10 @@ function shouldApplyCloudProgress(localCards, cloudCards) {
   return getLatestProgressTime(cloudCards) > getLatestProgressTime(localCards);
 }
 
+function shouldApplyRepoProgressBackup(localCards, backupCards) {
+  return localCards.length === 0 && getLatestProgressTime(backupCards) > 0;
+}
+
 function applyCloudPayloadToCards(cards, payload) {
   if (Array.isArray(payload.cardProgress)) return applyProgressEntries(cards, payload.cardProgress);
   return mergeCardsByLatestProgress(cards, parseImportedDeck(JSON.stringify(payload)));
@@ -469,6 +474,7 @@ async function startBrowserApp() {
   const storedDeck = readStoredDeck();
   const state = {
     cards: storedDeck.cards,
+    startedWithEmptyDeck: storedDeck.cards.length === 0,
     seedDeckVersion: storedDeck.seedDeckVersion,
     queue: [],
     currentIndex: 0,
@@ -554,7 +560,7 @@ async function startBrowserApp() {
   }
 
   async function loadSeedCards() {
-    if (state.seedDeckVersion >= SEED_DECK_VERSION) return;
+    if (state.cards.length > 0 && state.seedDeckVersion >= SEED_DECK_VERSION) return;
 
     try {
       const response = await fetch(SEED_DECK_URL, { cache: "no-store" });
@@ -723,6 +729,26 @@ async function startBrowserApp() {
       autoSync: els.supabaseAutoSync.checked
     };
     saveCloudSettings();
+  }
+
+  async function loadRepoProgressBackupIfNeeded() {
+    if (!state.startedWithEmptyDeck) return;
+
+    try {
+      const response = await fetch(REPO_PROGRESS_URL, { cache: "no-store" });
+      if (!response.ok) return;
+      const payload = JSON.parse(await response.text());
+      const backupCards = applyCloudPayloadToCards(state.cards, payload);
+      if (!shouldApplyRepoProgressBackup([], backupCards)) return;
+      state.cards = backupCards;
+      state.seedDeckVersion = Number(payload.seedDeckVersion || state.seedDeckVersion);
+      saveCards({ cloud: false });
+      renderAll();
+      const stats = getLearningStats(state.cards);
+      setMessage(`Restored repo backup: ${stats.studied} of ${stats.total} studied.`);
+    } catch {
+      setMessage("Built-in cards loaded. Repo progress backup could not be restored automatically.");
+    }
   }
 
   function hasSupabaseSettings() {
@@ -1043,6 +1069,7 @@ async function startBrowserApp() {
   saveCloudSettings();
   renderAll();
   await loadSeedCards();
+  await loadRepoProgressBackupIfNeeded();
   await restoreSupabaseSession();
 }
 
@@ -1065,6 +1092,7 @@ if (typeof module !== "undefined") {
     createSupabaseProgressRow,
     extractSupabaseProgressPayload,
     shouldApplyCloudProgress,
+    shouldApplyRepoProgressBackup,
     applyCloudPayloadToCards,
     extractCloudCards,
     applyProgressEntries,
