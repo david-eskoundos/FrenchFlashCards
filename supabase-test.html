@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Supabase Sync Test</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17201a;
+      --muted: #5f6b63;
+      --line: #d9dfd8;
+      --paper: #fffdf8;
+      --surface: #f4f7f1;
+      --accent: #2f6f5e;
+      --accent-strong: #1f5448;
+      --warn: #a4442f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    main {
+      width: min(720px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      gap: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.1;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .panel {
+      display: grid;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      padding: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+    }
+
+    input,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: white;
+      color: var(--ink);
+    }
+
+    button {
+      min-height: 44px;
+      border: 1px solid var(--accent-strong);
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: var(--paper);
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .status {
+      min-height: 24px;
+      color: var(--accent-strong);
+      overflow-wrap: anywhere;
+    }
+
+    .error {
+      color: var(--warn);
+    }
+
+    .log {
+      min-height: 180px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p>French Flashcards</p>
+      <h1>Supabase Sync Test</h1>
+    </header>
+
+    <section class="panel">
+      <p>This page tests Supabase only. It does not change the flashcard app.</p>
+      <label>Project URL <input id="projectUrl" type="url" value="https://fnmixmpfpnxmutspisip.supabase.co"></label>
+      <label>Publishable key <input id="publishableKey" type="password" value="sb_publishable_4UTG8D_G5staocT4D5pGaA_eadBfI_f"></label>
+      <label>Email <input id="email" type="email" autocomplete="email" placeholder="you@example.com"></label>
+      <div class="grid">
+        <button id="sendMagicLink" type="button">Send magic link</button>
+        <button class="secondary" id="signOut" type="button">Sign out</button>
+        <button class="secondary" id="writeTest" type="button">Write test row</button>
+        <button class="secondary" id="readTest" type="button">Read test row</button>
+      </div>
+      <p class="status" id="status">Ready.</p>
+    </section>
+
+    <section class="panel">
+      <p>Debug log</p>
+      <textarea class="log" id="log" readonly></textarea>
+    </section>
+  </main>
+
+  <script>
+    const SESSION_KEY = "french-flashcards-supabase-test-session-v1";
+    const TABLE_NAME = "flashcard_progress";
+
+    const els = {
+      projectUrl: document.getElementById("projectUrl"),
+      publishableKey: document.getElementById("publishableKey"),
+      email: document.getElementById("email"),
+      sendMagicLink: document.getElementById("sendMagicLink"),
+      signOut: document.getElementById("signOut"),
+      writeTest: document.getElementById("writeTest"),
+      readTest: document.getElementById("readTest"),
+      status: document.getElementById("status"),
+      log: document.getElementById("log")
+    };
+
+    let session = null;
+    let user = null;
+
+    function normalizeUrl(value) {
+      return String(value || "").trim().replace(/\/+$/, "");
+    }
+
+    function appendLog(label, detail) {
+      const line = `[${new Date().toISOString()}] ${label}${detail ? ": " + detail : ""}`;
+      els.log.value = `${line}\n${els.log.value}`;
+    }
+
+    function setStatus(text, isError = false) {
+      els.status.textContent = text;
+      els.status.classList.toggle("error", isError);
+      appendLog(isError ? "ERROR" : "STATUS", text);
+    }
+
+    function config() {
+      return {
+        url: normalizeUrl(els.projectUrl.value),
+        key: String(els.publishableKey.value || "").trim()
+      };
+    }
+
+    function decodeBase64Url(value) {
+      const base64 = String(value || "").replace(/-/g, "+").replace(/_/g, "/");
+      const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+      return decodeURIComponent(Array.from(atob(padded), (char) => {
+        return "%" + char.charCodeAt(0).toString(16).padStart(2, "0");
+      }).join(""));
+    }
+
+    function decodeJwtPayload(token) {
+      const payload = String(token || "").split(".")[1];
+      if (!payload) throw new Error("Missing JWT payload.");
+      return JSON.parse(decodeBase64Url(payload));
+    }
+
+    function saveSession(nextSession) {
+      session = nextSession;
+      if (!session) {
+        user = null;
+        localStorage.removeItem(SESSION_KEY);
+        updateButtons();
+        return;
+      }
+      const claims = decodeJwtPayload(session.access_token);
+      user = { id: claims.sub, email: claims.email || els.email.value };
+      localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+      updateButtons();
+    }
+
+    function updateButtons() {
+      const signedIn = Boolean(session && user);
+      els.signOut.disabled = !signedIn;
+      els.writeTest.disabled = !signedIn;
+      els.readTest.disabled = !signedIn;
+    }
+
+    function authHeaders(token = "") {
+      const { key } = config();
+      return {
+        apikey: key,
+        Authorization: `Bearer ${token || key}`,
+        "Content-Type": "application/json"
+      };
+    }
+
+    function readSessionFromUrl() {
+      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const accessToken = hash.get("access_token");
+      if (!accessToken) return null;
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+      return {
+        access_token: accessToken,
+        refresh_token: hash.get("refresh_token") || "",
+        token_type: hash.get("token_type") || "bearer"
+      };
+    }
+
+    function restoreSession() {
+      const urlSession = readSessionFromUrl();
+      if (urlSession) {
+        saveSession(urlSession);
+        setStatus(`Signed in as ${user.email || user.id}.`);
+        return;
+      }
+      try {
+        const stored = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+        if (stored && stored.access_token) {
+          saveSession(stored);
+          setStatus(`Restored session for ${user.email || user.id}.`);
+          return;
+        }
+      } catch {
+        localStorage.removeItem(SESSION_KEY);
+      }
+      updateButtons();
+    }
+
+    async function sendMagicLink() {
+      const { url } = config();
+      const email = String(els.email.value || "").trim();
+      if (!email) {
+        setStatus("Enter your email first.", true);
+        return;
+      }
+      els.sendMagicLink.disabled = true;
+      setStatus(`Sending magic link to ${email}...`);
+      try {
+        const redirectTo = `${window.location.origin}${window.location.pathname}`;
+        const response = await fetch(`${url}/auth/v1/otp?redirect_to=${encodeURIComponent(redirectTo)}`, {
+          method: "POST",
+          headers: authHeaders(),
+          body: JSON.stringify({ email, create_user: true })
+        });
+        const text = await response.text();
+        appendLog("OTP response", `${response.status} ${text || "(empty)"}`);
+        if (!response.ok) throw new Error(text || `HTTP ${response.status}`);
+        setStatus(`Magic link sent to ${email}. Check inbox and spam.`);
+      } catch (error) {
+        setStatus(`Magic link failed: ${error.message}`, true);
+      } finally {
+        els.sendMagicLink.disabled = false;
+      }
+    }
+
+    async function writeTestRow() {
+      if (!session || !user) {
+        setStatus("Sign in first.", true);
+        return;
+      }
+      const { url } = config();
+      const now = new Date().toISOString();
+      const row = {
+        user_id: user.id,
+        app: "FrenchFlashCards",
+        progress: {
+          app: "FrenchFlashCards",
+          version: 99,
+          test: true,
+          savedAt: now,
+          cardProgress: []
+        },
+        seed_deck_version: 3,
+        saved_at: now,
+        updated_at: now
+      };
+      setStatus("Writing test row...");
+      try {
+        const response = await fetch(`${url}/rest/v1/${TABLE_NAME}?on_conflict=user_id`, {
+          method: "POST",
+          headers: {
+            ...authHeaders(session.access_token),
+            Prefer: "resolution=merge-duplicates,return=minimal"
+          },
+          body: JSON.stringify(row)
+        });
+        const text = await response.text();
+        appendLog("Write response", `${response.status} ${text || "(empty)"}`);
+        if (!response.ok) throw new Error(text || `HTTP ${response.status}`);
+        setStatus("Write test succeeded.");
+      } catch (error) {
+        setStatus(`Write test failed: ${error.message}`, true);
+      }
+    }
+
+    async function readTestRow() {
+      if (!session || !user) {
+        setStatus("Sign in first.", true);
+        return;
+      }
+      const { url } = config();
+      setStatus("Reading test row...");
+      try {
+        const response = await fetch(`${url}/rest/v1/${TABLE_NAME}?user_id=eq.${encodeURIComponent(user.id)}&select=*`, {
+          headers: authHeaders(session.access_token)
+        });
+        const text = await response.text();
+        appendLog("Read response", `${response.status} ${text || "(empty)"}`);
+        if (!response.ok) throw new Error(text || `HTTP ${response.status}`);
+        const rows = JSON.parse(text || "[]");
+        setStatus(rows.length ? "Read test succeeded." : "Read test found no row.");
+      } catch (error) {
+        setStatus(`Read test failed: ${error.message}`, true);
+      }
+    }
+
+    els.sendMagicLink.addEventListener("click", sendMagicLink);
+    els.signOut.addEventListener("click", () => {
+      saveSession(null);
+      setStatus("Signed out locally.");
+    });
+    els.writeTest.addEventListener("click", writeTestRow);
+    els.readTest.addEventListener("click", readTestRow);
+
+    restoreSession();
+  </script>
+</body>
+</html>
