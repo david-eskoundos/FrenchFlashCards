@@ -1,5 +1,6 @@
 const STORAGE_KEY = "french-flashcards-v1";
 const CLOUD_SETTINGS_KEY = "french-flashcards-cloud-settings-v1";
+const SUPABASE_SESSION_KEY = "french-flashcards-supabase-session-v1";
 const SEED_DECK_URL = "data/seed-cards.json";
 const SEED_DECK_VERSION = 3;
 const REPO_PROGRESS_URL = "progress/david-progress.json";
@@ -13,7 +14,7 @@ const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
 const REPO_SAVE_MAX_ATTEMPTS = 3;
-const APP_VERSION = "20260623-progress-recovery";
+const APP_VERSION = "20260623-rest-sync";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -282,6 +283,13 @@ function shouldApplyRepoProgressBackup(localCards, backupCards) {
   return localCards.length === 0 && getLatestProgressTime(backupCards) > 0;
 }
 
+function decodeJwtPayload(token) {
+  const payload = String(token || "").split(".")[1];
+  if (!payload) throw new Error("Invalid Supabase session token.");
+  const base64 = payload.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(payload.length / 4) * 4, "=");
+  return JSON.parse(decodeBase64(base64));
+}
+
 function applyCloudPayloadToCards(cards, payload) {
   if (Array.isArray(payload.cardProgress)) return applyProgressEntries(cards, payload.cardProgress);
   return mergeCardsByLatestProgress(cards, parseImportedDeck(JSON.stringify(payload)));
@@ -481,9 +489,8 @@ async function startBrowserApp() {
     revealed: false,
     browseVisibleCount: BROWSE_PAGE_SIZE,
     cloud: readCloudSettings(),
-    supabaseClient: null,
     cloudUser: null,
-    cloudAuthSubscription: null,
+    cloudSession: null,
     cloudSaveInFlight: false,
     cloudSavePending: false,
     cloudSaveTimer: 0
@@ -755,6 +762,20 @@ async function startBrowserApp() {
     return Boolean(state.cloud.supabaseUrl && state.cloud.supabaseKey);
   }
 
+  function supabaseUrl(path = "") {
+    return `${state.cloud.supabaseUrl}${path}`;
+  }
+
+  function supabaseHeaders(options = {}) {
+    const headers = {
+      apikey: state.cloud.supabaseKey,
+      Authorization: `Bearer ${options.token || state.cloud.supabaseKey}`,
+      "Content-Type": "application/json"
+    };
+    if (options.prefer) headers.Prefer = options.prefer;
+    return headers;
+  }
+
   function cloudErrorMessage(action, error) {
     const detail = error && error.message ? error.message : "cloud request failed";
     if (isGenericNetworkError(error)) return `${action} failed: Browser could not reach Supabase. Progress is still saved on this device.`;
@@ -777,37 +798,53 @@ async function startBrowserApp() {
 
   function initializeSupabaseClient() {
     if (!hasSupabaseSettings()) {
-      state.supabaseClient = null;
       state.cloudUser = null;
       renderCloudStatus();
       return null;
     }
-    if (!window.supabase || typeof window.supabase.createClient !== "function") {
-      setCloudMessage("Supabase library did not load. Refresh the page, then try again.");
+    renderCloudStatus();
+    return true;
+  }
+
+  function saveSupabaseSession(session) {
+    state.cloudSession = session;
+    if (!session) {
+      state.cloudUser = null;
+      localStorage.removeItem(SUPABASE_SESSION_KEY);
       renderCloudStatus();
+      return;
+    }
+    const claims = decodeJwtPayload(session.access_token);
+    state.cloudUser = { id: claims.sub, email: claims.email || state.cloud.email };
+    localStorage.setItem(SUPABASE_SESSION_KEY, JSON.stringify(session));
+    renderCloudStatus();
+  }
+
+  function readSessionFromUrl() {
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
+    if (!accessToken) return null;
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+    return { access_token: accessToken, refresh_token: refreshToken || "", token_type: params.get("token_type") || "bearer" };
+  }
+
+  function readStoredSupabaseSession() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(SUPABASE_SESSION_KEY) || "null");
+      return parsed && parsed.access_token ? parsed : null;
+    } catch {
       return null;
     }
-    if (state.cloudAuthSubscription) state.cloudAuthSubscription.unsubscribe();
-    state.supabaseClient = window.supabase.createClient(state.cloud.supabaseUrl, state.cloud.supabaseKey);
-    const { data } = state.supabaseClient.auth.onAuthStateChange((_event, session) => {
-      state.cloudUser = session ? session.user : null;
-      renderCloudStatus();
-      if (state.cloudUser) loadFromSupabase({ silent: true });
-    });
-    state.cloudAuthSubscription = data.subscription;
-    renderCloudStatus();
-    return state.supabaseClient;
   }
 
   async function restoreSupabaseSession() {
-    const client = initializeSupabaseClient();
-    if (!client) return;
+    if (!initializeSupabaseClient()) return;
     try {
-      const { data, error } = await client.auth.getSession();
-      if (error) throw error;
-      state.cloudUser = data.session ? data.session.user : null;
-      renderCloudStatus();
-      if (state.cloudUser) await loadFromSupabase({ silent: true });
+      const session = readSessionFromUrl() || readStoredSupabaseSession();
+      if (!session) return;
+      saveSupabaseSession(session);
+      await loadFromSupabase({ silent: true });
     } catch (error) {
       setMessage(cloudErrorMessage("Supabase session restore", error));
     }
@@ -815,8 +852,7 @@ async function startBrowserApp() {
 
   async function signInWithSupabase() {
     readCloudForm();
-    const client = initializeSupabaseClient();
-    if (!client) return;
+    if (!initializeSupabaseClient()) return;
     if (!state.cloud.email) {
       setCloudMessage("Enter your email before sending the magic link.");
       return;
@@ -825,11 +861,16 @@ async function startBrowserApp() {
       els.supabaseSignInBtn.disabled = true;
       els.supabaseSignInBtn.textContent = "Sending...";
       setCloudMessage(`Sending magic link to ${state.cloud.email}...`);
-      const { error } = await client.auth.signInWithOtp({
-        email: state.cloud.email,
-        options: { emailRedirectTo: window.location.origin + window.location.pathname }
+      const redirectTo = window.location.origin + window.location.pathname;
+      const response = await fetch(supabaseUrl(`/auth/v1/otp?redirect_to=${encodeURIComponent(redirectTo)}`), {
+        method: "POST",
+        headers: supabaseHeaders(),
+        body: JSON.stringify({
+          email: state.cloud.email,
+          create_user: true
+        })
       });
-      if (error) throw error;
+      if (!response.ok) throw new Error(await response.text());
       setCloudMessage(`Magic link sent to ${state.cloud.email}. Check inbox and spam.`);
     } catch (error) {
       setCloudMessage(cloudErrorMessage("Supabase sign-in", error));
@@ -840,31 +881,21 @@ async function startBrowserApp() {
   }
 
   async function signOutOfSupabase() {
-    const client = state.supabaseClient || initializeSupabaseClient();
-    if (!client) return;
-    try {
-      const { error } = await client.auth.signOut();
-      if (error) throw error;
-      state.cloudUser = null;
-      renderCloudStatus();
-      setMessage("Signed out of Supabase. Local saving is still active.");
-    } catch (error) {
-      setMessage(cloudErrorMessage("Supabase sign-out", error));
-    }
+    saveSupabaseSession(null);
+    setMessage("Signed out of Supabase. Local saving is still active.");
   }
 
   async function fetchSupabaseProgressRow() {
-    const { data, error } = await state.supabaseClient
-      .from(SUPABASE_PROGRESS_TABLE)
-      .select("*")
-      .eq("user_id", state.cloudUser.id)
-      .maybeSingle();
-    if (error) throw error;
-    return data;
+    const response = await fetch(supabaseUrl(`/rest/v1/${SUPABASE_PROGRESS_TABLE}?user_id=eq.${encodeURIComponent(state.cloudUser.id)}&select=*`), {
+      headers: supabaseHeaders({ token: state.cloudSession.access_token })
+    });
+    if (!response.ok) throw new Error(await response.text());
+    const rows = await response.json();
+    return rows[0] || null;
   }
 
   async function saveToSupabase(options = {}) {
-    if (!state.cloudUser || !state.supabaseClient) {
+    if (!state.cloudUser || !state.cloudSession) {
       if (!options.silent) setMessage("Sign in with Supabase before syncing.");
       return false;
     }
@@ -879,10 +910,15 @@ async function startBrowserApp() {
 
     try {
       const row = createSupabaseProgressRow(state.cloudUser.id, state.cards, state.seedDeckVersion);
-      const { error } = await state.supabaseClient
-        .from(SUPABASE_PROGRESS_TABLE)
-        .upsert(row, { onConflict: "user_id" });
-      if (error) throw error;
+      const response = await fetch(supabaseUrl(`/rest/v1/${SUPABASE_PROGRESS_TABLE}?on_conflict=user_id`), {
+        method: "POST",
+        headers: supabaseHeaders({
+          token: state.cloudSession.access_token,
+          prefer: "resolution=merge-duplicates,return=minimal"
+        }),
+        body: JSON.stringify(row)
+      });
+      if (!response.ok) throw new Error(await response.text());
       if (!options.silent) setMessage("Learning progress saved to Supabase.");
       return true;
     } catch (error) {
@@ -896,9 +932,8 @@ async function startBrowserApp() {
       }
     }
   }
-
   function queueCloudSave() {
-    if (!state.cloud.autoSync || !state.cloudUser || !state.supabaseClient) return;
+    if (!state.cloud.autoSync || !state.cloudUser || !state.cloudSession) return;
     window.clearTimeout(state.cloudSaveTimer);
     state.cloudSaveTimer = window.setTimeout(() => {
       saveToSupabase({ silent: true });
@@ -906,7 +941,7 @@ async function startBrowserApp() {
   }
 
   async function loadFromSupabase(options = {}) {
-    if (!state.cloudUser || !state.supabaseClient) {
+    if (!state.cloudUser || !state.cloudSession) {
       if (!options.silent) setMessage("Sign in with Supabase before loading cloud progress.");
       return;
     }
