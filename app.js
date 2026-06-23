@@ -10,7 +10,7 @@ const DEFAULT_SUPABASE_KEY = "sb_publishable_4UTG8D_G5staocT4D5pGaA_eadBfI_f";
 const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
-const APP_VERSION = "20260623-supabase-row-timestamp";
+const APP_VERSION = "20260623-supabase-refresh-token";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -282,6 +282,12 @@ function decodeJwtPayload(token) {
   if (!payload) throw new Error("Missing JWT payload.");
   const base64 = payload.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(payload.length / 4) * 4, "=");
   return JSON.parse(decodeBase64(base64));
+}
+
+function isJwtExpired(token, now = new Date(), skewSeconds = 60) {
+  const payload = decodeJwtPayload(token);
+  if (!payload.exp) return false;
+  return payload.exp * 1000 <= now.getTime() + skewSeconds * 1000;
 }
 
 function encodeBase64(text) {
@@ -775,6 +781,39 @@ function startBrowserApp() {
     };
   }
 
+  async function refreshSupabaseSession() {
+    if (!state.cloudSession || !state.cloudSession.refresh_token) {
+      saveSupabaseSession(null);
+      throw new Error("Session expired. Send a new magic link, then try again.");
+    }
+    setCloudStatus("Refreshing Supabase session...");
+    const response = await fetch(`${supabaseUrl("/auth/v1/token")}?grant_type=refresh_token`, {
+      method: "POST",
+      headers: supabaseHeaders(),
+      body: JSON.stringify({ refresh_token: state.cloudSession.refresh_token })
+    });
+    const text = await response.text();
+    if (!response.ok) {
+      saveSupabaseSession(null);
+      throw new Error(text || "Session expired. Send a new magic link, then try again.");
+    }
+    const refreshed = JSON.parse(text);
+    saveSupabaseSession({
+      ...state.cloudSession,
+      ...refreshed,
+      refresh_token: refreshed.refresh_token || state.cloudSession.refresh_token
+    });
+    return state.cloudSession;
+  }
+
+  async function ensureFreshSupabaseSession() {
+    if (!state.cloudUser || !state.cloudSession) {
+      throw new Error("Sign in with Supabase first.");
+    }
+    if (!isJwtExpired(state.cloudSession.access_token)) return state.cloudSession;
+    return refreshSupabaseSession();
+  }
+
   function restoreSupabaseSession() {
     try {
       const session = readSessionFromUrl() || JSON.parse(localStorage.getItem(SUPABASE_SESSION_KEY) || "null");
@@ -833,6 +872,7 @@ function startBrowserApp() {
     }
     setCloudStatus("Saving progress to Supabase...");
     try {
+      await ensureFreshSupabaseSession();
       const row = createSupabaseProgressRow(state.cloudUser.id, state.cards, state.seedDeckVersion);
       const response = await fetch(`${supabaseUrl(`/rest/v1/${SUPABASE_PROGRESS_TABLE}`)}?on_conflict=user_id`, {
         method: "POST",
@@ -860,6 +900,7 @@ function startBrowserApp() {
     }
     setCloudStatus("Loading progress from Supabase...");
     try {
+      await ensureFreshSupabaseSession();
       const response = await fetch(`${supabaseUrl(`/rest/v1/${SUPABASE_PROGRESS_TABLE}`)}?user_id=eq.${encodeURIComponent(state.cloudUser.id)}&select=*`, {
         headers: supabaseHeaders(state.cloudSession.access_token)
       });
@@ -1036,6 +1077,7 @@ if (typeof module !== "undefined") {
     createSupabaseProgressRow,
     extractSupabaseProgressPayload,
     decodeJwtPayload,
+    isJwtExpired,
     extractCloudCards,
     applyProgressEntries,
     createProgressEntries,

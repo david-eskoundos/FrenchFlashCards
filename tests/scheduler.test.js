@@ -17,6 +17,7 @@ const {
   createSupabaseProgressRow,
   extractSupabaseProgressPayload,
   decodeJwtPayload,
+  isJwtExpired,
   applyProgressEntries,
   createProgressEntries,
   shouldRetryRepoSave,
@@ -219,6 +220,17 @@ test("decodeJwtPayload reads email and subject from Supabase access token", () =
   const token = `header.${payload}.signature`;
 
   assert.deepEqual(decodeJwtPayload(token), { sub: "user-123", email: "david@example.com" });
+});
+
+test("isJwtExpired checks JWT expiry with a small refresh window", () => {
+  const now = new Date("2026-07-01T12:00:00.000Z");
+  const expiredPayload = Buffer.from(JSON.stringify({ exp: Math.floor(now.getTime() / 1000) - 1 })).toString("base64url");
+  const soonPayload = Buffer.from(JSON.stringify({ exp: Math.floor(now.getTime() / 1000) + 30 })).toString("base64url");
+  const validPayload = Buffer.from(JSON.stringify({ exp: Math.floor(now.getTime() / 1000) + 120 })).toString("base64url");
+
+  assert.equal(isJwtExpired(`header.${expiredPayload}.signature`, now), true);
+  assert.equal(isJwtExpired(`header.${soonPayload}.signature`, now), true);
+  assert.equal(isJwtExpired(`header.${validPayload}.signature`, now), false);
 });
 
 test("createProgressEntries stores only progressed seed cards", () => {
