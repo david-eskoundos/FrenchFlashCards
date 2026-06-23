@@ -10,7 +10,7 @@ const DEFAULT_SUPABASE_KEY = "sb_publishable_4UTG8D_G5staocT4D5pGaA_eadBfI_f";
 const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
-const APP_VERSION = "20260623-manual-supabase";
+const APP_VERSION = "20260623-supabase-row-timestamp";
 
 function toIso(date) {
   return new Date(date).toISOString();
