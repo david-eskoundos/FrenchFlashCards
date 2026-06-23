@@ -4,6 +4,8 @@ const SEED_DECK_URL = "data/seed-cards.json";
 const SEED_DECK_VERSION = 3;
 const PROGRESS_USER = "david";
 const SUPABASE_PROGRESS_TABLE = "flashcard_progress";
+const DEFAULT_SUPABASE_URL = "https://fnmixmpfpnxmutspisip.supabase.co";
+const DEFAULT_SUPABASE_KEY = "sb_publishable_4UTG8D_G5staocT4D5pGaA_eadBfI_f";
 const GITHUB_REPO_OWNER = "david-eskoundos";
 const GITHUB_REPO_NAME = "FrenchFlashCards";
 const GITHUB_REPO_BRANCH = "main";
@@ -489,13 +491,13 @@ async function startBrowserApp() {
     try {
       const parsed = JSON.parse(localStorage.getItem(CLOUD_SETTINGS_KEY) || "{}");
       return {
-        supabaseUrl: normalizeUrl(parsed.supabaseUrl),
-        supabaseKey: normalizeToken(parsed.supabaseKey),
+        supabaseUrl: normalizeUrl(parsed.supabaseUrl || DEFAULT_SUPABASE_URL),
+        supabaseKey: normalizeToken(parsed.supabaseKey || DEFAULT_SUPABASE_KEY),
         email: normalizeText(parsed.email),
         autoSync: parsed.autoSync !== false
       };
     } catch {
-      return { supabaseUrl: "", supabaseKey: "", email: "", autoSync: true };
+      return { supabaseUrl: DEFAULT_SUPABASE_URL, supabaseKey: DEFAULT_SUPABASE_KEY, email: "", autoSync: true };
     }
   }
 

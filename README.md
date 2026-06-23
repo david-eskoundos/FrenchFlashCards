@@ -53,7 +53,7 @@ For cross-device progress, configure Supabase in the `Data` tab:
 2. Run `docs/supabase-setup.sql` in the Supabase SQL editor.
 3. Enable email magic links in Supabase Auth.
 4. Add `https://david-eskoundos.github.io/FrenchFlashCards/` as an allowed redirect URL.
-5. Paste the Supabase project URL and publishable key into the app.
+5. The app is prefilled for David's Supabase project; paste different Supabase values only if you change projects.
 6. Enter your email and press `Send magic link`.
 
 After sign-in, `Sync now` uploads this device's progress and `Load cloud` restores newer cloud progress. Auto sync uploads changes after ratings, imports, card edits, and resets.
