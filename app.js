@@ -12,7 +12,7 @@ const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
 const REPO_SAVE_MAX_ATTEMPTS = 3;
-const APP_VERSION = "20260623-supabase-sync";
+const APP_VERSION = "20260623-supabase-status";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -487,6 +487,11 @@ async function startBrowserApp() {
     els.message.textContent = text;
   }
 
+  function setCloudMessage(text) {
+    setMessage(text);
+    if (els.cloudStatus) els.cloudStatus.textContent = text;
+  }
+
   function readCloudSettings() {
     try {
       const parsed = JSON.parse(localStorage.getItem(CLOUD_SETTINGS_KEY) || "{}");
@@ -752,7 +757,7 @@ async function startBrowserApp() {
       return null;
     }
     if (!window.supabase || typeof window.supabase.createClient !== "function") {
-      setMessage("Supabase library did not load. Progress is still saved locally.");
+      setCloudMessage("Supabase library did not load. Refresh the page, then try again.");
       renderCloudStatus();
       return null;
     }
@@ -787,19 +792,24 @@ async function startBrowserApp() {
     const client = initializeSupabaseClient();
     if (!client) return;
     if (!state.cloud.email) {
-      setMessage("Enter your email before sending the magic link.");
+      setCloudMessage("Enter your email before sending the magic link.");
       return;
     }
     try {
-      setMessage("Sending Supabase magic link...");
+      els.supabaseSignInBtn.disabled = true;
+      els.supabaseSignInBtn.textContent = "Sending...";
+      setCloudMessage(`Sending magic link to ${state.cloud.email}...`);
       const { error } = await client.auth.signInWithOtp({
         email: state.cloud.email,
         options: { emailRedirectTo: window.location.origin + window.location.pathname }
       });
       if (error) throw error;
-      setMessage("Magic link sent. Open it on this device to finish sign-in.");
+      setCloudMessage(`Magic link sent to ${state.cloud.email}. Check inbox and spam.`);
     } catch (error) {
-      setMessage(cloudErrorMessage("Supabase sign-in", error));
+      setCloudMessage(cloudErrorMessage("Supabase sign-in", error));
+    } finally {
+      els.supabaseSignInBtn.disabled = false;
+      els.supabaseSignInBtn.textContent = "Send magic link";
     }
   }
 
