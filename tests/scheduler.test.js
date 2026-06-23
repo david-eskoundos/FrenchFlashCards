@@ -24,6 +24,7 @@ const {
   isGenericNetworkError,
   formatNetworkError,
   getLatestProgressTime,
+  getSupabaseRowSavedTime,
   createRepoSaveBody,
   createTimestampedBackupFilename,
   getLearningStats,
@@ -295,6 +296,17 @@ test("getLatestProgressTime ignores fresh cards and returns newest studied updat
   const newer = scheduleCard(createCard({ id: "seed-new", front: "new", back: "nouveau" }, now), "hard", new Date("2026-07-03T12:00:00.000Z"));
 
   assert.equal(getLatestProgressTime([fresh, older, newer]), new Date("2026-07-03T12:00:00.000Z").getTime());
+});
+
+test("getSupabaseRowSavedTime uses the cloud row sync timestamp", () => {
+  const payload = createCloudPayload([], 3, new Date("2026-07-03T12:00:00.000Z"));
+  const row = {
+    progress: payload,
+    saved_at: "2026-07-04T12:00:00.000Z",
+    updated_at: "2026-07-04T12:00:00.000Z"
+  };
+
+  assert.equal(getSupabaseRowSavedTime(row, payload), new Date("2026-07-04T12:00:00.000Z").getTime());
 });
 
 test("getFrenchText chooses the French side based on card direction", () => {

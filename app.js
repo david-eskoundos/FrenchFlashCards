@@ -223,6 +223,12 @@ function getLatestProgressTime(cards) {
   }, 0);
 }
 
+function getSupabaseRowSavedTime(row, payload = row && row.progress) {
+  const savedAt = (row && (row.saved_at || row.updated_at)) || (payload && payload.savedAt);
+  const timestamp = new Date(savedAt).getTime();
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
 function applyProgressEntries(cards, progressEntries) {
   const cardsById = new Map(cards.map((card) => [card.id, card]));
   progressEntries.forEach((progress) => {
@@ -871,7 +877,7 @@ function startBrowserApp() {
       const localStats = getLearningStats(state.cards);
       const cloudStats = getLearningStats(cloudCards);
       const localProgressTime = getLatestProgressTime(state.cards);
-      const cloudProgressTime = getLatestProgressTime(cloudCards);
+      const cloudProgressTime = getSupabaseRowSavedTime(rows[0], payload);
       if (localProgressTime > cloudProgressTime) {
         setCloudStatus(`Cloud progress is older (${cloudStats.studied} studied). This browser has ${localStats.studied}. Press Sync now to upload this device.`);
         return;
@@ -1038,6 +1044,7 @@ if (typeof module !== "undefined") {
     isGenericNetworkError,
     formatNetworkError,
     getLatestProgressTime,
+    getSupabaseRowSavedTime,
     createRepoSaveBody,
     createTimestampedBackupFilename,
     getLearningStats,
