@@ -5,16 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>French Flashcards</title>
   <link rel="stylesheet" href="styles.css">
-  <script>
-    document.documentElement.className = "js-enabled";
-  </script>
 </head>
 <body>
   <main class="app">
-    <noscript>
-      <p class="message">JavaScript is disabled or blocked. The flashcards need JavaScript to load and sync.</p>
-    </noscript>
-    <p class="script-warning">JavaScript is not running yet. If this stays visible, the browser is blocking the app script.</p>
     <header class="topbar">
       <div>
         <p class="kicker">French study</p>
@@ -89,26 +82,7 @@
         </section>
 
         <section class="tab-panel" id="tab-data" hidden>
-          <p class="local-save-note">Progress saves automatically in this browser first. Supabase sync is optional for continuing on another device.</p>
-          <section class="cloud-sync" aria-label="Supabase cloud sync">
-            <div class="cloud-header">
-              <div>
-                <h2>Cloud sync</h2>
-                <p id="cloudStatus">Cloud sync is not configured.</p>
-              </div>
-              <span class="version-pill" id="appVersion">loading</span>
-            </div>
-            <label>Supabase project URL <input id="supabaseUrl" type="url" placeholder="https://your-project.supabase.co"></label>
-            <label>Supabase publishable key <input id="supabaseKey" type="password" autocomplete="off" placeholder="eyJ..."></label>
-            <label>Email <input id="supabaseEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
-            <label class="checkbox-row"><input id="supabaseAutoSync" type="checkbox"> Auto sync after each save</label>
-            <div class="cloud-actions">
-              <button id="supabaseSignInBtn" type="button">Send magic link</button>
-              <button id="supabaseSignOutBtn" type="button">Sign out</button>
-              <button id="supabaseLoadBtn" type="button">Load cloud</button>
-              <button id="supabaseSyncBtn" type="button">Sync now</button>
-            </div>
-          </section>
+          <p class="local-save-note">Progress saves automatically in this browser on this device. Export JSON regularly for your own backup.</p>
           <button id="exportBtn" type="button">Export JSON</button>
           <button id="copyBackupBtn" type="button">Copy backup</button>
           <textarea class="backup-text" id="backupText" rows="5" readonly hidden></textarea>
@@ -122,49 +96,7 @@
 
     <p class="message" id="message" role="status" aria-live="polite"></p>
   </main>
-  <script defer src="app.js?v=20260623-defer-fallback"></script>
-  <script>
-    window.setTimeout(function () {
-      if (window.__frenchFlashcardsBooted) return;
-      var message = document.getElementById("message");
-      var warning = document.querySelector(".script-warning");
-      if (message) message.textContent = "App script did not start. Loading safe deck fallback...";
-      if (warning) {
-        warning.style.display = "block";
-        warning.textContent = "App script did not start. Loading safe deck fallback...";
-      }
-      document.querySelectorAll(".tab").forEach(function (tab) {
-        tab.addEventListener("click", function () {
-          document.querySelectorAll(".tab").forEach(function (candidate) { candidate.classList.remove("is-active"); });
-          document.querySelectorAll(".tab-panel").forEach(function (panel) { panel.hidden = true; panel.classList.remove("is-active"); });
-          tab.classList.add("is-active");
-          var panel = document.getElementById("tab-" + tab.dataset.tab);
-          if (panel) { panel.hidden = false; panel.classList.add("is-active"); }
-        });
-      });
-      fetch("data/seed-cards.json", { cache: "no-store" })
-        .then(function (response) {
-          if (!response.ok) throw new Error("Seed deck request failed");
-          return response.json();
-        })
-        .then(function (deck) {
-          var cards = deck.cards || [];
-          var first = cards[0] || {};
-          document.getElementById("newCount").textContent = String(cards.length);
-          document.getElementById("cardPosition").textContent = cards.length ? "1 of " + cards.length : "No cards";
-          document.getElementById("cardPrompt").textContent = first.front || "No cards loaded.";
-          document.getElementById("cardAnswer").textContent = first.back || "";
-          document.getElementById("cardTags").textContent = first.tags || "";
-          document.getElementById("browseCount").textContent = cards.length + " cards";
-          if (message) message.textContent = "Loaded safe deck fallback. Refresh once; if this remains, app.js is blocked.";
-          if (warning) warning.textContent = "Loaded safe deck fallback. Refresh once; if this remains, app.js is blocked.";
-        })
-        .catch(function (error) {
-          if (message) message.textContent = "Could not load deck: " + error.message;
-          if (warning) warning.textContent = "Could not load deck: " + error.message;
-        });
-    }, 1200);
-  </script>
+  <script src="app.js?v=20260622-local-export"></script>
 </body>
 </html>
 

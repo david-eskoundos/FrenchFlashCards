@@ -1,21 +1,15 @@
 const STORAGE_KEY = "french-flashcards-v1";
 const CLOUD_SETTINGS_KEY = "french-flashcards-cloud-settings-v1";
-const SUPABASE_SESSION_KEY = "french-flashcards-supabase-session-v1";
 const SEED_DECK_URL = "data/seed-cards.json";
 const SEED_DECK_VERSION = 3;
-const REPO_PROGRESS_URL = "progress/david-progress.json";
 const PROGRESS_USER = "david";
-const SUPABASE_PROGRESS_TABLE = "flashcard_progress";
-const DEFAULT_SUPABASE_URL = "https://fnmixmpfpnxmutspisip.supabase.co";
-const DEFAULT_SUPABASE_KEY = "sb_publishable_4UTG8D_G5staocT4D5pGaA_eadBfI_f";
-const BOOT_FLAG = "__frenchFlashcardsBooted";
 const GITHUB_REPO_OWNER = "david-eskoundos";
 const GITHUB_REPO_NAME = "FrenchFlashCards";
 const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
 const BROWSE_PAGE_SIZE = 25;
 const REPO_SAVE_MAX_ATTEMPTS = 3;
-const APP_VERSION = "20260623-rest-sync";
+const APP_VERSION = "20260622-local-export";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -222,7 +216,7 @@ function createProgressEntries(cards) {
 
 function getLatestProgressTime(cards) {
   return cards.reduce((latest, card) => {
-    if (!hasProgress(card) && isSeedCard(card)) return latest;
+    if (!hasProgress(card)) return latest;
     const updatedAt = new Date(card.updatedAt).getTime();
     return Number.isFinite(updatedAt) && updatedAt > latest ? updatedAt : latest;
   }, 0);
@@ -257,43 +251,6 @@ function createCloudPayload(cards, seedDeckVersion, now = new Date()) {
     stats: getLearningStats(cards),
     cardProgress: createProgressEntries(cards)
   };
-}
-
-function createSupabaseProgressRow(userId, cards, seedDeckVersion, now = new Date()) {
-  const savedAt = toIso(now);
-  return {
-    user_id: userId,
-    app: "FrenchFlashCards",
-    progress: createCloudPayload(cards, seedDeckVersion, now),
-    seed_deck_version: seedDeckVersion,
-    saved_at: savedAt,
-    updated_at: savedAt
-  };
-}
-
-function extractSupabaseProgressPayload(row) {
-  if (!row || !row.progress) throw new Error("No cloud progress found.");
-  return row.progress;
-}
-
-function shouldApplyCloudProgress(localCards, cloudCards) {
-  return getLatestProgressTime(cloudCards) > getLatestProgressTime(localCards);
-}
-
-function shouldApplyRepoProgressBackup(localCards, backupCards) {
-  return localCards.length === 0 && getLatestProgressTime(backupCards) > 0;
-}
-
-function decodeJwtPayload(token) {
-  const payload = String(token || "").split(".")[1];
-  if (!payload) throw new Error("Invalid Supabase session token.");
-  const base64 = payload.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(payload.length / 4) * 4, "=");
-  return JSON.parse(decodeBase64(base64));
-}
-
-function applyCloudPayloadToCards(cards, payload) {
-  if (Array.isArray(payload.cardProgress)) return applyProgressEntries(cards, payload.cardProgress);
-  return mergeCardsByLatestProgress(cards, parseImportedDeck(JSON.stringify(payload)));
 }
 
 function encodeBase64(text) {
@@ -436,7 +393,7 @@ function readStoredDeck() {
   }
 }
 
-async function startBrowserApp() {
+function startBrowserApp() {
   const els = {
     dueCount: document.getElementById("dueCount"),
     newCount: document.getElementById("newCount"),
@@ -464,15 +421,6 @@ async function startBrowserApp() {
     backupText: document.getElementById("backupText"),
     importText: document.getElementById("importText"),
     importBtn: document.getElementById("importBtn"),
-    supabaseUrl: document.getElementById("supabaseUrl"),
-    supabaseKey: document.getElementById("supabaseKey"),
-    supabaseEmail: document.getElementById("supabaseEmail"),
-    supabaseSignInBtn: document.getElementById("supabaseSignInBtn"),
-    supabaseSignOutBtn: document.getElementById("supabaseSignOutBtn"),
-    supabaseLoadBtn: document.getElementById("supabaseLoadBtn"),
-    supabaseSyncBtn: document.getElementById("supabaseSyncBtn"),
-    supabaseAutoSync: document.getElementById("supabaseAutoSync"),
-    cloudStatus: document.getElementById("cloudStatus"),
     listenBtn: document.getElementById("listenBtn"),
     spellBtn: document.getElementById("spellBtn"),
     spellingLine: document.getElementById("spellingLine"),
@@ -483,51 +431,37 @@ async function startBrowserApp() {
   const storedDeck = readStoredDeck();
   const state = {
     cards: storedDeck.cards,
-    startedWithEmptyDeck: storedDeck.cards.length === 0,
     seedDeckVersion: storedDeck.seedDeckVersion,
     queue: [],
     currentIndex: 0,
     revealed: false,
-    browseVisibleCount: BROWSE_PAGE_SIZE,
-    cloud: readCloudSettings(),
-    cloudUser: null,
-    cloudSession: null,
-    cloudSaveInFlight: false,
-    cloudSavePending: false,
-    cloudSaveTimer: 0
+    browseVisibleCount: BROWSE_PAGE_SIZE
   };
 
   function setMessage(text) {
     els.message.textContent = text;
   }
 
-  function setCloudMessage(text) {
-    setMessage(text);
-    if (els.cloudStatus) els.cloudStatus.textContent = text;
-  }
-
   function readCloudSettings() {
     try {
       const parsed = JSON.parse(localStorage.getItem(CLOUD_SETTINGS_KEY) || "{}");
       return {
-        supabaseUrl: normalizeUrl(parsed.supabaseUrl || DEFAULT_SUPABASE_URL),
-        supabaseKey: normalizeToken(parsed.supabaseKey || DEFAULT_SUPABASE_KEY),
-        email: normalizeText(parsed.email),
-        autoSync: parsed.autoSync !== false
+        token: normalizeToken(parsed.token),
+        syncServerUrl: normalizeUrl(parsed.syncServerUrl),
+        autoSync: Boolean(parsed.autoSync)
       };
     } catch {
-      return { supabaseUrl: DEFAULT_SUPABASE_URL, supabaseKey: DEFAULT_SUPABASE_KEY, email: "", autoSync: true };
+      return { token: "", syncServerUrl: "", autoSync: false };
     }
   }
 
   function saveCloudSettings() {
     localStorage.setItem(CLOUD_SETTINGS_KEY, JSON.stringify(state.cloud));
-    els.supabaseUrl.value = state.cloud.supabaseUrl || "";
-    els.supabaseKey.value = state.cloud.supabaseKey || "";
-    els.supabaseEmail.value = state.cloud.email || "";
+    els.githubToken.value = state.cloud.token;
+    els.syncServerUrl.value = state.cloud.syncServerUrl || "";
     els.appVersion.textContent = APP_VERSION;
-    els.supabaseAutoSync.checked = state.cloud.autoSync;
-    renderCloudStatus();
+    els.progressPath.textContent = PROGRESS_FILE_PATH;
+    els.autoSync.checked = state.cloud.autoSync;
   }
 
   function createBackupJson() {
@@ -561,14 +495,13 @@ async function startBrowserApp() {
         JSON.stringify({ version: 1, seedDeckVersion: state.seedDeckVersion, cards: state.cards })
       );
       if (options.cloud !== false) setMessage("Saved in this browser.");
-      if (options.cloud !== false) queueCloudSave();
     } catch {
       setMessage("Storage failed. Export your cards before closing this browser.");
     }
   }
 
   async function loadSeedCards() {
-    if (state.cards.length > 0 && state.seedDeckVersion >= SEED_DECK_VERSION) return;
+    if (state.seedDeckVersion >= SEED_DECK_VERSION) return;
 
     try {
       const response = await fetch(SEED_DECK_URL, { cache: "no-store" });
@@ -729,175 +662,55 @@ async function startBrowserApp() {
     speakFrenchText(spelling, { rate: 0.65 });
   }
 
-  function readCloudForm() {
-    state.cloud = {
-      supabaseUrl: normalizeUrl(els.supabaseUrl.value),
-      supabaseKey: normalizeToken(els.supabaseKey.value),
-      email: normalizeText(els.supabaseEmail.value),
-      autoSync: els.supabaseAutoSync.checked
-    };
-    saveCloudSettings();
+  function hasSyncServer() {
+    return Boolean(normalizeUrl(state.cloud.syncServerUrl));
   }
 
-  async function loadRepoProgressBackupIfNeeded() {
-    if (!state.startedWithEmptyDeck) return;
-
-    try {
-      const response = await fetch(REPO_PROGRESS_URL, { cache: "no-store" });
-      if (!response.ok) return;
-      const payload = JSON.parse(await response.text());
-      const backupCards = applyCloudPayloadToCards(state.cards, payload);
-      if (!shouldApplyRepoProgressBackup([], backupCards)) return;
-      state.cards = backupCards;
-      state.seedDeckVersion = Number(payload.seedDeckVersion || state.seedDeckVersion);
-      saveCards({ cloud: false });
-      renderAll();
-      const stats = getLearningStats(state.cards);
-      setMessage(`Restored repo backup: ${stats.studied} of ${stats.total} studied.`);
-    } catch {
-      setMessage("Built-in cards loaded. Repo progress backup could not be restored automatically.");
-    }
+  function syncServerUrl(path = "") {
+    return `${normalizeUrl(state.cloud.syncServerUrl)}${path}`;
   }
 
-  function hasSupabaseSettings() {
-    return Boolean(state.cloud.supabaseUrl && state.cloud.supabaseKey);
+  async function syncServerRequest(path, options = {}) {
+    const response = await githubRequest(syncServerUrl(path), {
+      method: options.method || "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache"
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined
+    });
+    if (!response.ok) throw await readGitHubError(response, options.action || "Sync server");
+    return response.json();
   }
 
-  function supabaseUrl(path = "") {
-    return `${state.cloud.supabaseUrl}${path}`;
-  }
-
-  function supabaseHeaders(options = {}) {
+  function cloudHeaders(options = {}) {
     const headers = {
-      apikey: state.cloud.supabaseKey,
-      Authorization: `Bearer ${options.token || state.cloud.supabaseKey}`,
-      "Content-Type": "application/json"
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${normalizeToken(state.cloud.token)}`,
+      "X-GitHub-Api-Version": "2022-11-28"
     };
-    if (options.prefer) headers.Prefer = options.prefer;
+    if (options.jsonBody) headers["Content-Type"] = "application/json";
     return headers;
   }
 
-  function cloudErrorMessage(action, error) {
-    const detail = error && error.message ? error.message : "cloud request failed";
-    if (isGenericNetworkError(error)) return `${action} failed: Browser could not reach Supabase. Progress is still saved on this device.`;
-    return `${action} failed: ${detail}`;
+  function progressFileUrl() {
+    return `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${PROGRESS_FILE_PATH}`;
   }
 
-  function renderCloudStatus() {
-    if (!els.cloudStatus) return;
-    if (!hasSupabaseSettings()) {
-      els.cloudStatus.textContent = "Cloud sync is not configured.";
-    } else if (state.cloudUser) {
-      els.cloudStatus.textContent = `Signed in as ${state.cloudUser.email || state.cloud.email || "Supabase user"}.`;
-    } else {
-      els.cloudStatus.textContent = "Supabase configured. Sign in with your email to sync.";
-    }
-    els.supabaseSignOutBtn.disabled = !state.cloudUser;
-    els.supabaseLoadBtn.disabled = !state.cloudUser;
-    els.supabaseSyncBtn.disabled = !state.cloudUser;
-  }
-
-  function initializeSupabaseClient() {
-    if (!hasSupabaseSettings()) {
-      state.cloudUser = null;
-      renderCloudStatus();
-      return null;
-    }
-    renderCloudStatus();
-    return true;
-  }
-
-  function saveSupabaseSession(session) {
-    state.cloudSession = session;
-    if (!session) {
-      state.cloudUser = null;
-      localStorage.removeItem(SUPABASE_SESSION_KEY);
-      renderCloudStatus();
-      return;
-    }
-    const claims = decodeJwtPayload(session.access_token);
-    state.cloudUser = { id: claims.sub, email: claims.email || state.cloud.email };
-    localStorage.setItem(SUPABASE_SESSION_KEY, JSON.stringify(session));
-    renderCloudStatus();
-  }
-
-  function readSessionFromUrl() {
-    const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-    const accessToken = params.get("access_token");
-    const refreshToken = params.get("refresh_token");
-    if (!accessToken) return null;
-    history.replaceState(null, "", window.location.pathname + window.location.search);
-    return { access_token: accessToken, refresh_token: refreshToken || "", token_type: params.get("token_type") || "bearer" };
-  }
-
-  function readStoredSupabaseSession() {
-    try {
-      const parsed = JSON.parse(localStorage.getItem(SUPABASE_SESSION_KEY) || "null");
-      return parsed && parsed.access_token ? parsed : null;
-    } catch {
-      return null;
-    }
-  }
-
-  async function restoreSupabaseSession() {
-    if (!initializeSupabaseClient()) return;
-    try {
-      const session = readSessionFromUrl() || readStoredSupabaseSession();
-      if (!session) return;
-      saveSupabaseSession(session);
-      await loadFromSupabase({ silent: true });
-    } catch (error) {
-      setMessage(cloudErrorMessage("Supabase session restore", error));
-    }
-  }
-
-  async function signInWithSupabase() {
-    readCloudForm();
-    if (!initializeSupabaseClient()) return;
-    if (!state.cloud.email) {
-      setCloudMessage("Enter your email before sending the magic link.");
-      return;
-    }
-    try {
-      els.supabaseSignInBtn.disabled = true;
-      els.supabaseSignInBtn.textContent = "Sending...";
-      setCloudMessage(`Sending magic link to ${state.cloud.email}...`);
-      const redirectTo = window.location.origin + window.location.pathname;
-      const response = await fetch(supabaseUrl(`/auth/v1/otp?redirect_to=${encodeURIComponent(redirectTo)}`), {
-        method: "POST",
-        headers: supabaseHeaders(),
-        body: JSON.stringify({
-          email: state.cloud.email,
-          create_user: true
-        })
-      });
-      if (!response.ok) throw new Error(await response.text());
-      setCloudMessage(`Magic link sent to ${state.cloud.email}. Check inbox and spam.`);
-    } catch (error) {
-      setCloudMessage(cloudErrorMessage("Supabase sign-in", error));
-    } finally {
-      els.supabaseSignInBtn.disabled = false;
-      els.supabaseSignInBtn.textContent = "Send magic link";
-    }
-  }
-
-  async function signOutOfSupabase() {
-    saveSupabaseSession(null);
-    setMessage("Signed out of Supabase. Local saving is still active.");
-  }
-
-  async function fetchSupabaseProgressRow() {
-    const response = await fetch(supabaseUrl(`/rest/v1/${SUPABASE_PROGRESS_TABLE}?user_id=eq.${encodeURIComponent(state.cloudUser.id)}&select=*`), {
-      headers: supabaseHeaders({ token: state.cloudSession.access_token })
+  async function fetchProgressFileSha() {
+    const response = await githubRequest(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
+      headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
     });
-    if (!response.ok) throw new Error(await response.text());
-    const rows = await response.json();
-    return rows[0] || null;
+    if (response.status === 404) return "";
+    if (!response.ok) throw await readGitHubError(response, "GitHub progress lookup");
+    const file = await response.json();
+    return file.sha || "";
   }
 
-  async function saveToSupabase(options = {}) {
-    if (!state.cloudUser || !state.cloudSession) {
-      if (!options.silent) setMessage("Sign in with Supabase before syncing.");
+  async function saveToGithub(options = {}) {
+    if (!hasSyncServer() && !state.cloud.token) {
+      if (!options.silent) setMessage("Add a GitHub token or sync server before syncing.");
       return false;
     }
 
@@ -907,23 +720,42 @@ async function startBrowserApp() {
     }
 
     state.cloudSaveInFlight = true;
-    if (!options.silent) setMessage("Saving progress to Supabase...");
+    if (!options.silent) setMessage("Saving progress to GitHub repo...");
+    const payload = createCloudPayload(state.cards, state.seedDeckVersion);
+    const content = JSON.stringify(payload, null, 2);
 
     try {
-      const row = createSupabaseProgressRow(state.cloudUser.id, state.cards, state.seedDeckVersion);
-      const response = await fetch(supabaseUrl(`/rest/v1/${SUPABASE_PROGRESS_TABLE}?on_conflict=user_id`), {
-        method: "POST",
-        headers: supabaseHeaders({
-          token: state.cloudSession.access_token,
-          prefer: "resolution=merge-duplicates,return=minimal"
-        }),
-        body: JSON.stringify(row)
-      });
-      if (!response.ok) throw new Error(await response.text());
-      if (!options.silent) setMessage("Learning progress saved to Supabase.");
-      return true;
+      if (hasSyncServer()) {
+        await syncServerRequest("/progress", {
+          method: "PUT",
+          body: payload,
+          action: "Sync server save"
+        });
+        if (!options.silent) setMessage("Learning saved through sync server.");
+        return true;
+      }
+
+      let lastStatus = 0;
+      for (let attempt = 1; attempt <= REPO_SAVE_MAX_ATTEMPTS; attempt += 1) {
+        const sha = await fetchProgressFileSha();
+        const response = await githubRequest(progressFileUrl(), {
+          method: "PUT",
+          headers: cloudHeaders({ jsonBody: true }),
+          body: JSON.stringify(createRepoSaveBody(content, sha))
+        });
+
+        if (response.ok) {
+          if (!options.silent) setMessage(`Learning saved to ${PROGRESS_FILE_PATH}.`);
+          return true;
+        }
+
+        lastStatus = response.status;
+        if (!shouldRetryRepoSave(response.status)) throw await readGitHubError(response, "GitHub repo save");
+      }
+
+      throw new Error(formatGitHubError("GitHub repo save", lastStatus, "the progress file kept changing; try Sync now again"));
     } catch (error) {
-      if (!options.silent) setMessage(cloudErrorMessage("Supabase save", error));
+      if (!options.silent) setMessage(formatNetworkError("GitHub repo save", error));
       return false;
     } finally {
       state.cloudSaveInFlight = false;
@@ -933,42 +765,99 @@ async function startBrowserApp() {
       }
     }
   }
+
   function queueCloudSave() {
-    if (!state.cloud.autoSync || !state.cloudUser || !state.cloudSession) return;
+    if (!state.cloud.autoSync || !state.cloud.token) return;
     window.clearTimeout(state.cloudSaveTimer);
     state.cloudSaveTimer = window.setTimeout(() => {
-      saveToSupabase({ silent: true });
+      saveToGithub({ silent: true });
     }, 3000);
   }
 
-  async function loadFromSupabase(options = {}) {
-    if (!state.cloudUser || !state.cloudSession) {
-      if (!options.silent) setMessage("Sign in with Supabase before loading cloud progress.");
+  async function loadFromGithub() {
+    if (!hasSyncServer() && !state.cloud.token) {
+      setMessage("Add a GitHub token or sync server before loading repo progress.");
       return;
     }
 
     try {
-      if (!options.silent) setMessage("Loading progress from Supabase...");
-      const row = await fetchSupabaseProgressRow();
-      if (!row) {
-        if (!options.silent) setMessage("No cloud progress yet. Press Sync now to upload this device.");
-        return;
+      setMessage(hasSyncServer() ? "Loading progress from sync server..." : "Loading progress from repo...");
+      let payload;
+      if (hasSyncServer()) {
+        payload = await syncServerRequest("/progress", { action: "Sync server load" });
+      } else {
+        const response = await githubRequest(`${progressFileUrl()}?ref=${GITHUB_REPO_BRANCH}`, {
+          headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
+        });
+        if (response.status === 404) throw new Error(`No progress file found at ${PROGRESS_FILE_PATH}.`);
+        if (!response.ok) throw await readGitHubError(response, "GitHub repo load");
+        const file = await response.json();
+        payload = JSON.parse(decodeBase64(file.content || ""));
       }
-      const payload = extractSupabaseProgressPayload(row);
-      const cloudCards = applyCloudPayloadToCards(state.cards, payload);
+      const cloudCards = Array.isArray(payload.cardProgress)
+        ? applyProgressEntries(state.cards, payload.cardProgress)
+        : parseImportedDeck(JSON.stringify(payload));
       const localStats = getLearningStats(state.cards);
       const cloudStats = getLearningStats(cloudCards);
-      if (!shouldApplyCloudProgress(state.cards, cloudCards)) {
-        if (!options.silent) setMessage(`Cloud progress is not newer (${cloudStats.learnedPercent}%). This device is at ${localStats.learnedPercent}%.`);
+      const localProgressTime = getLatestProgressTime(state.cards);
+      const cloudProgressTime = getLatestProgressTime(cloudCards);
+      if (localProgressTime > cloudProgressTime) {
+        setMessage(`Repo progress is older (${cloudStats.learnedPercent}%). Phone progress is newer (${localStats.learnedPercent}%). Press Sync now to upload the phone.`);
         return;
       }
-      state.cards = cloudCards;
-      state.seedDeckVersion = Number(payload.seedDeckVersion || row.seed_deck_version || state.seedDeckVersion);
+      state.cards = Array.isArray(payload.cardProgress) ? cloudCards : mergeCardsByLatestProgress(state.cards, cloudCards);
+      state.seedDeckVersion = Number(payload.seedDeckVersion || state.seedDeckVersion);
       saveCards({ cloud: false });
       renderAll();
-      setMessage(`Loaded Supabase progress: ${cloudStats.studied} of ${cloudStats.total} studied.`);
+      setMessage(`Loaded ${cloudCards.length} cards from ${PROGRESS_FILE_PATH}.`);
     } catch (error) {
-      if (!options.silent) setMessage(cloudErrorMessage("Supabase load", error));
+      setMessage(formatNetworkError("GitHub repo load", error));
+    }
+  }
+  async function testGithubToken() {
+    state.cloud = {
+      token: normalizeToken(els.githubToken.value),
+      syncServerUrl: normalizeUrl(els.syncServerUrl.value),
+      autoSync: els.autoSync.checked
+    };
+    saveCloudSettings();
+
+    if (hasSyncServer()) {
+      try {
+        setMessage("Testing sync server...");
+        await syncServerRequest("/health", { action: "Sync server test" });
+        setMessage("Sync server works. Press Sync now.");
+      } catch (error) {
+        setMessage(formatNetworkError("Sync server test", error));
+      }
+      return;
+    }
+
+    if (!state.cloud.token) {
+      setMessage("Add a GitHub token or sync server before testing.");
+      return;
+    }
+
+    try {
+      setMessage("Testing GitHub connection...");
+      const publicResponse = await githubRequest("https://api.github.com/rate_limit", {
+        headers: { Accept: "application/vnd.github+json", "Cache-Control": "no-cache" }
+      });
+      if (!publicResponse.ok) throw await readGitHubError(publicResponse, "GitHub public API test");
+
+      setMessage("Testing GitHub token...");
+      const repoResponse = await githubRequest(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`, {
+        headers: { ...cloudHeaders(), "Cache-Control": "no-cache" }
+      });
+      if (!repoResponse.ok) throw await readGitHubError(repoResponse, "GitHub token test");
+      const repo = await repoResponse.json();
+      const canWrite = !repo.permissions || repo.permissions.push || repo.permissions.admin || repo.permissions.maintain;
+      await fetchProgressFileSha();
+      setMessage(canWrite
+        ? "Token can access this repo. Press Sync now to save phone progress."
+        : "Token can read the repo but may not write. Give it Contents: Read and write.");
+    } catch (error) {
+      setMessage(formatNetworkError("GitHub token test", error));
     }
   }
 
@@ -1055,42 +944,15 @@ async function startBrowserApp() {
 
   els.importBtn.addEventListener("click", () => {
     try {
-      const parsed = JSON.parse(els.importText.value);
-      const imported = Array.isArray(parsed.cardProgress)
-        ? applyCloudPayloadToCards(state.cards, parsed)
-        : parseImportedDeck(els.importText.value);
-      state.cards = Array.isArray(parsed.cardProgress) ? imported : mergeCards(state.cards, imported);
+      const imported = parseImportedDeck(els.importText.value);
+      state.cards = mergeCards(state.cards, imported);
       saveCards();
       els.importText.value = "";
-      setMessage(`Imported ${Array.isArray(parsed.cardProgress) ? parsed.cardProgress.length : imported.length} progress entries.`);
+      setMessage(`Imported ${imported.length} cards.`);
       renderAll();
     } catch (error) {
-      try {
-        const imported = parseImportedDeck(els.importText.value);
-        state.cards = mergeCards(state.cards, imported);
-        saveCards();
-        els.importText.value = "";
-        setMessage(`Imported ${imported.length} cards.`);
-        renderAll();
-      } catch (importError) {
-        setMessage(importError.message || error.message);
-      }
+      setMessage(error.message);
     }
-  });
-
-  els.supabaseSignInBtn.addEventListener("click", signInWithSupabase);
-  els.supabaseSignOutBtn.addEventListener("click", signOutOfSupabase);
-  els.supabaseLoadBtn.addEventListener("click", () => loadFromSupabase());
-  els.supabaseSyncBtn.addEventListener("click", () => {
-    readCloudForm();
-    initializeSupabaseClient();
-    saveToSupabase();
-  });
-  [els.supabaseUrl, els.supabaseKey, els.supabaseEmail, els.supabaseAutoSync].forEach((input) => {
-    input.addEventListener("change", () => {
-      readCloudForm();
-      initializeSupabaseClient();
-    });
   });
 
   els.resetLearningBtn.addEventListener("click", () => {
@@ -1102,11 +964,8 @@ async function startBrowserApp() {
     setMessage("Learning progress reset.");
   });
 
-  saveCloudSettings();
   renderAll();
-  await loadSeedCards();
-  await loadRepoProgressBackupIfNeeded();
-  await restoreSupabaseSession();
+  loadSeedCards();
 }
 
 if (typeof module !== "undefined") {
@@ -1125,11 +984,6 @@ if (typeof module !== "undefined") {
     syncSeedCards,
     resetLearning,
     createCloudPayload,
-    createSupabaseProgressRow,
-    extractSupabaseProgressPayload,
-    shouldApplyCloudProgress,
-    shouldApplyRepoProgressBackup,
-    applyCloudPayloadToCards,
     extractCloudCards,
     applyProgressEntries,
     createProgressEntries,
@@ -1147,12 +1001,7 @@ if (typeof module !== "undefined") {
 }
 
 if (typeof window !== "undefined") {
-  window[BOOT_FLAG] = true;
-  if (document.readyState === "loading") {
-    window.addEventListener("DOMContentLoaded", startBrowserApp);
-  } else {
-    startBrowserApp();
-  }
+  window.addEventListener("DOMContentLoaded", startBrowserApp);
 }
 
 
