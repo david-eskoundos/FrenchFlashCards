@@ -1,0 +1,933 @@
+{
+  "app": "FrenchFlashCards",
+  "version": 3,
+  "user": "david",
+  "progressPath": "progress/david-progress.json",
+  "seedDeckVersion": 3,
+  "savedAt": "2026-06-23T07:58:49.752Z",
+  "stats": {
+    "total": 1184,
+    "studied": 102,
+    "learnedPercent": 9
+  },
+  "cardProgress": [
+    {
+      "id": "seed-xlsx-0001-un-avion-airplane",
+      "updatedAt": "2026-06-21T20:45:07.371Z",
+      "dueAt": "2026-06-23T20:45:07.371Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0002-un-a-roport-airport",
+      "updatedAt": "2026-06-21T20:50:57.902Z",
+      "dueAt": "2026-06-23T20:50:57.902Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0003-un-vol-flight",
+      "updatedAt": "2026-06-21T20:55:12.929Z",
+      "dueAt": "2026-06-23T20:55:12.929Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0004-une-porte-gate",
+      "updatedAt": "2026-06-21T20:51:06.789Z",
+      "dueAt": "2026-06-23T20:51:06.789Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0005-l-heure-on-time",
+      "updatedAt": "2026-06-21T20:55:37.785Z",
+      "dueAt": "2026-06-23T20:55:37.785Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0006-en-retard-late",
+      "updatedAt": "2026-06-21T20:51:12.511Z",
+      "dueAt": "2026-06-23T20:51:12.511Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0007-un-billet-d-avion-plane-ticket",
+      "updatedAt": "2026-06-21T20:55:46.583Z",
+      "dueAt": "2026-06-23T20:55:46.583Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0008-un-passeport-passport",
+      "updatedAt": "2026-06-21T20:51:16.280Z",
+      "dueAt": "2026-06-23T20:51:16.280Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0009-les-arriv-es-arrivals",
+      "updatedAt": "2026-06-22T15:00:26.115Z",
+      "dueAt": "2026-06-23T15:00:26.115Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0010-l-enregistrement-check-in",
+      "updatedAt": "2026-06-23T07:30:02.878Z",
+      "dueAt": "2026-06-23T07:40:02.878Z",
+      "intervalDays": 0,
+      "ease": 2.3,
+      "repetitions": 0,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0011-les-d-parts-departures",
+      "updatedAt": "2026-06-22T17:09:12.356Z",
+      "dueAt": "2026-06-23T17:09:12.356Z",
+      "intervalDays": 1,
+      "ease": 2.1,
+      "repetitions": 1,
+      "lapses": 2
+    },
+    {
+      "id": "seed-xlsx-0012-en-avance-early",
+      "updatedAt": "2026-06-21T20:51:32.571Z",
+      "dueAt": "2026-06-23T20:51:32.571Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0013-en-classe-conomique-en-classe-touriste",
+      "updatedAt": "2026-06-22T15:07:57.101Z",
+      "dueAt": "2026-06-24T15:07:57.101Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0014-le-contr-le-de-s-curit-security-check",
+      "updatedAt": "2026-06-21T20:51:59.316Z",
+      "dueAt": "2026-06-23T20:51:59.316Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0015-un-visa-visa",
+      "updatedAt": "2026-06-21T20:55:58.092Z",
+      "dueAt": "2026-06-23T20:55:58.092Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0016-les-bagages-luggage-baggage",
+      "updatedAt": "2026-06-21T20:52:18.718Z",
+      "dueAt": "2026-06-23T20:52:18.718Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0017-les-bagages-main-carry-on-luggage",
+      "updatedAt": "2026-06-22T15:02:04.765Z",
+      "dueAt": "2026-06-23T15:02:04.765Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0018-un-chariot-cart",
+      "updatedAt": "2026-06-21T20:52:27.125Z",
+      "dueAt": "2026-06-22T20:52:27.125Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0019-un-passager-passenger",
+      "updatedAt": "2026-06-22T15:06:17.259Z",
+      "dueAt": "2026-06-23T15:06:17.259Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0020-le-pilote-pilot",
+      "updatedAt": "2026-06-22T15:00:10.211Z",
+      "dueAt": "2026-06-24T15:00:10.211Z",
+      "intervalDays": 2,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0021-embarquer-to-board",
+      "updatedAt": "2026-06-22T15:02:16.607Z",
+      "dueAt": "2026-06-24T15:02:16.607Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0022-acheter-un-billet-to-buy-a-ticket",
+      "updatedAt": "2026-06-21T20:52:48.381Z",
+      "dueAt": "2026-06-23T20:52:48.381Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0023-enregistrer-les-bagages-to-check-bags",
+      "updatedAt": "2026-06-22T17:09:34.141Z",
+      "dueAt": "2026-06-23T17:09:34.141Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0024-atterrir-to-land",
+      "updatedAt": "2026-06-23T07:30:16.454Z",
+      "dueAt": "2026-06-26T07:30:16.454Z",
+      "intervalDays": 3,
+      "ease": 2.45,
+      "repetitions": 2,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0025-d-coller-to-take-off",
+      "updatedAt": "2026-06-22T15:02:35.929Z",
+      "dueAt": "2026-06-23T15:02:35.929Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0026-une-compagnie-a-rienne-airline",
+      "updatedAt": "2026-06-23T07:33:16.404Z",
+      "dueAt": "2026-06-25T07:33:16.404Z",
+      "intervalDays": 2,
+      "ease": 2.4,
+      "repetitions": 2,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0027-la-douane-customs",
+      "updatedAt": "2026-06-22T15:06:28.590Z",
+      "dueAt": "2026-06-23T15:06:28.590Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0028-une-boutique-hors-taxes-duty-free",
+      "updatedAt": "2026-06-22T15:04:20.343Z",
+      "dueAt": "2026-06-24T15:04:20.343Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0029-en-classe-conomique-in-economy-class",
+      "updatedAt": "2026-06-22T15:08:00.601Z",
+      "dueAt": "2026-06-24T15:08:00.601Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0030-en-premi-re-classe-in-first-class",
+      "updatedAt": "2026-06-22T15:04:35.187Z",
+      "dueAt": "2026-06-24T15:04:35.187Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0031-l-immigration-immigration",
+      "updatedAt": "2026-06-22T15:06:52.784Z",
+      "dueAt": "2026-06-23T15:06:52.784Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0032-une-navette-shuttle",
+      "updatedAt": "2026-06-22T17:20:50.426Z",
+      "dueAt": "2026-06-23T17:20:50.426Z",
+      "intervalDays": 1,
+      "ease": 2.1,
+      "repetitions": 1,
+      "lapses": 2
+    },
+    {
+      "id": "seed-xlsx-0033-une-escale-stopover",
+      "updatedAt": "2026-06-23T07:30:26.021Z",
+      "dueAt": "2026-06-24T07:30:26.021Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0034-une-a-rogare-terminal",
+      "updatedAt": "2026-06-22T17:20:43.608Z",
+      "dueAt": "2026-06-22T17:30:43.608Z",
+      "intervalDays": 0,
+      "ease": 2.1,
+      "repetitions": 0,
+      "lapses": 2
+    },
+    {
+      "id": "seed-xlsx-0035-un-billet-aller-retour-round-trip-ticket",
+      "updatedAt": "2026-06-22T15:06:59.824Z",
+      "dueAt": "2026-06-24T15:06:59.824Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0036-un-billet-simple-one-way-ticket",
+      "updatedAt": "2026-06-22T15:05:34.655Z",
+      "dueAt": "2026-06-23T15:05:34.655Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0037-la-premi-re-classe-first-class",
+      "updatedAt": "2026-06-22T15:08:03.835Z",
+      "dueAt": "2026-06-24T15:08:03.835Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0038-une-carte-d-embarquement-boarding-pass",
+      "updatedAt": "2026-06-22T15:05:45.297Z",
+      "dueAt": "2026-06-23T15:05:45.297Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0039-les-bagages-enregistr-s-checked-luggage",
+      "updatedAt": "2026-06-22T15:07:09.934Z",
+      "dueAt": "2026-06-23T15:07:09.934Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0040-les-bagages-en-soute-checked-luggage",
+      "updatedAt": "2026-06-22T17:09:51.296Z",
+      "dueAt": "2026-06-23T17:09:51.296Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0041-la-livraison-des-bagages-baggage-claim",
+      "updatedAt": "2026-06-22T15:07:19.785Z",
+      "dueAt": "2026-06-23T15:07:19.785Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0042-un-e-agent-e-de-bord-flight-attendant",
+      "updatedAt": "2026-06-22T15:08:21.654Z",
+      "dueAt": "2026-06-23T15:08:21.654Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0043-un-steward-flight-attendant",
+      "updatedAt": "2026-06-23T07:29:44.909Z",
+      "dueAt": "2026-06-23T07:39:44.909Z",
+      "intervalDays": 0,
+      "ease": 2.1,
+      "repetitions": 0,
+      "lapses": 2
+    },
+    {
+      "id": "seed-xlsx-0044-une-h-tesse-de-l-air-flight-attendant",
+      "updatedAt": "2026-06-23T07:29:07.680Z",
+      "dueAt": "2026-06-23T07:39:07.680Z",
+      "intervalDays": 0,
+      "ease": 2.1,
+      "repetitions": 0,
+      "lapses": 2
+    },
+    {
+      "id": "seed-xlsx-0045-d-clarer-to-declare",
+      "updatedAt": "2026-06-22T17:09:56.620Z",
+      "dueAt": "2026-06-24T17:09:56.620Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0046-faire-une-r-servation-to-make-a-reservation",
+      "updatedAt": "2026-06-22T15:08:50.052Z",
+      "dueAt": "2026-06-23T15:08:50.052Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0048-des-cheveux-hair",
+      "updatedAt": "2026-06-22T15:08:52.272Z",
+      "dueAt": "2026-06-24T15:08:52.272Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0049-un-bras-arm",
+      "updatedAt": "2026-06-22T17:10:21.753Z",
+      "dueAt": "2026-06-23T17:10:21.753Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0050-une-t-te-head",
+      "updatedAt": "2026-06-22T15:08:56.976Z",
+      "dueAt": "2026-06-24T15:08:56.976Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0051-un-visage-face",
+      "updatedAt": "2026-06-22T17:21:12.666Z",
+      "dueAt": "2026-06-23T17:21:12.666Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0052-un-il-eye",
+      "updatedAt": "2026-06-22T15:09:08.081Z",
+      "dueAt": "2026-06-24T15:09:08.081Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0053-une-main-hand",
+      "updatedAt": "2026-06-22T17:10:33.468Z",
+      "dueAt": "2026-06-23T17:10:33.468Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0054-des-yeux-eyes",
+      "updatedAt": "2026-06-22T15:09:13.336Z",
+      "dueAt": "2026-06-24T15:09:13.336Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0055-un-doigt-finger",
+      "updatedAt": "2026-06-23T07:30:29.610Z",
+      "dueAt": "2026-06-25T07:30:29.610Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0056-un-nez-nose",
+      "updatedAt": "2026-06-22T15:09:21.125Z",
+      "dueAt": "2026-06-23T15:09:21.125Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0057-une-bouche-mouth",
+      "updatedAt": "2026-06-22T17:10:39.459Z",
+      "dueAt": "2026-06-23T17:10:39.459Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0058-une-jambe-leg",
+      "updatedAt": "2026-06-22T15:09:26.728Z",
+      "dueAt": "2026-06-24T15:09:26.728Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0059-un-genou-knee",
+      "updatedAt": "2026-06-22T17:21:26.008Z",
+      "dueAt": "2026-06-23T17:21:26.008Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0060-une-dent-tooth",
+      "updatedAt": "2026-06-22T15:09:32.384Z",
+      "dueAt": "2026-06-23T15:09:32.384Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0061-une-oreille-ear",
+      "updatedAt": "2026-06-22T17:11:50.843Z",
+      "dueAt": "2026-06-23T17:11:50.843Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0062-un-pied-foot",
+      "updatedAt": "2026-06-22T15:09:39.689Z",
+      "dueAt": "2026-06-24T15:09:39.689Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0064-un-c-ur-heart",
+      "updatedAt": "2026-06-22T15:12:15.716Z",
+      "dueAt": "2026-06-24T15:12:15.716Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0065-une-joue-cheek",
+      "updatedAt": "2026-06-22T17:11:58.282Z",
+      "dueAt": "2026-06-23T17:11:58.282Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0066-un-dos-back",
+      "updatedAt": "2026-06-22T15:12:26.208Z",
+      "dueAt": "2026-06-24T15:12:26.208Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0067-une-l-vre-lip",
+      "updatedAt": "2026-06-23T07:32:54.896Z",
+      "dueAt": "2026-06-24T07:32:54.896Z",
+      "intervalDays": 1,
+      "ease": 2.25,
+      "repetitions": 1,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0068-un-estomac-stomach",
+      "updatedAt": "2026-06-22T15:12:30.761Z",
+      "dueAt": "2026-06-24T15:12:30.761Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0069-une-paule-shoulder",
+      "updatedAt": "2026-06-22T17:12:01.399Z",
+      "dueAt": "2026-06-24T17:12:01.399Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0070-un-cr-ne-skull-head",
+      "updatedAt": "2026-06-23T07:30:42.003Z",
+      "dueAt": "2026-06-23T07:40:42.003Z",
+      "intervalDays": 0,
+      "ease": 2.3,
+      "repetitions": 0,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0071-un-coude-elbow",
+      "updatedAt": "2026-06-23T07:32:39.322Z",
+      "dueAt": "2026-06-24T07:32:39.322Z",
+      "intervalDays": 1,
+      "ease": 2.25,
+      "repetitions": 1,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0073-un-ongle-fingernail",
+      "updatedAt": "2026-06-23T07:29:20.518Z",
+      "dueAt": "2026-06-23T07:39:20.518Z",
+      "intervalDays": 0,
+      "ease": 2.1,
+      "repetitions": 0,
+      "lapses": 2
+    },
+    {
+      "id": "seed-xlsx-0074-un-pouce-thumb",
+      "updatedAt": "2026-06-23T07:30:53.278Z",
+      "dueAt": "2026-06-23T07:40:53.278Z",
+      "intervalDays": 0,
+      "ease": 2.3,
+      "repetitions": 0,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0075-une-gueule-mouth",
+      "updatedAt": "2026-06-22T17:12:41.738Z",
+      "dueAt": "2026-06-22T17:22:41.738Z",
+      "intervalDays": 0,
+      "ease": 2.3,
+      "repetitions": 0,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0077-un-orteil-toe",
+      "updatedAt": "2026-06-23T07:29:28.132Z",
+      "dueAt": "2026-06-23T07:39:28.132Z",
+      "intervalDays": 0,
+      "ease": 2.1,
+      "repetitions": 0,
+      "lapses": 2
+    },
+    {
+      "id": "seed-xlsx-0078-une-gorge-throat",
+      "updatedAt": "2026-06-23T07:31:02.154Z",
+      "dueAt": "2026-06-23T07:41:02.154Z",
+      "intervalDays": 0,
+      "ease": 2.3,
+      "repetitions": 0,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0079-une-poitrine-chest",
+      "updatedAt": "2026-06-23T07:32:47.389Z",
+      "dueAt": "2026-06-24T07:32:47.389Z",
+      "intervalDays": 1,
+      "ease": 2.25,
+      "repetitions": 1,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0081-mercredi-wednesday",
+      "updatedAt": "2026-06-22T17:15:17.336Z",
+      "dueAt": "2026-06-24T17:15:17.336Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0082-jeudi-thursday",
+      "updatedAt": "2026-06-23T07:31:04.988Z",
+      "dueAt": "2026-06-25T07:31:04.988Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0083-vendredi-friday",
+      "updatedAt": "2026-06-22T17:15:19.674Z",
+      "dueAt": "2026-06-24T17:15:19.674Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0085-dimanche-sunday",
+      "updatedAt": "2026-06-22T17:15:21.723Z",
+      "dueAt": "2026-06-24T17:15:21.723Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0086-janvier-january",
+      "updatedAt": "2026-06-23T07:31:10.925Z",
+      "dueAt": "2026-06-25T07:31:10.925Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0087-f-vrier-february",
+      "updatedAt": "2026-06-22T17:15:23.740Z",
+      "dueAt": "2026-06-24T17:15:23.740Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0089-avril-april",
+      "updatedAt": "2026-06-22T17:15:25.743Z",
+      "dueAt": "2026-06-24T17:15:25.743Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0090-mai-may",
+      "updatedAt": "2026-06-23T07:31:14.178Z",
+      "dueAt": "2026-06-25T07:31:14.178Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0091-juin-june",
+      "updatedAt": "2026-06-22T17:15:32.331Z",
+      "dueAt": "2026-06-23T17:15:32.331Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0093-ao-t-august",
+      "updatedAt": "2026-06-22T17:15:33.999Z",
+      "dueAt": "2026-06-24T17:15:33.999Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0094-septembre-september",
+      "updatedAt": "2026-06-23T07:31:15.725Z",
+      "dueAt": "2026-06-25T07:31:15.725Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0095-octobre-october",
+      "updatedAt": "2026-06-22T17:15:35.917Z",
+      "dueAt": "2026-06-24T17:15:35.917Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0097-d-cembre-december",
+      "updatedAt": "2026-06-22T17:15:37.346Z",
+      "dueAt": "2026-06-24T17:15:37.346Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0098-printemps-spring",
+      "updatedAt": "2026-06-23T07:31:22.436Z",
+      "dueAt": "2026-06-23T07:41:22.436Z",
+      "intervalDays": 0,
+      "ease": 2.3,
+      "repetitions": 0,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0099-t-summer",
+      "updatedAt": "2026-06-22T17:15:39.036Z",
+      "dueAt": "2026-06-24T17:15:39.036Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0101-hiver-winter",
+      "updatedAt": "2026-06-22T17:15:40.537Z",
+      "dueAt": "2026-06-24T17:15:40.537Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0102-card-no-vocabulary-classified",
+      "updatedAt": "2026-06-23T07:31:30.008Z",
+      "dueAt": "2026-06-25T07:31:30.008Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0103-card-no-vocabulary-classified",
+      "updatedAt": "2026-06-22T17:15:49.097Z",
+      "dueAt": "2026-06-24T17:15:49.097Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0105-un-blouson-jacket",
+      "updatedAt": "2026-06-23T07:29:32.864Z",
+      "dueAt": "2026-06-24T07:29:32.864Z",
+      "intervalDays": 1,
+      "ease": 2.3,
+      "repetitions": 1,
+      "lapses": 1
+    },
+    {
+      "id": "seed-xlsx-0106-un-pantalon-pants-trousers",
+      "updatedAt": "2026-06-23T07:31:35.460Z",
+      "dueAt": "2026-06-25T07:31:35.460Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0107-un-short-shorts",
+      "updatedAt": "2026-06-22T17:16:05.934Z",
+      "dueAt": "2026-06-23T17:16:05.934Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0109-un-tee-shirt-t-shirt",
+      "updatedAt": "2026-06-22T17:16:15.995Z",
+      "dueAt": "2026-06-23T17:16:15.995Z",
+      "intervalDays": 1,
+      "ease": 2.5,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0110-des-chaussures-f-shoes",
+      "updatedAt": "2026-06-23T07:31:38.113Z",
+      "dueAt": "2026-06-25T07:31:38.113Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0111-des-chaussettes-f-socks",
+      "updatedAt": "2026-06-22T17:16:19.331Z",
+      "dueAt": "2026-06-24T17:16:19.331Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0113-une-jupe-skirt",
+      "updatedAt": "2026-06-22T17:16:26.201Z",
+      "dueAt": "2026-06-23T17:16:26.201Z",
+      "intervalDays": 1,
+      "ease": 2.45,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0114-une-chemise-shirt",
+      "updatedAt": "2026-06-23T07:31:45.037Z",
+      "dueAt": "2026-06-25T07:31:45.037Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    },
+    {
+      "id": "seed-xlsx-0115-un-maillot-de-bain-bathing-suit",
+      "updatedAt": "2026-06-22T17:16:31.939Z",
+      "dueAt": "2026-06-24T17:16:31.939Z",
+      "intervalDays": 2,
+      "ease": 2.65,
+      "repetitions": 1,
+      "lapses": 0
+    }
+  ]
+}

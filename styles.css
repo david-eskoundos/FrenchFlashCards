@@ -100,6 +100,39 @@ h1 {
   gap: 16px;
 }
 
+.deck-bar {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--paper);
+}
+
+.deck-picker {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.deck-summary {
+  color: var(--muted);
+  font-size: 14px;
+  align-self: center;
+}
+
+.deck-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.deck-actions button {
+  min-width: 0;
+  padding-inline: 10px;
+}
+
 .study-panel,
 .manage-panel {
   min-width: 0;
@@ -377,4 +410,15 @@ select {
 .cloud-actions button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
+}
+
+@media (min-width: 640px) {
+  .deck-bar {
+    grid-template-columns: minmax(220px, 1fr) auto auto;
+    align-items: end;
+  }
+
+  .deck-actions {
+    grid-template-columns: repeat(3, auto);
+  }
 }

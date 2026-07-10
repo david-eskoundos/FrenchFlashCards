@@ -13,13 +13,14 @@ Repository: https://github.com/david-eskoundos/FrenchFlashCards
 - Schedules cards with `Again`, `Hard`, `Good`, and `Easy` ratings.
 - Reads French aloud with the browser speech voice.
 - Spells the French answer slowly with the `Spell` button.
+- Supports multiple named decks, each with its own cards, progress, and due dates.
 - Saves progress locally in the browser.
-- Can save David's learning progress automatically to `progress/david-progress.json` in this repo.
+- Can sync the full deck library through Supabase when configured.
 - Works as a static GitHub Pages site: no server or database is required.
 
-## Current Deck
+## Built-In Default Deck
 
-The built-in deck currently has `1,184` flashcards:
+The default `French Flashcards` deck currently has `1,184` built-in flashcards:
 
 | Source | Cards |
 | --- | ---: |
@@ -43,16 +44,16 @@ The B1 handnotes were imported from a visual transcription JSON file. Three of t
 5. Use `Listen` for pronunciation.
 6. Use `Spell` when you want the exact French spelling.
 
-## Saving And Backups
+## Decks, Saving, And Backups
 
-The app saves progress automatically in the current browser with `localStorage`. On the same iPhone/browser, you can close the page and come back later.
+The app saves the full deck library automatically in the current browser with `localStorage`. On the same iPhone/browser, you can close the page and come back later. Use the deck selector to create, rename, delete, and switch decks. Study stats, due cards, browse, add-card, and reset learning actions apply to the selected deck only.
 
 Use the `Data` tab for manual backups:
 
-- `Export JSON` downloads a timestamped backup file, for example `french-flashcards-2026-06-22T20-15-30-123Z.json`.
+- `Export JSON` downloads a timestamped full-library backup file, for example `french-flashcards-2026-06-22T20-15-30-123Z.json`.
 - `Copy backup` shows the same JSON on screen and tries to copy it to the clipboard.
-- `Import JSON` restores cards/progress from a backup.
-- `Reset learning` clears scheduling progress but keeps the cards.
+- `Import JSON` restores or merges decks, cards, and progress from a backup. Old single-deck backups merge into the selected deck.
+- `Reset this deck` clears scheduling progress for the selected deck but keeps its cards.
 
 For best safety, export a JSON backup after each study session or whenever you have made important progress.
 
@@ -156,7 +157,7 @@ https://david-eskoundos.github.io/FrenchFlashCards/
 - Prefer small, simple UI changes because the main target is iPhone.
 - Preserve English front / French back unless the user asks otherwise.
 - When adding many cards, update the source file, regenerate `data/seed-cards.json`, update the verification report, and run tests.
-- If changing the built-in deck, bump `SEED_DECK_VERSION` in `app.js` so existing browsers receive the new cards.
-- Do not remove user learning progress during deck updates; built-in card text can update while scheduling state is preserved.
+- If changing the built-in deck, bump `SEED_DECK_VERSION` in `app.js` so existing browsers receive the new cards in the default deck.
+- Do not remove user learning progress during deck updates; built-in card text can update while scheduling state is preserved. Custom decks should not receive built-in seed cards automatically.
 
 

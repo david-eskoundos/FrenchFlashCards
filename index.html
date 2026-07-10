@@ -20,6 +20,18 @@
       </div>
     </header>
 
+    <section class="deck-bar" aria-label="Decks">
+      <label class="deck-picker">Deck
+        <select id="deckSelect"></select>
+      </label>
+      <span class="deck-summary" id="deckSummary">0 cards</span>
+      <div class="deck-actions" aria-label="Deck actions">
+        <button id="createDeckBtn" type="button">New</button>
+        <button id="renameDeckBtn" type="button">Rename</button>
+        <button class="danger" id="deleteDeckBtn" type="button">Delete</button>
+      </div>
+    </section>
+
     <section class="workspace" aria-label="Flashcard workspace">
       <section class="study-panel" aria-label="Study card">
         <div class="card-shell">
@@ -82,7 +94,7 @@
         </section>
 
         <section class="tab-panel" id="tab-data" hidden>
-          <p class="local-save-note">Progress saves automatically in this browser on this device. Export JSON regularly for your own backup.</p>
+          <p class="local-save-note">Progress saves immediately in this browser. Export JSON backs up all decks. Supabase sync keeps local backup active.</p>
           <section class="cloud-sync" aria-label="Supabase cloud sync">
             <div class="cloud-header">
               <div>
@@ -105,16 +117,16 @@
           <button id="copyBackupBtn" type="button">Copy backup</button>
           <textarea class="backup-text" id="backupText" rows="5" readonly hidden></textarea>
           <label>Import JSON <textarea id="importText" rows="5"></textarea></label>
-          <button id="importBtn" type="button">Import cards</button>
+          <button id="importBtn" type="button">Import backup</button>
 
-          <button class="danger" id="resetLearningBtn" type="button">Reset learning</button>
+          <button class="danger" id="resetLearningBtn" type="button">Reset this deck</button>
         </section>
       </section>
     </section>
 
     <p class="message" id="message" role="status" aria-live="polite"></p>
   </main>
-  <script src="app.js?v=20260623-supabase-refresh-token"></script>
+  <script src="app.js?v=20260710-decks"></script>
 </body>
 </html>
 

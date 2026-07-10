@@ -9,8 +9,16 @@ const DEFAULT_SUPABASE_URL = "https://fnmixmpfpnxmutspisip.supabase.co";
 const DEFAULT_SUPABASE_KEY = "sb_publishable_4UTG8D_G5staocT4D5pGaA_eadBfI_f";
 const GITHUB_REPO_BRANCH = "main";
 const PROGRESS_FILE_PATH = `progress/${PROGRESS_USER}-progress.json`;
+const ATTACHED_PROGRESS_FILE_PATH = "progress/attached-progress.json";
+const BUNDLED_PROGRESS_URLS = [ATTACHED_PROGRESS_FILE_PATH, PROGRESS_FILE_PATH];
+const IMPORTED_PROGRESS_SOURCES_KEY = "french-flashcards-imported-progress-sources-v1";
 const BROWSE_PAGE_SIZE = 25;
-const APP_VERSION = "20260623-supabase-refresh-token";
+const APP_VERSION = "20260710-decks";
+const LIBRARY_VERSION = 2;
+const CLOUD_PAYLOAD_VERSION = 4;
+const DEFAULT_DECK_ID = "deck-default";
+const DEFAULT_DECK_NAME = "French Flashcards";
+const UNTITLED_DECK_NAME = "Untitled deck";
 
 function toIso(date) {
   return new Date(date).toISOString();
@@ -141,6 +149,295 @@ function mergeCardsByLatestProgress(localCards, cloudCards) {
   return Array.from(merged.values());
 }
 
+function timestampMs(value) {
+  const time = new Date(value || 0).getTime();
+  return Number.isFinite(time) ? time : 0;
+}
+
+function newestIso(...values) {
+  const newest = values.reduce((latest, value) => Math.max(latest, timestampMs(value)), 0);
+  return newest ? toIso(new Date(newest)) : values.find(Boolean) || toIso(new Date());
+}
+
+function oldestIso(...values) {
+  const times = values.map(timestampMs).filter(Boolean);
+  return times.length ? toIso(new Date(Math.min(...times))) : values.find(Boolean) || toIso(new Date());
+}
+
+function mergeProgressCard(localCard, incomingCard) {
+  const localTime = timestampMs(localCard.updatedAt);
+  const incomingTime = timestampMs(incomingCard.updatedAt);
+  const textSource = incomingTime > localTime ? incomingCard : localCard;
+
+  return {
+    ...localCard,
+    ...textSource,
+    createdAt: oldestIso(localCard.createdAt, incomingCard.createdAt),
+    updatedAt: newestIso(localCard.updatedAt, incomingCard.updatedAt),
+    dueAt: newestIso(localCard.dueAt, incomingCard.dueAt),
+    intervalDays: Math.max(Number(localCard.intervalDays || 0), Number(incomingCard.intervalDays || 0)),
+    ease: Math.max(Number(localCard.ease || 2.5), Number(incomingCard.ease || 2.5)),
+    repetitions: Math.max(Number(localCard.repetitions || 0), Number(incomingCard.repetitions || 0)),
+    lapses: Math.max(Number(localCard.lapses || 0), Number(incomingCard.lapses || 0))
+  };
+}
+
+function mergeProgressCards(localCards, incomingCards) {
+  const merged = new Map(localCards.map((card) => [card.id, card]));
+  incomingCards.forEach((incomingCard) => {
+    const localCard = merged.get(incomingCard.id);
+    merged.set(incomingCard.id, localCard ? mergeProgressCard(localCard, incomingCard) : incomingCard);
+  });
+  return Array.from(merged.values());
+}
+
+function makeDeckId() {
+  return `deck-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function normalizeCards(cards) {
+  if (!Array.isArray(cards)) return [];
+  return cards.map((card) => createCard(card));
+}
+
+function createDeck(input = {}, now = new Date()) {
+  const deckInput = input && typeof input === "object" ? input : {};
+  const id = normalizeText(deckInput.id) || makeDeckId();
+  const name = normalizeText(deckInput.name) || (id === DEFAULT_DECK_ID ? DEFAULT_DECK_NAME : UNTITLED_DECK_NAME);
+  const cards = Array.isArray(deckInput.cards)
+    ? normalizeCards(deckInput.cards)
+    : applyProgressEntries([], Array.isArray(deckInput.cardProgress) ? deckInput.cardProgress : []);
+
+  return {
+    id,
+    name,
+    createdAt: deckInput.createdAt || toIso(now),
+    updatedAt: deckInput.updatedAt || toIso(now),
+    seedDeckVersion: Number(deckInput.seedDeckVersion || 0),
+    cards
+  };
+}
+
+function createDefaultDeck(cards = [], seedDeckVersion = 0, now = new Date()) {
+  return createDeck({
+    id: DEFAULT_DECK_ID,
+    name: DEFAULT_DECK_NAME,
+    seedDeckVersion,
+    cards
+  }, now);
+}
+
+function normalizeLibrary(input = {}, now = new Date()) {
+  const raw = input && typeof input === "object" ? input : {};
+
+  if (Array.isArray(input) || Array.isArray(raw.cards) || Array.isArray(raw.cardProgress)) {
+    const cards = Array.isArray(input)
+      ? normalizeCards(input)
+      : Array.isArray(raw.cards)
+        ? normalizeCards(raw.cards)
+        : applyProgressEntries([], raw.cardProgress);
+    const defaultDeck = createDefaultDeck(cards, Number(raw.seedDeckVersion || 0), now);
+    return {
+      version: LIBRARY_VERSION,
+      activeDeckId: DEFAULT_DECK_ID,
+      decks: [defaultDeck]
+    };
+  }
+
+  if (Array.isArray(raw.decks)) {
+    const seen = new Set();
+    const decks = raw.decks.map((deck, index) => {
+      const normalized = createDeck(deck, now);
+      if (!seen.has(normalized.id)) {
+        seen.add(normalized.id);
+        return normalized;
+      }
+      const unique = { ...normalized, id: `${normalized.id}-${index + 1}` };
+      seen.add(unique.id);
+      return unique;
+    });
+    const normalizedDecks = decks.length ? decks : [createDefaultDeck([], Number(raw.seedDeckVersion || 0), now)];
+    const activeDeckId = normalizedDecks.some((deck) => deck.id === raw.activeDeckId)
+      ? raw.activeDeckId
+      : normalizedDecks[0].id;
+    return {
+      version: LIBRARY_VERSION,
+      activeDeckId,
+      decks: normalizedDecks
+    };
+  }
+
+  return {
+    version: LIBRARY_VERSION,
+    activeDeckId: DEFAULT_DECK_ID,
+    decks: [createDefaultDeck([], Number(raw.seedDeckVersion || 0), now)]
+  };
+}
+
+function getActiveDeck(library) {
+  const normalized = library && Array.isArray(library.decks) ? library : normalizeLibrary(library);
+  return normalized.decks.find((deck) => deck.id === normalized.activeDeckId) || normalized.decks[0] || createDefaultDeck();
+}
+
+function replaceDeckById(library, deckId, nextDeck) {
+  const normalized = normalizeLibrary(library);
+  const replacement = createDeck(nextDeck);
+  const decks = normalized.decks.map((deck) => (deck.id === deckId ? replacement : deck));
+  return normalizeLibrary({
+    version: LIBRARY_VERSION,
+    activeDeckId: decks.some((deck) => deck.id === normalized.activeDeckId) ? normalized.activeDeckId : replacement.id,
+    decks
+  });
+}
+
+function replaceActiveDeck(library, nextDeck) {
+  const normalized = normalizeLibrary(library);
+  return replaceDeckById(normalized, normalized.activeDeckId, { ...nextDeck, id: normalized.activeDeckId });
+}
+
+function mergeDecks(localDeck, incomingDeck) {
+  const localTime = timestampMs(localDeck.updatedAt);
+  const incomingTime = timestampMs(incomingDeck.updatedAt);
+  const textSource = incomingTime > localTime ? incomingDeck : localDeck;
+
+  return createDeck({
+    ...localDeck,
+    ...textSource,
+    id: localDeck.id,
+    createdAt: oldestIso(localDeck.createdAt, incomingDeck.createdAt),
+    updatedAt: newestIso(localDeck.updatedAt, incomingDeck.updatedAt),
+    seedDeckVersion: Math.max(Number(localDeck.seedDeckVersion || 0), Number(incomingDeck.seedDeckVersion || 0)),
+    cards: mergeProgressCards(localDeck.cards, incomingDeck.cards)
+  });
+}
+
+function mergeLibraries(localLibrary, incomingLibrary) {
+  const local = normalizeLibrary(localLibrary);
+  const incoming = normalizeLibrary(incomingLibrary);
+  const merged = new Map(local.decks.map((deck) => [deck.id, deck]));
+
+  incoming.decks.forEach((incomingDeck) => {
+    const localDeck = merged.get(incomingDeck.id);
+    merged.set(incomingDeck.id, localDeck ? mergeDecks(localDeck, incomingDeck) : incomingDeck);
+  });
+
+  const decks = Array.from(merged.values());
+  const activeDeckId = decks.some((deck) => deck.id === local.activeDeckId)
+    ? local.activeDeckId
+    : incoming.activeDeckId;
+
+  return normalizeLibrary({ version: LIBRARY_VERSION, activeDeckId, decks });
+}
+
+function syncLibrarySeedCards(library, seedCards, seedDeckVersion) {
+  const normalized = normalizeLibrary(library);
+  const decks = [...normalized.decks];
+  let defaultIndex = decks.findIndex((deck) => deck.id === DEFAULT_DECK_ID);
+  if (defaultIndex < 0) {
+    decks.unshift(createDefaultDeck([], 0));
+    defaultIndex = 0;
+  }
+
+  const defaultDeck = decks[defaultIndex];
+  if (Number(defaultDeck.seedDeckVersion || 0) >= seedDeckVersion) return normalized;
+
+  decks[defaultIndex] = createDeck({
+    ...defaultDeck,
+    updatedAt: toIso(new Date()),
+    seedDeckVersion,
+    cards: syncSeedCards(defaultDeck.cards, seedCards)
+  });
+
+  return normalizeLibrary({ version: LIBRARY_VERSION, activeDeckId: normalized.activeDeckId, decks });
+}
+
+function getLibraryStats(library) {
+  const normalized = normalizeLibrary(library);
+  const total = normalized.decks.reduce((sum, deck) => sum + deck.cards.length, 0);
+  const studied = normalized.decks.reduce((sum, deck) => sum + deck.cards.filter(hasBeenStudied).length, 0);
+  const learnedPercent = total ? Math.round((studied / total) * 100) : 0;
+  return { decks: normalized.decks.length, total, studied, learnedPercent };
+}
+
+function getLatestLibraryProgressTime(library) {
+  return normalizeLibrary(library).decks.reduce((latest, deck) => {
+    const deckLatest = getLatestProgressTime(deck.cards);
+    return deckLatest > latest ? deckLatest : latest;
+  }, 0);
+}
+
+function createLibraryPayload(library, now = new Date()) {
+  const normalized = normalizeLibrary(library);
+  const defaultDeck = normalized.decks.find((deck) => deck.id === DEFAULT_DECK_ID) || normalized.decks[0];
+
+  return {
+    app: "FrenchFlashCards",
+    version: CLOUD_PAYLOAD_VERSION,
+    user: PROGRESS_USER,
+    progressPath: PROGRESS_FILE_PATH,
+    seedDeckVersion: defaultDeck ? defaultDeck.seedDeckVersion : 0,
+    savedAt: toIso(now),
+    activeDeckId: normalized.activeDeckId,
+    stats: getLibraryStats(normalized),
+    decks: normalized.decks.map((deck) => ({
+      id: deck.id,
+      name: deck.name,
+      createdAt: deck.createdAt,
+      updatedAt: deck.updatedAt,
+      seedDeckVersion: deck.seedDeckVersion,
+      stats: getLearningStats(deck.cards),
+      cardProgress: createProgressEntries(deck.cards)
+    }))
+  };
+}
+
+function payloadToLibrary(payload, baseLibrary) {
+  if (!payload) return normalizeLibrary(baseLibrary);
+  const parsed = typeof payload === "string" ? JSON.parse(payload) : payload;
+  const base = normalizeLibrary(baseLibrary || {});
+
+  if (Array.isArray(parsed) || Array.isArray(parsed.cards) || Array.isArray(parsed.cardProgress)) {
+    const activeDeck = getActiveDeck(base);
+    const incomingCards = Array.isArray(parsed.cardProgress)
+      ? applyProgressEntries(activeDeck.cards, parsed.cardProgress)
+      : normalizeCards(Array.isArray(parsed) ? parsed : parsed.cards);
+    const cards = Array.isArray(parsed.cardProgress)
+      ? incomingCards
+      : mergeProgressCards(activeDeck.cards, incomingCards);
+    return replaceActiveDeck(base, {
+      ...activeDeck,
+      seedDeckVersion: Math.max(Number(activeDeck.seedDeckVersion || 0), Number(parsed.seedDeckVersion || 0)),
+      cards
+    });
+  }
+
+  if (Array.isArray(parsed.decks)) {
+    const decks = parsed.decks.map((deckPayload) => {
+      const baseDeck = base.decks.find((deck) => deck.id === deckPayload.id);
+      let cards = [];
+      if (Array.isArray(deckPayload.cardProgress)) {
+        cards = applyProgressEntries(baseDeck ? baseDeck.cards : [], deckPayload.cardProgress);
+      } else if (Array.isArray(deckPayload.cards)) {
+        cards = normalizeCards(deckPayload.cards);
+      } else if (baseDeck) {
+        cards = baseDeck.cards;
+      }
+      return createDeck({
+        ...deckPayload,
+        seedDeckVersion: Number(deckPayload.seedDeckVersion || (baseDeck && baseDeck.seedDeckVersion) || 0),
+        cards
+      });
+    });
+    return normalizeLibrary({
+      version: LIBRARY_VERSION,
+      activeDeckId: parsed.activeDeckId || base.activeDeckId,
+      decks
+    });
+  }
+
+  return normalizeLibrary(parsed);
+}
+
 function syncSeedCards(existingCards, seedCards) {
   const seedById = new Map(seedCards.map((card) => [card.id, card]));
   const existingIds = new Set(existingCards.map((card) => card.id));
@@ -260,13 +557,18 @@ function createCloudPayload(cards, seedDeckVersion, now = new Date()) {
   };
 }
 
-function createSupabaseProgressRow(userId, cards, seedDeckVersion, now = new Date()) {
+function createSupabaseProgressRow(userId, cardsOrLibrary, seedDeckVersion, now = new Date()) {
   const savedAt = toIso(now);
+  const isLibrary = cardsOrLibrary && typeof cardsOrLibrary === "object" && Array.isArray(cardsOrLibrary.decks);
+  const progress = isLibrary
+    ? createLibraryPayload(cardsOrLibrary, now)
+    : createCloudPayload(cardsOrLibrary, seedDeckVersion, now);
+  const defaultDeck = isLibrary ? getActiveDeck(normalizeLibrary({ ...cardsOrLibrary, activeDeckId: DEFAULT_DECK_ID })) : null;
   return {
     user_id: userId,
     app: "FrenchFlashCards",
-    progress: createCloudPayload(cards, seedDeckVersion, now),
-    seed_deck_version: seedDeckVersion,
+    progress,
+    seed_deck_version: isLibrary ? Number((defaultDeck && defaultDeck.seedDeckVersion) || 0) : seedDeckVersion,
     saved_at: savedAt,
     updated_at: savedAt
   };
@@ -416,17 +718,13 @@ function buildSpellingText(text) {
     .replace(/\. apostrophe\./g, " apostrophe")
     .replace(/\. tiret\./g, " tiret");
 }
-function readStoredDeck() {
+function readStoredLibrary() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return { cards: [], seedDeckVersion: 0 };
-    const parsed = JSON.parse(stored);
-    return {
-      cards: parseImportedDeck(stored),
-      seedDeckVersion: Number(parsed.seedDeckVersion || 0)
-    };
+    if (!stored) return normalizeLibrary({});
+    return normalizeLibrary(JSON.parse(stored));
   } catch {
-    return { cards: [], seedDeckVersion: 0 };
+    return normalizeLibrary({});
   }
 }
 
@@ -435,6 +733,11 @@ function startBrowserApp() {
     dueCount: document.getElementById("dueCount"),
     newCount: document.getElementById("newCount"),
     learnedPercent: document.getElementById("learnedPercent"),
+    deckSelect: document.getElementById("deckSelect"),
+    deckSummary: document.getElementById("deckSummary"),
+    createDeckBtn: document.getElementById("createDeckBtn"),
+    renameDeckBtn: document.getElementById("renameDeckBtn"),
+    deleteDeckBtn: document.getElementById("deleteDeckBtn"),
     cardPosition: document.getElementById("cardPosition"),
     cardTags: document.getElementById("cardTags"),
     flashcard: document.getElementById("flashcard"),
@@ -474,10 +777,8 @@ function startBrowserApp() {
     message: document.getElementById("message")
   };
 
-  const storedDeck = readStoredDeck();
   const state = {
-    cards: storedDeck.cards,
-    seedDeckVersion: storedDeck.seedDeckVersion,
+    library: readStoredLibrary(),
     queue: [],
     currentIndex: 0,
     revealed: false,
@@ -494,6 +795,18 @@ function startBrowserApp() {
   function setCloudStatus(text) {
     setMessage(text);
     if (els.cloudStatus) els.cloudStatus.textContent = text;
+  }
+
+  function activeDeck() {
+    return getActiveDeck(state.library);
+  }
+
+  function setLibrary(nextLibrary) {
+    state.library = normalizeLibrary(nextLibrary);
+  }
+
+  function setActiveDeck(nextDeck) {
+    setLibrary(replaceActiveDeck(state.library, { ...nextDeck, updatedAt: toIso(new Date()) }));
   }
 
   function readCloudSettings() {
@@ -519,7 +832,7 @@ function startBrowserApp() {
   }
 
   function createBackupJson() {
-    return JSON.stringify(createCloudPayload(state.cards, state.seedDeckVersion), null, 2);
+    return JSON.stringify(createLibraryPayload(state.library), null, 2);
   }
 
   async function copyBackupToClipboard() {
@@ -544,30 +857,29 @@ function startBrowserApp() {
 
   function saveCards(options = {}) {
     try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ version: 1, seedDeckVersion: state.seedDeckVersion, cards: state.cards })
-      );
+      setLibrary(state.library);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.library));
       if (options.cloud !== false) setMessage("Saved in this browser.");
     } catch {
-      setMessage("Storage failed. Export your cards before closing this browser.");
+      setMessage("Storage failed. Export your library before closing this browser.");
     }
   }
 
   async function loadSeedCards() {
-    if (state.seedDeckVersion >= SEED_DECK_VERSION && state.cards.length > 0) return;
+    const defaultDeck = state.library.decks.find((deck) => deck.id === DEFAULT_DECK_ID) || createDefaultDeck();
+    if (Number(defaultDeck.seedDeckVersion || 0) >= SEED_DECK_VERSION && defaultDeck.cards.length > 0) return;
 
     try {
       const response = await fetch(SEED_DECK_URL, { cache: "no-store" });
       if (!response.ok) throw new Error("Seed deck unavailable");
       const text = await response.text();
       const seedCards = parseImportedDeck(text);
-      const before = state.cards.length;
-      state.cards = syncSeedCards(state.cards, seedCards);
-      state.seedDeckVersion = SEED_DECK_VERSION;
+      const before = defaultDeck.cards.length;
+      setLibrary(syncLibrarySeedCards(state.library, seedCards, SEED_DECK_VERSION));
       saveCards({ cloud: false });
       renderAll();
-      const added = state.cards.length - before;
+      const nextDefaultDeck = state.library.decks.find((deck) => deck.id === DEFAULT_DECK_ID) || createDefaultDeck();
+      const added = nextDefaultDeck.cards.length - before;
       if (added > 0) setMessage(`Loaded ${added} built-in cards.`);
     } catch {
       setMessage("Built-in cards could not be loaded. You can still add your own cards.");
@@ -575,7 +887,7 @@ function startBrowserApp() {
   }
 
   function refreshQueue() {
-    state.queue = getStudyQueue(state.cards);
+    state.queue = getStudyQueue(activeDeck().cards);
     state.currentIndex = Math.min(state.currentIndex, Math.max(state.queue.length - 1, 0));
     state.revealed = false;
   }
@@ -584,18 +896,38 @@ function startBrowserApp() {
     return state.queue[state.currentIndex];
   }
 
+  function renderDecks() {
+    if (!els.deckSelect) return;
+    const current = activeDeck();
+    els.deckSelect.innerHTML = "";
+    state.library.decks.forEach((deck) => {
+      const option = document.createElement("option");
+      option.value = deck.id;
+      option.textContent = deck.name;
+      els.deckSelect.append(option);
+    });
+    els.deckSelect.value = current.id;
+    if (els.deckSummary) {
+      const stats = getLearningStats(current.cards);
+      els.deckSummary.textContent = `${stats.total} cards, ${stats.studied} studied`;
+    }
+    if (els.deleteDeckBtn) els.deleteDeckBtn.disabled = state.library.decks.length <= 1;
+  }
+
   function renderStats() {
+    const cards = activeDeck().cards;
     const now = Date.now();
-    const due = state.cards.filter((card) => hasBeenStudied(card) && new Date(card.dueAt).getTime() <= now).length;
-    const fresh = state.cards.filter((card) => card.repetitions === 0 && card.lapses === 0).length;
+    const due = cards.filter((card) => hasBeenStudied(card) && new Date(card.dueAt).getTime() <= now).length;
+    const fresh = cards.filter((card) => card.repetitions === 0 && card.lapses === 0).length;
     els.dueCount.textContent = String(due);
     els.newCount.textContent = String(fresh);
-    els.learnedPercent.textContent = `${getLearningStats(state.cards).learnedPercent}%`;
+    els.learnedPercent.textContent = `${getLearningStats(cards).learnedPercent}%`;
   }
 
   function renderStudy() {
     refreshQueue();
     renderStats();
+    const deck = activeDeck();
     const card = currentCard();
 
     els.ratingGrid.hidden = true;
@@ -603,20 +935,22 @@ function startBrowserApp() {
     els.revealBtn.hidden = false;
 
     if (!card) {
-      els.cardPosition.textContent = state.cards.length ? "All caught up" : "No cards";
-      els.cardTags.textContent = "";
-      els.cardPrompt.textContent = state.cards.length
+      els.cardPosition.textContent = deck.cards.length ? "All caught up" : "No cards";
+      els.cardTags.textContent = deck.name;
+      els.cardPrompt.textContent = deck.cards.length
         ? "No cards are due right now."
-        : "Loading built-in cards...";
+        : deck.id === DEFAULT_DECK_ID
+          ? "Loading built-in cards..."
+          : "This deck has no cards yet.";
       els.cardAnswer.textContent = "";
-      els.cardNotes.textContent = state.cards.length ? "Come back later or add a new card." : "";
+      els.cardNotes.textContent = deck.cards.length ? "Come back later or add a new card." : "Add a card to start this deck.";
       els.revealBtn.disabled = true;
       return;
     }
 
     els.revealBtn.disabled = false;
     els.cardPosition.textContent = `${state.currentIndex + 1} of ${state.queue.length}`;
-    els.cardTags.textContent = card.tags;
+    els.cardTags.textContent = card.tags || deck.name;
     els.cardPrompt.textContent = card.front;
     els.cardAnswer.textContent = card.back;
     els.cardNotes.textContent = card.notes;
@@ -624,7 +958,8 @@ function startBrowserApp() {
 
   function renderBrowse() {
     const query = normalizeText(els.search.value).toLowerCase();
-    const cards = state.cards.filter((card) => {
+    const deck = activeDeck();
+    const cards = deck.cards.filter((card) => {
       const haystack = `${card.front} ${card.back} ${card.notes} ${card.tags}`.toLowerCase();
       return haystack.includes(query);
     });
@@ -661,7 +996,8 @@ function startBrowserApp() {
       deleteBtn.textContent = "Delete";
       deleteBtn.addEventListener("click", () => {
         if (!confirm("Delete this card?")) return;
-        state.cards = state.cards.filter((candidate) => candidate.id !== card.id);
+        const current = activeDeck();
+        setActiveDeck({ ...current, cards: current.cards.filter((candidate) => candidate.id !== card.id) });
         saveCards();
         renderAll();
         setMessage("Card deleted.");
@@ -674,6 +1010,7 @@ function startBrowserApp() {
   }
 
   function renderAll() {
+    renderDecks();
     renderStudy();
     renderBrowse();
   }
@@ -866,14 +1203,14 @@ function startBrowserApp() {
       setCloudStatus("Sign in with Supabase before syncing.");
       return false;
     }
-    if (state.cards.length === 0) {
+    if (getLibraryStats(state.library).total === 0) {
       setCloudStatus("Cards are still loading. Wait for the built-in deck before syncing.");
       return false;
     }
     setCloudStatus("Saving progress to Supabase...");
     try {
       await ensureFreshSupabaseSession();
-      const row = createSupabaseProgressRow(state.cloudUser.id, state.cards, state.seedDeckVersion);
+      const row = createSupabaseProgressRow(state.cloudUser.id, state.library);
       const response = await fetch(`${supabaseUrl(`/rest/v1/${SUPABASE_PROGRESS_TABLE}`)}?on_conflict=user_id`, {
         method: "POST",
         headers: {
@@ -912,23 +1249,23 @@ function startBrowserApp() {
         return;
       }
       const payload = extractSupabaseProgressPayload(rows[0]);
-      const cloudCards = Array.isArray(payload.cardProgress)
-        ? applyProgressEntries(state.cards, payload.cardProgress)
-        : mergeCardsByLatestProgress(state.cards, parseImportedDeck(JSON.stringify(payload)));
-      const localStats = getLearningStats(state.cards);
-      const cloudStats = getLearningStats(cloudCards);
-      const localProgressTime = getLatestProgressTime(state.cards);
+      const baseLibrary = payload && Array.isArray(payload.decks)
+        ? state.library
+        : { ...state.library, activeDeckId: DEFAULT_DECK_ID };
+      const cloudLibrary = payloadToLibrary(payload, baseLibrary);
+      const localStats = getLibraryStats(state.library);
+      const cloudStats = getLibraryStats(cloudLibrary);
+      const localProgressTime = getLatestLibraryProgressTime(state.library);
       const cloudProgressTime = getSupabaseRowSavedTime(rows[0], payload);
       if (localProgressTime > cloudProgressTime) {
         setCloudStatus(`Cloud progress is older (${cloudStats.studied} studied). This browser has ${localStats.studied}. Press Sync now to upload this device.`);
         return;
       }
-      state.cards = cloudCards;
-      state.seedDeckVersion = Number(payload.seedDeckVersion || rows[0].seed_deck_version || state.seedDeckVersion);
+      setLibrary(mergeLibraries(state.library, cloudLibrary));
       saveCards({ cloud: false });
       renderAll();
-      const stats = getLearningStats(state.cards);
-      setCloudStatus(`Loaded cloud progress: ${stats.studied} of ${stats.total} studied.`);
+      const stats = getLibraryStats(state.library);
+      setCloudStatus(`Loaded cloud progress: ${stats.studied} of ${stats.total} studied across ${stats.decks} decks.`);
     } catch (error) {
       setCloudStatus(`Supabase load failed: ${error.message}`);
     }
@@ -954,6 +1291,52 @@ function startBrowserApp() {
     });
   });
 
+  els.deckSelect.addEventListener("change", () => {
+    setLibrary({ ...state.library, activeDeckId: els.deckSelect.value });
+    state.currentIndex = 0;
+    state.browseVisibleCount = BROWSE_PAGE_SIZE;
+    saveCards({ cloud: false, message: false });
+    renderAll();
+  });
+
+  els.createDeckBtn.addEventListener("click", () => {
+    const name = normalizeText(prompt("New deck name", "New deck"));
+    if (!name) return;
+    const deck = createDeck({ name });
+    setLibrary({ ...state.library, activeDeckId: deck.id, decks: [...state.library.decks, deck] });
+    state.currentIndex = 0;
+    state.browseVisibleCount = BROWSE_PAGE_SIZE;
+    saveCards();
+    renderAll();
+    setMessage(`Created ${deck.name}.`);
+  });
+
+  els.renameDeckBtn.addEventListener("click", () => {
+    const current = activeDeck();
+    const name = normalizeText(prompt("Deck name", current.name));
+    if (!name || name === current.name) return;
+    setActiveDeck({ ...current, name });
+    saveCards();
+    renderAll();
+    setMessage("Deck renamed.");
+  });
+
+  els.deleteDeckBtn.addEventListener("click", () => {
+    if (state.library.decks.length <= 1) {
+      setMessage("You need at least one deck.");
+      return;
+    }
+    const current = activeDeck();
+    if (!confirm(`Delete ${current.name}? Cards and progress in this deck will be removed.`)) return;
+    const decks = state.library.decks.filter((deck) => deck.id !== current.id);
+    setLibrary({ version: LIBRARY_VERSION, activeDeckId: decks[0].id, decks });
+    state.currentIndex = 0;
+    state.browseVisibleCount = BROWSE_PAGE_SIZE;
+    saveCards();
+    renderAll();
+    setMessage("Deck deleted.");
+  });
+
   els.flashcard.addEventListener("click", revealCurrent);
   els.revealBtn.addEventListener("click", revealCurrent);
   els.listenBtn.addEventListener("click", speakCurrentFrench);
@@ -966,8 +1349,9 @@ function startBrowserApp() {
     const card = currentCard();
     if (!card) return;
 
+    const deck = activeDeck();
     const scheduled = scheduleCard(card, button.dataset.rating);
-    state.cards = state.cards.map((candidate) => (candidate.id === card.id ? scheduled : candidate));
+    setActiveDeck({ ...deck, cards: deck.cards.map((candidate) => (candidate.id === card.id ? scheduled : candidate)) });
     state.currentIndex += 1;
     saveCards();
     renderAll();
@@ -983,7 +1367,8 @@ function startBrowserApp() {
         tags: els.tags.value,
         direction: els.direction.value
       });
-      state.cards = [card, ...state.cards];
+      const deck = activeDeck();
+      setActiveDeck({ ...deck, cards: [card, ...deck.cards] });
       saveCards();
       els.cardForm.reset();
       setMessage("Card saved.");
@@ -1032,24 +1417,26 @@ function startBrowserApp() {
 
   els.importBtn.addEventListener("click", () => {
     try {
-      const imported = parseImportedDeck(els.importText.value);
-      state.cards = mergeCards(state.cards, imported);
+      const parsed = JSON.parse(els.importText.value);
+      const importedLibrary = payloadToLibrary(parsed, state.library);
+      setLibrary(Array.isArray(parsed.decks) ? mergeLibraries(state.library, importedLibrary) : importedLibrary);
       saveCards();
       els.importText.value = "";
-      setMessage(`Imported ${imported.length} cards.`);
+      setMessage(Array.isArray(parsed.decks) ? `Imported ${importedLibrary.decks.length} decks.` : "Imported cards into this deck.");
       renderAll();
     } catch (error) {
-      setMessage(error.message);
+      setMessage(error instanceof SyntaxError ? "Invalid JSON" : error.message);
     }
   });
 
   els.resetLearningBtn.addEventListener("click", () => {
-    if (!confirm("Reset all learning progress? Cards stay, ratings and due dates restart.")) return;
-    state.cards = resetLearning(state.cards);
+    if (!confirm("Reset learning progress in this deck? Cards stay, ratings and due dates restart.")) return;
+    const deck = activeDeck();
+    setActiveDeck({ ...deck, cards: resetLearning(deck.cards) });
     state.currentIndex = 0;
     saveCards();
     renderAll();
-    setMessage("Learning progress reset.");
+    setMessage("Learning progress reset for this deck.");
   });
 
   renderAll();
@@ -1071,6 +1458,17 @@ if (typeof module !== "undefined") {
     parseImportedDeck,
     mergeCards,
     mergeCardsByLatestProgress,
+    createDeck,
+    normalizeLibrary,
+    getActiveDeck,
+    replaceActiveDeck,
+    mergeLibraries,
+    syncLibrarySeedCards,
+    createLibraryPayload,
+    payloadToLibrary,
+    getLibraryStats,
+    getLatestLibraryProgressTime,
+    mergeProgressCards,
     syncSeedCards,
     resetLearning,
     createCloudPayload,

@@ -11,6 +11,16 @@ const {
   parseImportedDeck,
   mergeCards,
   mergeCardsByLatestProgress,
+  createDeck,
+  normalizeLibrary,
+  getActiveDeck,
+  replaceActiveDeck,
+  mergeLibraries,
+  syncLibrarySeedCards,
+  createLibraryPayload,
+  payloadToLibrary,
+  getLibraryStats,
+  getLatestLibraryProgressTime,
   syncSeedCards,
   resetLearning,
   createCloudPayload,
@@ -177,6 +187,153 @@ test("getLearningStats reports studied percentage", () => {
   assert.deepEqual(stats, { total: 3, studied: 2, learnedPercent: 67 });
 });
 
+test("normalizeLibrary migrates a legacy single deck without losing progress", () => {
+  const now = new Date("2026-06-21T10:00:00.000Z");
+  const studied = scheduleCard(createCard({ id: "legacy-1", front: "hello", back: "bonjour" }, now), "good", now);
+  const library = normalizeLibrary({ cards: [studied], seedDeckVersion: 7 }, now);
+  const deck = getActiveDeck(library);
+
+  assert.equal(library.version, 2);
+  assert.equal(library.activeDeckId, "deck-default");
+  assert.equal(deck.name, "French Flashcards");
+  assert.equal(deck.seedDeckVersion, 7);
+  assert.equal(deck.cards[0].id, "legacy-1");
+  assert.equal(deck.cards[0].dueAt, "2026-06-22T10:00:00.000Z");
+  assert.equal(deck.cards[0].repetitions, 1);
+});
+
+test("active deck study queue ignores cards from other decks", () => {
+  const now = new Date("2026-06-21T10:00:00.000Z");
+  const defaultDue = { ...createCard({ id: "default-due", front: "default", back: "defaut" }, now), dueAt: "2026-06-20T10:00:00.000Z", repetitions: 1 };
+  const travelDue = { ...createCard({ id: "travel-due", front: "airport", back: "aeroport" }, now), dueAt: "2026-06-20T10:00:00.000Z", repetitions: 1 };
+  const library = normalizeLibrary({
+    activeDeckId: "travel",
+    decks: [
+      createDeck({ id: "deck-default", name: "French Flashcards", cards: [defaultDue] }, now),
+      createDeck({ id: "travel", name: "Travel", cards: [travelDue] }, now)
+    ]
+  }, now);
+
+  assert.deepEqual(getStudyQueue(getActiveDeck(library).cards, now).map((card) => card.id), ["travel-due"]);
+});
+
+test("replaceActiveDeck updates one deck without changing another deck", () => {
+  const now = new Date("2026-06-21T10:00:00.000Z");
+  const defaultCard = createCard({ id: "default-card", front: "hello", back: "bonjour" }, now);
+  const customCard = createCard({ id: "custom-card", front: "one", back: "un" }, now);
+  const library = normalizeLibrary({
+    activeDeckId: "custom",
+    decks: [
+      createDeck({ id: "deck-default", name: "French Flashcards", cards: [defaultCard] }, now),
+      createDeck({ id: "custom", name: "Numbers", cards: [customCard] }, now)
+    ]
+  }, now);
+  const scheduled = scheduleCard(customCard, "easy", now);
+  const nextLibrary = replaceActiveDeck(library, { ...getActiveDeck(library), cards: [scheduled] });
+
+  const defaultDeck = nextLibrary.decks.find((deck) => deck.id === "deck-default");
+  const customDeck = nextLibrary.decks.find((deck) => deck.id === "custom");
+  assert.equal(defaultDeck.cards[0].repetitions, 0);
+  assert.equal(customDeck.cards[0].repetitions, 1);
+  assert.equal(customDeck.cards[0].dueAt, "2026-06-23T10:00:00.000Z");
+});
+
+test("syncLibrarySeedCards updates only the default deck", () => {
+  const now = new Date("2026-06-21T10:00:00.000Z");
+  const customCard = createCard({ id: "custom-card", front: "hotel", back: "hotel" }, now);
+  const library = normalizeLibrary({
+    activeDeckId: "custom",
+    decks: [
+      createDeck({ id: "deck-default", name: "French Flashcards", seedDeckVersion: 0, cards: [] }, now),
+      createDeck({ id: "custom", name: "Travel", cards: [customCard] }, now)
+    ]
+  }, now);
+  const synced = syncLibrarySeedCards(library, [{ id: "seed-1", front: "please", back: "s'il vous plait", gender: "", example: "" }], 2);
+
+  const defaultDeck = synced.decks.find((deck) => deck.id === "deck-default");
+  const customDeck = synced.decks.find((deck) => deck.id === "custom");
+  assert.equal(defaultDeck.seedDeckVersion, 2);
+  assert.deepEqual(defaultDeck.cards.map((card) => card.id), ["seed-1"]);
+  assert.deepEqual(customDeck.cards.map((card) => card.id), ["custom-card"]);
+});
+
+test("createLibraryPayload round trips full library backups", () => {
+  const now = new Date("2026-06-21T10:00:00.000Z");
+  const studied = scheduleCard(createCard({ id: "custom-card", front: "train", back: "train" }, now), "good", now);
+  const library = normalizeLibrary({
+    activeDeckId: "custom",
+    decks: [
+      createDeck({ id: "deck-default", name: "French Flashcards", seedDeckVersion: 3, cards: [] }, now),
+      createDeck({ id: "custom", name: "Travel", cards: [studied] }, now)
+    ]
+  }, now);
+  const payload = createLibraryPayload(library, new Date("2026-06-21T12:00:00.000Z"));
+  const restored = payloadToLibrary(payload, library);
+
+  assert.equal(payload.version, 4);
+  assert.equal(payload.activeDeckId, "custom");
+  assert.deepEqual(payload.stats, { decks: 2, total: 1, studied: 1, learnedPercent: 100 });
+  assert.equal(restored.activeDeckId, "custom");
+  assert.equal(getActiveDeck(restored).cards[0].dueAt, "2026-06-22T10:00:00.000Z");
+  assert.equal(getLatestLibraryProgressTime(restored), Date.parse("2026-06-21T10:00:00.000Z"));
+});
+
+test("payloadToLibrary merges old cardProgress backups into the active deck", () => {
+  const now = new Date("2026-06-21T10:00:00.000Z");
+  const baseCard = createCard({ id: "active-card", front: "left", back: "gauche" }, now);
+  const base = normalizeLibrary({
+    activeDeckId: "custom",
+    decks: [
+      createDeck({ id: "deck-default", name: "French Flashcards", cards: [] }, now),
+      createDeck({ id: "custom", name: "Custom", cards: [baseCard] }, now)
+    ]
+  }, now);
+  const payload = {
+    seedDeckVersion: 9,
+    cardProgress: [{ id: "active-card", dueAt: "2026-06-23T10:00:00.000Z", lastReviewedAt: "2026-06-22T10:00:00.000Z", repetitions: 2, intervalDays: 2, easeFactor: 2.6, lapses: 0 }]
+  };
+  const merged = payloadToLibrary(payload, base);
+
+  const activeDeck = getActiveDeck(merged);
+  assert.equal(activeDeck.id, "custom");
+  assert.equal(activeDeck.seedDeckVersion, 9);
+  assert.equal(activeDeck.cards[0].dueAt, "2026-06-23T10:00:00.000Z");
+  assert.equal(merged.decks.find((deck) => deck.id === "deck-default").cards.length, 0);
+});
+
+test("mergeLibraries adds cloud decks and merges same-deck progress", () => {
+  const now = new Date("2026-06-21T10:00:00.000Z");
+  const olderLocal = {
+    ...scheduleCard(createCard({ id: "shared", front: "shared", back: "partage" }, now), "good", now),
+    lastReviewedAt: "2026-06-21T10:00:00.000Z"
+  };
+  const newerCloud = {
+    ...olderLocal,
+    dueAt: "2026-06-25T10:00:00.000Z",
+    lastReviewedAt: "2026-06-22T10:00:00.000Z",
+    repetitions: 3
+  };
+  const local = normalizeLibrary({
+    activeDeckId: "deck-default",
+    decks: [createDeck({ id: "deck-default", name: "Local Name", updatedAt: "2026-06-21T10:00:00.000Z", cards: [olderLocal] }, now)]
+  }, now);
+  const cloud = normalizeLibrary({
+    activeDeckId: "travel",
+    decks: [
+      createDeck({ id: "deck-default", name: "Cloud Name", updatedAt: "2026-06-22T10:00:00.000Z", cards: [newerCloud] }, now),
+      createDeck({ id: "travel", name: "Travel", cards: [createCard({ id: "travel-1", front: "ticket", back: "billet" }, now)] }, now)
+    ]
+  }, now);
+  const merged = mergeLibraries(local, cloud);
+
+  const defaultDeck = merged.decks.find((deck) => deck.id === "deck-default");
+  assert.equal(merged.activeDeckId, "deck-default");
+  assert.equal(merged.decks.length, 2);
+  assert.equal(defaultDeck.name, "Cloud Name");
+  assert.equal(defaultDeck.cards[0].dueAt, "2026-06-25T10:00:00.000Z");
+  assert.equal(merged.decks.find((deck) => deck.id === "travel").cards[0].front, "ticket");
+  assert.deepEqual(getLibraryStats(merged), { decks: 2, total: 2, studied: 1, learnedPercent: 50 });
+});
 test("createCloudPayload stores compact david repo progress metadata", () => {
   const card = createCard({ id: "card-1", front: "merci", back: "thank you" });
   const studied = scheduleCard(card, "good", new Date("2026-07-01T12:00:00.000Z"));
@@ -330,7 +487,7 @@ test("getFrenchText chooses the French side based on card direction", () => {
 });
 
 test("buildSpellingText formats French text for slow spelling", () => {
-  assert.equal(buildSpellingText("l'aéroport"), "l apostrophe a é r o p o r t");
+  assert.equal(buildSpellingText("l'a\u00e9roport"), "l apostrophe a \u00e9 r o p o r t");
   assert.equal(buildSpellingText("un vol"), "u n. v o l");
 });
 
