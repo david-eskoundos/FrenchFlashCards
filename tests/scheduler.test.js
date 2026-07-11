@@ -17,6 +17,7 @@ const {
   replaceActiveDeck,
   mergeLibraries,
   syncLibrarySeedCards,
+  syncBuiltInDeck,
   createLibraryPayload,
   payloadToLibrary,
   getLibraryStats,
@@ -257,6 +258,43 @@ test("syncLibrarySeedCards updates only the default deck", () => {
   assert.deepEqual(customDeck.cards.map((card) => card.id), ["custom-card"]);
 });
 
+test("syncBuiltInDeck adds and refreshes the grammar deck without changing active deck", () => {
+  const now = new Date("2026-06-21T10:00:00.000Z");
+  const payload = {
+    id: "deck-grammer-b1",
+    name: "grammer B1",
+    cards: [
+      { id: "seed-grammer-b1-0001", front: "Question", back: "Answer", direction: "fr-en" }
+    ]
+  };
+  const library = normalizeLibrary({
+    activeDeckId: "deck-default",
+    decks: [createDeck({ id: "deck-default", name: "French Flashcards", cards: [] }, now)]
+  }, now);
+
+  const synced = syncBuiltInDeck(library, payload, 1);
+  const grammarDeck = synced.decks.find((deck) => deck.id === "deck-grammer-b1");
+
+  assert.equal(synced.activeDeckId, "deck-default");
+  assert.equal(grammarDeck.name, "grammer B1");
+  assert.equal(grammarDeck.seedDeckVersion, 1);
+  assert.deepEqual(grammarDeck.cards.map((card) => card.front), ["Question"]);
+});
+
+test("grammar B1 deck contains every workbook flashcard row", () => {
+  const grammarPath = path.join(__dirname, "..", "data", "grammar-b1-cards.json");
+  const payload = JSON.parse(fs.readFileSync(grammarPath, "utf8"));
+  const cards = payload.cards.map((card) => createCard(card));
+
+  assert.equal(payload.name, "grammer B1");
+  assert.equal(cards.length, 1012);
+  assert.equal(cards.length, new Set(cards.map((card) => card.id)).size);
+  assert.ok(cards.every((card) => card.front && card.back));
+  assert.equal(cards[0].front, "[Présent] À quoi sert le présent de l’indicatif ?");
+  assert.equal(cards[0].back, "À parler d’une action actuelle, d’une habitude, d’une vérité générale ou d’un futur proche/programmé.");
+  assert.equal(cards[1011].front, "[Révision mixte B1] Corrige toute la phrase : C’est la ville que je suis né.");
+  assert.equal(cards[1011].back, "C’est la ville où je suis né(e).");
+});
 test("createLibraryPayload round trips full library backups", () => {
   const now = new Date("2026-06-21T10:00:00.000Z");
   const studied = scheduleCard(createCard({ id: "custom-card", front: "train", back: "train" }, now), "good", now);
@@ -516,11 +554,3 @@ test("seed deck contains valid generated cards", () => {
   assert.equal(cards[0].front, "airplane");
   assert.equal(cards[0].back, "un avion");
 });
-
-
-
-
-
-
-
-

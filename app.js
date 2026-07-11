@@ -2,7 +2,10 @@ const STORAGE_KEY = "french-flashcards-v1";
 const CLOUD_SETTINGS_KEY = "french-flashcards-cloud-settings-v1";
 const SUPABASE_SESSION_KEY = "french-flashcards-supabase-session-v1";
 const SEED_DECK_URL = "data/seed-cards.json";
-const SEED_DECK_VERSION = 3;
+const SEED_DECK_VERSION = 4;
+const GRAMMAR_B1_DECK_URL = "data/grammar-b1-cards.json";
+const GRAMMAR_B1_DECK_ID = "deck-grammer-b1";
+const GRAMMAR_B1_DECK_VERSION = 1;
 const PROGRESS_USER = "david";
 const SUPABASE_PROGRESS_TABLE = "flashcard_progress";
 const DEFAULT_SUPABASE_URL = "https://fnmixmpfpnxmutspisip.supabase.co";
@@ -347,6 +350,39 @@ function syncLibrarySeedCards(library, seedCards, seedDeckVersion) {
     seedDeckVersion,
     cards: syncSeedCards(defaultDeck.cards, seedCards)
   });
+
+  return normalizeLibrary({ version: LIBRARY_VERSION, activeDeckId: normalized.activeDeckId, decks });
+}
+
+function syncBuiltInDeck(library, deckPayload, seedDeckVersion) {
+  const normalized = normalizeLibrary(library);
+  const incoming = createDeck({ ...deckPayload, seedDeckVersion });
+  const decks = [...normalized.decks];
+  const deckIndex = decks.findIndex((deck) => deck.id === incoming.id);
+  const existingDeck = deckIndex >= 0 ? decks[deckIndex] : null;
+
+  if (
+    existingDeck &&
+    Number(existingDeck.seedDeckVersion || 0) >= seedDeckVersion &&
+    existingDeck.cards.length > 0
+  ) {
+    return normalized;
+  }
+
+  const nextDeck = createDeck({
+    ...(existingDeck || {}),
+    id: incoming.id,
+    name: incoming.name,
+    updatedAt: toIso(new Date()),
+    seedDeckVersion,
+    cards: syncSeedCards(existingDeck ? existingDeck.cards : [], incoming.cards)
+  });
+
+  if (deckIndex >= 0) {
+    decks[deckIndex] = nextDeck;
+  } else {
+    decks.push(nextDeck);
+  }
 
   return normalizeLibrary({ version: LIBRARY_VERSION, activeDeckId: normalized.activeDeckId, decks });
 }
@@ -866,21 +902,36 @@ function startBrowserApp() {
   }
 
   async function loadSeedCards() {
-    const defaultDeck = state.library.decks.find((deck) => deck.id === DEFAULT_DECK_ID) || createDefaultDeck();
-    if (Number(defaultDeck.seedDeckVersion || 0) >= SEED_DECK_VERSION && defaultDeck.cards.length > 0) return;
+    let loaded = 0;
 
     try {
-      const response = await fetch(SEED_DECK_URL, { cache: "no-store" });
-      if (!response.ok) throw new Error("Seed deck unavailable");
-      const text = await response.text();
-      const seedCards = parseImportedDeck(text);
-      const before = defaultDeck.cards.length;
-      setLibrary(syncLibrarySeedCards(state.library, seedCards, SEED_DECK_VERSION));
+      const defaultDeck = state.library.decks.find((deck) => deck.id === DEFAULT_DECK_ID) || createDefaultDeck();
+      if (Number(defaultDeck.seedDeckVersion || 0) < SEED_DECK_VERSION || defaultDeck.cards.length === 0) {
+        const response = await fetch(SEED_DECK_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error("Seed deck unavailable");
+        const text = await response.text();
+        const seedCards = parseImportedDeck(text);
+        const before = defaultDeck.cards.length;
+        setLibrary(syncLibrarySeedCards(state.library, seedCards, SEED_DECK_VERSION));
+        const nextDefaultDeck = state.library.decks.find((deck) => deck.id === DEFAULT_DECK_ID) || createDefaultDeck();
+        loaded += Math.max(0, nextDefaultDeck.cards.length - before);
+      }
+
+      const grammarDeck = state.library.decks.find((deck) => deck.id === GRAMMAR_B1_DECK_ID);
+      if (!grammarDeck || Number(grammarDeck.seedDeckVersion || 0) < GRAMMAR_B1_DECK_VERSION || grammarDeck.cards.length === 0) {
+        const response = await fetch(GRAMMAR_B1_DECK_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error("Grammar deck unavailable");
+        const text = await response.text();
+        const grammarPayload = JSON.parse(text);
+        const before = grammarDeck ? grammarDeck.cards.length : 0;
+        setLibrary(syncBuiltInDeck(state.library, grammarPayload, GRAMMAR_B1_DECK_VERSION));
+        const nextGrammarDeck = state.library.decks.find((deck) => deck.id === GRAMMAR_B1_DECK_ID);
+        loaded += Math.max(0, (nextGrammarDeck ? nextGrammarDeck.cards.length : 0) - before);
+      }
+
       saveCards({ cloud: false });
       renderAll();
-      const nextDefaultDeck = state.library.decks.find((deck) => deck.id === DEFAULT_DECK_ID) || createDefaultDeck();
-      const added = nextDefaultDeck.cards.length - before;
-      if (added > 0) setMessage(`Loaded ${added} built-in cards.`);
+      if (loaded > 0) setMessage(`Loaded ${loaded} built-in cards.`);
     } catch {
       setMessage("Built-in cards could not be loaded. You can still add your own cards.");
     }
@@ -1464,6 +1515,7 @@ if (typeof module !== "undefined") {
     replaceActiveDeck,
     mergeLibraries,
     syncLibrarySeedCards,
+    syncBuiltInDeck,
     createLibraryPayload,
     payloadToLibrary,
     getLibraryStats,
@@ -1496,13 +1548,3 @@ if (typeof module !== "undefined") {
 if (typeof window !== "undefined") {
   window.addEventListener("DOMContentLoaded", startBrowserApp);
 }
-
-
-
-
-
-
-
-
-
-
